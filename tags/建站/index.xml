@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><updated>2026-07-13T17:14:45+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99/</id><entry><title type="html">本站进化记录-持续更新中</title><link href="https://1024daniel.github.io/posts/%E6%9C%AC%E7%AB%99%E8%BF%9B%E5%8C%96%E8%AE%B0%E5%BD%95/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/%E6%9C%AC%E7%AB%99%E8%BF%9B%E5%8C%96%E8%AE%B0%E5%BD%95/</id><author><name>Daniel Diana</name></author><published>2026-06-05T17:12:53+08:00</published><updated>2026-06-05T17:12:53+08:00</updated><content type="html"><![CDATA[<p>本站一些持续迭代优化记录</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><updated>2026-07-13T17:25:01+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99/</id><entry><title type="html">本站进化记录-持续更新中</title><link href="https://1024daniel.github.io/posts/%E6%9C%AC%E7%AB%99%E8%BF%9B%E5%8C%96%E8%AE%B0%E5%BD%95/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/%E6%9C%AC%E7%AB%99%E8%BF%9B%E5%8C%96%E8%AE%B0%E5%BD%95/</id><author><name>Daniel Diana</name></author><published>2026-06-05T17:12:53+08:00</published><updated>2026-06-05T17:12:53+08:00</updated><content type="html"><![CDATA[<p>本站一些持续迭代优化记录</p>
 <blockquote>
 </blockquote>
 <h3 id="多图排版">多图排版</h3>
@@ -57,13 +57,9 @@
 使用partial来整合主页和详情页豆瓣观影和阅读的内容 减少代码冗余
 <a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/beb4c80dd0774393c9bb2d9977af9cdec096e4bb" target="_blank" rel="noopener nofollow noreferrer">
   <span class="link-preview-card__content">
-    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
-      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
-    <span class="link-preview-card__meta">GitHub</span>
+    <span class="link-preview-card__title">https://github.com/1024daniel/1024daniel.github.io/commit/beb4c80dd0774393c9bb2d9977af9cdec096e4bb</span>
+    <span class="link-preview-card__meta">github.com</span>
   </span>
-    <span class="link-preview-card__media">
-      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
-    </span>
 </a>
 </p>
 <h3 id="toc">TOC</h3>
@@ -145,35 +141,23 @@ raw image文件名默认就是拍摄时间，如果需要修改文件名可以�
 <h3 id="增加全局搜功能">增加全局搜功能</h3>
 <p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/de687d0e517d9ea02567e4de5d8e381a8f93b48d" target="_blank" rel="noopener nofollow noreferrer">
   <span class="link-preview-card__content">
-    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
-      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
-    <span class="link-preview-card__meta">GitHub</span>
+    <span class="link-preview-card__title">https://github.com/1024daniel/1024daniel.github.io/commit/de687d0e517d9ea02567e4de5d8e381a8f93b48d</span>
+    <span class="link-preview-card__meta">github.com</span>
   </span>
-    <span class="link-preview-card__media">
-      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
-    </span>
 </a>
 <br>
 <a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/dcd539935c5f7a40a0f33ae91d03e92cd11bbcfb" target="_blank" rel="noopener nofollow noreferrer">
   <span class="link-preview-card__content">
-    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
-      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
-    <span class="link-preview-card__meta">GitHub</span>
+    <span class="link-preview-card__title">https://github.com/1024daniel/1024daniel.github.io/commit/dcd539935c5f7a40a0f33ae91d03e92cd11bbcfb</span>
+    <span class="link-preview-card__meta">github.com</span>
   </span>
-    <span class="link-preview-card__media">
-      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
-    </span>
 </a>
 <br>
 <a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/cf279c346d5795991f2e36637e41a712d50b7177" target="_blank" rel="noopener nofollow noreferrer">
   <span class="link-preview-card__content">
-    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
-      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
-    <span class="link-preview-card__meta">GitHub</span>
+    <span class="link-preview-card__title">https://github.com/1024daniel/1024daniel.github.io/commit/cf279c346d5795991f2e36637e41a712d50b7177</span>
+    <span class="link-preview-card__meta">github.com</span>
   </span>
-    <span class="link-preview-card__media">
-      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
-    </span>
 </a>
 </p>
 <p>   主页menu搜索键直接🔍关键词，支持多关键词搜索，多关键词搜素直接空格间隔<br>
@@ -242,13 +226,9 @@ raw image文件名默认就是拍摄时间，如果需要修改文件名可以�
 <h3 id="leetcode总结页面">leetcode总结页面</h3>
 <p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/602a55227297ec3487aad3650d0d539e0e9c310c" target="_blank" rel="noopener nofollow noreferrer">
   <span class="link-preview-card__content">
-    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
-      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
-    <span class="link-preview-card__meta">GitHub</span>
+    <span class="link-preview-card__title">https://github.com/1024daniel/1024daniel.github.io/commit/602a55227297ec3487aad3650d0d539e0e9c310c</span>
+    <span class="link-preview-card__meta">github.com</span>
   </span>
-    <span class="link-preview-card__media">
-      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
-    </span>
 </a>
 </p>
 <ol>
@@ -342,25 +322,17 @@ raw image文件名默认就是拍摄时间，如果需要修改文件名可以�
 <h3 id="增加references-shortcode">增加references shortcode</h3>
 <p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/a67ec03ff1e53132f9f03277eb5d4aa47cb4f7f6" target="_blank" rel="noopener nofollow noreferrer">
   <span class="link-preview-card__content">
-    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
-      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
-    <span class="link-preview-card__meta">GitHub</span>
+    <span class="link-preview-card__title">https://github.com/1024daniel/1024daniel.github.io/commit/a67ec03ff1e53132f9f03277eb5d4aa47cb4f7f6</span>
+    <span class="link-preview-card__meta">github.com</span>
   </span>
-    <span class="link-preview-card__media">
-      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
-    </span>
 </a>
 </p>
 <h3 id="增加网页内嵌视频的渲染">增加网页内嵌视频的渲染</h3>
 <p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/7ea6075d82c7761314eee20059111efffdcc2b7f" target="_blank" rel="noopener nofollow noreferrer">
   <span class="link-preview-card__content">
-    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
-      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
-    <span class="link-preview-card__meta">GitHub</span>
+    <span class="link-preview-card__title">https://github.com/1024daniel/1024daniel.github.io/commit/7ea6075d82c7761314eee20059111efffdcc2b7f</span>
+    <span class="link-preview-card__meta">github.com</span>
   </span>
-    <span class="link-preview-card__media">
-      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
-    </span>
 </a>
 </p>
 <h3 id="资源文件位置规划">资源文件位置规划</h3>
@@ -408,24 +380,16 @@ raw image文件名默认就是拍摄时间，如果需要修改文件名可以�
 </span></span></code></pre></div><h3 id="增加美食记录">增加美食记录</h3>
 <p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/f9c444c6bfc8e7c26129108e31e49ee3abb2cc50" target="_blank" rel="noopener nofollow noreferrer">
   <span class="link-preview-card__content">
-    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
-      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
-    <span class="link-preview-card__meta">GitHub</span>
+    <span class="link-preview-card__title">https://github.com/1024daniel/1024daniel.github.io/commit/f9c444c6bfc8e7c26129108e31e49ee3abb2cc50</span>
+    <span class="link-preview-card__meta">github.com</span>
   </span>
-    <span class="link-preview-card__media">
-      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
-    </span>
 </a>
 
 <a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/481d641eb407dae55b0e23ff311104a1965237a5" target="_blank" rel="noopener nofollow noreferrer">
   <span class="link-preview-card__content">
-    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
-      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
-    <span class="link-preview-card__meta">GitHub</span>
+    <span class="link-preview-card__title">https://github.com/1024daniel/1024daniel.github.io/commit/481d641eb407dae55b0e23ff311104a1965237a5</span>
+    <span class="link-preview-card__meta">github.com</span>
   </span>
-    <span class="link-preview-card__media">
-      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
-    </span>
 </a>
 </p>
 <p>增加美食界面记录 美食部分内容复用光影部分代码 同时将album.html内容模板化</p>
@@ -434,49 +398,33 @@ raw image文件名默认就是拍摄时间，如果需要修改文件名可以�
 因此需要针对那些大尺寸图片在加载缩率图失败的情况下需要加载原图
 <a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/c53dcd094ca6ef68046dd07254978ff38b6b8d1a" target="_blank" rel="noopener nofollow noreferrer">
   <span class="link-preview-card__content">
-    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
-      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
-    <span class="link-preview-card__meta">GitHub</span>
+    <span class="link-preview-card__title">https://github.com/1024daniel/1024daniel.github.io/commit/c53dcd094ca6ef68046dd07254978ff38b6b8d1a</span>
+    <span class="link-preview-card__meta">github.com</span>
   </span>
-    <span class="link-preview-card__media">
-      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
-    </span>
 </a>
 </p>
 <h3 id="album和dishes在主页和详情页代码抽象归一">album和dishes在主页和详情页代码抽象归一</h3>
 <p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/9da48f02c1e1c7702d08cdb7742a758f1c26c488" target="_blank" rel="noopener nofollow noreferrer">
   <span class="link-preview-card__content">
-    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
-      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
-    <span class="link-preview-card__meta">GitHub</span>
+    <span class="link-preview-card__title">https://github.com/1024daniel/1024daniel.github.io/commit/9da48f02c1e1c7702d08cdb7742a758f1c26c488</span>
+    <span class="link-preview-card__meta">github.com</span>
   </span>
-    <span class="link-preview-card__media">
-      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
-    </span>
 </a>
 </p>
 <h3 id="link-preview-card">link preview card</h3>
 <p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/5060355b89e6dcb97e70583e7327458c42ea9782" target="_blank" rel="noopener nofollow noreferrer">
   <span class="link-preview-card__content">
-    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
-      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
-    <span class="link-preview-card__meta">GitHub</span>
+    <span class="link-preview-card__title">https://github.com/1024daniel/1024daniel.github.io/commit/5060355b89e6dcb97e70583e7327458c42ea9782</span>
+    <span class="link-preview-card__meta">github.com</span>
   </span>
-    <span class="link-preview-card__media">
-      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
-    </span>
 </a>
 </p>
 <h3 id="album节点图片显示严格按照capture-time排序">album节点图片显示严格按照capture time排序</h3>
 <p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/cf0a19666ed99085916d3a491c2f960b1cb491de" target="_blank" rel="noopener nofollow noreferrer">
   <span class="link-preview-card__content">
-    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
-      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
-    <span class="link-preview-card__meta">GitHub</span>
+    <span class="link-preview-card__title">https://github.com/1024daniel/1024daniel.github.io/commit/cf0a19666ed99085916d3a491c2f960b1cb491de</span>
+    <span class="link-preview-card__meta">github.com</span>
   </span>
-    <span class="link-preview-card__media">
-      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
-    </span>
 </a>
 </p>
 <p>按capture time时间排序才能对准timeline进行追溯光影，这里使用渐进式加载排序</p>
@@ -491,13 +439,9 @@ raw image文件名默认就是拍摄时间，如果需要修改文件名可以�
 <h3 id="album展示按照紧密瀑布流布局">album展示按照紧密瀑布流布局</h3>
 <p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/edef3964e6bbdc58471b9ab1ad822b5d47b46ffb" target="_blank" rel="noopener nofollow noreferrer">
   <span class="link-preview-card__content">
-    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
-      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
-    <span class="link-preview-card__meta">GitHub</span>
+    <span class="link-preview-card__title">https://github.com/1024daniel/1024daniel.github.io/commit/edef3964e6bbdc58471b9ab1ad822b5d47b46ffb</span>
+    <span class="link-preview-card__meta">github.com</span>
   </span>
-    <span class="link-preview-card__media">
-      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
-    </span>
 </a>
 
 原来的 column-count 瀑布流会先从上到下填满一列，这里改为图片加载先优先左上角 之后每行加载<br>
@@ -524,13 +468,9 @@ album-masonry<br>
 <h3 id="批量加载非全量加载">批量加载非全量加载</h3>
 <p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/4fbf87b75ab43e51f8136c688b29e9cc5591ca5b" target="_blank" rel="noopener nofollow noreferrer">
   <span class="link-preview-card__content">
-    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
-      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
-    <span class="link-preview-card__meta">GitHub</span>
+    <span class="link-preview-card__title">https://github.com/1024daniel/1024daniel.github.io/commit/4fbf87b75ab43e51f8136c688b29e9cc5591ca5b</span>
+    <span class="link-preview-card__meta">github.com</span>
   </span>
-    <span class="link-preview-card__media">
-      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
-    </span>
 </a>
 </p>
 <p>对于云上的ablum中图片内容会越来越丰富，网页详情页加载虽然使用了缩略图，<br>
@@ -538,6 +478,21 @@ album-masonry<br>
 而是再客户往下持续滑动才加载额外的内容
 同时原来的list接口列出图片会存在最大值1000的限制，可能会存在加载的图片不完全，<br>
 这里ListObjectsV2 continuation token pagination来完成迭代获取所有的内容</p>
+<h3 id="源码private-网页public">源码private 网页public</h3>
+<p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io.src/commit/ad542d4bbc5686894136675e67a00163bbe3d34c" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">https://github.com/1024daniel/1024daniel.github.io.src/commit/ad542d4bbc5686894136675e67a00163bbe3d34c</span>
+    <span class="link-preview-card__meta">github.com</span>
+  </span>
+</a>
+
+本地生成ssh公钥和私钥<br>
+public repo中Settings → Deploy keys → Add deploy key添加公钥<br>
+private repo中Settings → Secrets and variables → Actions → New repository secret 设置Secret名称为PAGES_DEPLOY_KEY 并添加私钥<br>
+public仓库中设置Settings → Pages → Build and deployment<br>
+Source: Deploy from a branch
+Branch: main
+Folder: / (root)</p>
 <h3 id="faq">FAQ</h3>
 <p>hugo server -D 构建成功之后但是网页无法打开指定网站
 ping localhost发现无法ping通，查看本地的路由表，发现127.0.0.1被错误的指定到feth3804这个网卡</p>
@@ -659,13 +614,9 @@ Centrally define menu entries for one or more menus.
 partial用法参考<br>
 <a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/beb4c80dd0774393c9bb2d9977af9cdec096e4bb" target="_blank" rel="noopener nofollow noreferrer">
   <span class="link-preview-card__content">
-    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
-      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
-    <span class="link-preview-card__meta">GitHub</span>
+    <span class="link-preview-card__title">https://github.com/1024daniel/1024daniel.github.io/commit/beb4c80dd0774393c9bb2d9977af9cdec096e4bb</span>
+    <span class="link-preview-card__meta">github.com</span>
   </span>
-    <span class="link-preview-card__media">
-      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
-    </span>
 </a>
 </p>
 <h3 id="markdown渲染钩子">markdown渲染钩子</h3>
