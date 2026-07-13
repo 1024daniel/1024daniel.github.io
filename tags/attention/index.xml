@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/tags/attention/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/tags/attention/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><updated>2026-07-13T17:14:45+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/tags/attention/</id><entry><title type="html">What_is_attention</title><link href="https://1024daniel.github.io/posts/ai/what_is_attention/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/ai/what_is_attention/</id><author><name>Daniel Diana</name></author><published>2026-06-11T09:39:49+08:00</published><updated>2026-06-11T09:39:49+08:00</updated><content type="html"><![CDATA[<p>Details in Attention</p>
+<blockquote>
+</blockquote>
+<h3 id="qkv获取">qkv获取</h3>
+<p>输入 token: A B C D<br>
+embedding + position -&gt; layer 0 hidden states<br>
+在模型一层内attention内会对hidden states做线性投影</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>Q <span style="color:#f92672">=</span> hidden <span style="color:#f92672">@</span> Wq
+</span></span><span style="display:flex;"><span>K <span style="color:#f92672">=</span> hidden <span style="color:#f92672">@</span> Wk
+</span></span><span style="display:flex;"><span>V <span style="color:#f92672">=</span> hidden <span style="color:#f92672">@</span> Wv
+</span></span></code></pre></div><p>但是实际上实现一般都是fused QKV projection:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>QKV <span style="color:#f92672">=</span> hidden <span style="color:#f92672">@</span> Wqkv
+</span></span><span style="display:flex;"><span>Q, K, V <span style="color:#f92672">=</span> split(QKV)
+</span></span></code></pre></div>]]></content><category scheme="https://1024daniel.github.io/tags/attention" term="attention" label="attention"/></entry></feed>

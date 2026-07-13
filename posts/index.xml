@@ -1,0 +1,1655 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/posts/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/posts/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><updated>2026-07-13T17:14:45+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/posts/</id><entry><title type="html">湘湖</title><link href="https://1024daniel.github.io/posts/scenes/%E6%B9%98%E6%B9%96/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/scenes/%E6%B9%98%E6%B9%96/</id><author><name>Daniel Diana</name></author><published>2026-06-20T00:09:07+08:00</published><updated>2026-06-20T00:09:07+08:00</updated><content type="html"><![CDATA[<p>2022年5月份来到杭州，第一个来到的景区就是湘湖，后面也有很长一段时间住在湘湖边的融泽府，湘湖风景很美，很静谧，非常适合骑行</p>
+<blockquote>
+</blockquote>
+<h3 id="我的湘湖印象">我的湘湖印象</h3>
+<p><img loading='lazy' decoding="async" src="https://1024daniel.oss-cn-hangzhou.aliyuncs.com/album/%E6%B9%98%E6%B9%96%E8%BE%B9%E6%97%85%E9%95%87%E6%B2%B3%E8%BE%B9%E8%8D%B7%E8%8A%B1.jpg" alt=""  /></p>
+<p><img loading='lazy' decoding="async" src="https://1024daniel.oss-cn-hangzhou.aliyuncs.com/album/%E6%B9%98%E6%B9%96%E4%B8%80%E8%8D%B7%E5%A1%98.jpg" alt=""  /></p>
+<p><img loading='lazy' decoding="async" src="https://1024daniel.oss-cn-hangzhou.aliyuncs.com/album/%E6%B9%98%E6%B9%96%E8%BE%B9%E5%A4%A7%E8%8D%89%E5%9D%AA-%E5%85%A8%E7%BB%BF%E8%89%B2.jpg" alt=""  /></p>
+<p><img loading='lazy' decoding="async" src="https://1024daniel.oss-cn-hangzhou.aliyuncs.com/album/%E6%B9%98%E6%B9%96%E8%8D%B7%E5%A1%98%E7%BE%8E%E6%99%AF%E5%85%A8%E8%A7%88.jpg" alt=""  />
+<img loading='lazy' decoding="async" src="https://1024daniel.oss-cn-hangzhou.aliyuncs.com/album/%E6%B9%98%E6%B9%96-%E6%B8%94%E7%BD%91%E6%B5%AE%E6%BC%82.jpg" alt=""  /></p>]]></content><category scheme="https://1024daniel.github.io/tags/%E6%B9%98%E6%B9%96" term="%E6%B9%98%E6%B9%96" label="湘湖"/><category scheme="https://1024daniel.github.io/tags/%E6%9D%AD%E5%B7%9E" term="%E6%9D%AD%E5%B7%9E" label="杭州"/></entry><entry><title type="html">我和小汽车</title><link href="https://1024daniel.github.io/posts/%E6%88%91%E5%92%8C%E5%B0%8F%E6%B1%BD%E8%BD%A6/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/%E6%88%91%E5%92%8C%E5%B0%8F%E6%B1%BD%E8%BD%A6/</id><author><name>Daniel Diana</name></author><published>2026-06-16T00:10:14+08:00</published><updated>2026-06-16T00:10:14+08:00</updated><content type="html">&lt;p>我对车的理解以及我开过的车&lt;/p>
+&lt;blockquote>
+&lt;/blockquote></content><category scheme="https://1024daniel.github.io/tags/car" term="car" label="car"/></entry><entry><title type="html">LeetCode 0743. 网络延迟时间</title><link href="https://1024daniel.github.io/posts/leetcode/leetcode-0743-network-delay-time/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/leetcode/leetcode-0743-network-delay-time/</id><author><name>Daniel Diana</name></author><published>2026-06-15T01:15:03+08:00</published><updated>2026-06-15T01:15:03+08:00</updated><content type="html"><![CDATA[<p><strong>原题链接：</strong><a href="https://leetcode.cn/problems/network-delay-time/" target="_blank" rel="noopener noreferrer">LeetCode 0743. 网络延迟时间</a></p>
+<blockquote>
+</blockquote>
+<h2 id="题目信号">题目信号</h2>
+<ul>
+<li>已知：</li>
+<li>目标：</li>
+<li>数据范围：</li>
+<li>模型识别：</li>
+</ul>
+<h2 id="首次思路">首次思路</h2>
+<p>记录真实推导过程，包括失败方案和卡点。</p>
+<h2 id="解法">解法</h2>
+<h3 id="核心不变量">核心不变量</h3>
+<p>用一句话说明算法为什么正确。</p>
+<h3 id="步骤">步骤</h3>
+<ol>
+<li>创建map存储存储输入给到单向链路信息， 方便算法内检索</li>
+<li>创建map/list 来存储从初始起点出发到各个节点的最短路径时间，在算法推进持续更新和检索</li>
+<li>创建最小heap，元素是一个键值对，键为到指定节点的时间，值为指定节点</li>
+<li>算法持续查询heap是否为空，否则持续从heap找出剩余最短路径的node，更新②，同时基于当前node检索①来看所有方向的节点，加入到③中的heap，推动下一次的迭代</li>
+<li>待所有的节点迭代完，如果②中存储的节点数也就是能遍历的节点数不是总结点数，说明signal无法达到所有的节点</li>
+<li>否者直接返回②中的最长时间即可，因为遍历所有节点只需要达到最远的node即可</li>
+</ol>
+<h3 id="代码">代码</h3>
+<p>自动展示 solution_path 目录下的所有语言实现：</p>
+<h4 id="c">C++</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;vector&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;queue&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> <span style="color:#66d9ef">namespace</span> std;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> networkDelayTime(vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;&amp;</span> times, <span style="color:#66d9ef">int</span> n, <span style="color:#66d9ef">int</span> k) {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 节点固定，无需unordered_map，直接用vector存储邻接表，减少hash计算和内存开销
+</span></span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span>pair<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span>,<span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;&gt;</span> graph(n <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> t : times) {
+</span></span><span style="display:flex;"><span>            graph[t[<span style="color:#ae81ff">0</span>]].push_back({t[<span style="color:#ae81ff">1</span>], t[<span style="color:#ae81ff">2</span>]});
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> dist(n <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, INT_MAX);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        priority_queue<span style="color:#f92672">&lt;</span>
+</span></span><span style="display:flex;"><span>            pair<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span>,<span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span>,
+</span></span><span style="display:flex;"><span>            vector<span style="color:#f92672">&lt;</span>pair<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span>,<span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;</span>,
+</span></span><span style="display:flex;"><span>            greater<span style="color:#f92672">&lt;</span>pair<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span>,<span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&gt;</span> pq;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        pq.push({<span style="color:#ae81ff">0</span>, k});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span> (<span style="color:#f92672">!</span>pq.empty()) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">auto</span> [curTime, node] <span style="color:#f92672">=</span> pq.top();
+</span></span><span style="display:flex;"><span>            pq.pop();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (curTime <span style="color:#f92672">&gt;=</span> dist[node]) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">continue</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            dist[node] <span style="color:#f92672">=</span> curTime;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> [nei, w] <span style="color:#f92672">:</span> graph[node]) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (curTime <span style="color:#f92672">+</span> w <span style="color:#f92672">&lt;</span> dist[nei]) {
+</span></span><span style="display:flex;"><span>                    pq.push({curTime <span style="color:#f92672">+</span> w, nei});
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> ans <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; i <span style="color:#f92672">&lt;=</span> n; i<span style="color:#f92672">++</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (dist[i] <span style="color:#f92672">==</span> INT_MAX) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            ans <span style="color:#f92672">=</span> max(ans, dist[i]);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ans;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h4 id="python">Python</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> typing <span style="color:#f92672">import</span> List
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> heapq
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> collections <span style="color:#f92672">import</span> defaultdict
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">networkDelayTime</span>(self, times: List[List[int]], n: int, k: int) <span style="color:#f92672">-&gt;</span> int:
+</span></span><span style="display:flex;"><span>        graph <span style="color:#f92672">=</span> defaultdict(list)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> u, v, w <span style="color:#f92672">in</span> times:
+</span></span><span style="display:flex;"><span>            graph[u]<span style="color:#f92672">.</span>append((v, w))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># dist[node] 表示从 k 到 node 的最短传播时间</span>
+</span></span><span style="display:flex;"><span>        dist <span style="color:#f92672">=</span> {}
+</span></span><span style="display:flex;"><span>        heap <span style="color:#f92672">=</span> [(<span style="color:#ae81ff">0</span>, k)]  <span style="color:#75715e"># 当前耗时, 当前节点， 最小堆</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span> heap:
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># 按时间长度从小到大弹出节点，也就是时间顺序在dist从存入节点和时间</span>
+</span></span><span style="display:flex;"><span>            time, node <span style="color:#f92672">=</span> heapq<span style="color:#f92672">.</span>heappop(heap)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> node <span style="color:#f92672">in</span> dist:
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            dist[node] <span style="color:#f92672">=</span> time
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> nei, w <span style="color:#f92672">in</span> graph[node]:
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> nei <span style="color:#f92672">not</span> <span style="color:#f92672">in</span> dist:
+</span></span><span style="display:flex;"><span>                    heapq<span style="color:#f92672">.</span>heappush(heap, (time <span style="color:#f92672">+</span> w, nei))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> len(dist) <span style="color:#f92672">!=</span> n:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">## 这里默认signal是从k节点所有方向发出的，所以只要达到最长的节点就可以了</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> max(dist<span style="color:#f92672">.</span>values())
+</span></span></code></pre></div>
+<h3 id="复杂度">复杂度</h3>
+<ul>
+<li>时间复杂度：$O()$</li>
+<li>空间复杂度：$O()$</li>
+</ul>
+<h2 id="易错点">易错点</h2>
+<ul>
+<li></li>
+</ul>
+<h2 id="迁移题">迁移题</h2>
+<ul>
+<li></li>
+</ul>
+<h2 id="复习记录">复习记录</h2>
+<table>
+  <thead>
+      <tr>
+          <th>日期</th>
+          <th>独立完成</th>
+          <th style="text-align: right">耗时</th>
+          <th>遗忘点</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td></td>
+          <td></td>
+          <td style="text-align: right"></td>
+          <td></td>
+      </tr>
+  </tbody>
+</table>]]></content><category scheme="https://1024daniel.github.io/tags/leetcode" term="leetcode" label="LeetCode"/><category scheme="https://1024daniel.github.io/tags/%E6%A0%91%E4%B8%8E%E5%9B%BE" term="%E6%A0%91%E4%B8%8E%E5%9B%BE" label="树与图"/><category scheme="https://1024daniel.github.io/tags/bfs" term="bfs" label="BFS"/></entry><entry><title type="html">LeetCode 0001. 两数之和</title><link href="https://1024daniel.github.io/posts/leetcode/leetcode-0001-two-sum/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/leetcode/leetcode-0001-two-sum/</id><author><name>Daniel Diana</name></author><published>2026-06-15T00:00:00+08:00</published><updated>2026-06-15T00:00:00+08:00</updated><content type="html"><![CDATA[<p><strong>原题链接：</strong><a href="https://leetcode.cn/problems/two-sum/" target="_blank" rel="noopener noreferrer">LeetCode 0001. 两数之和</a></p>
+<blockquote>
+</blockquote>
+<h2 id="题目信号">题目信号</h2>
+<ul>
+<li>已知：数组中存在唯一一组答案，同一元素不能重复使用。</li>
+<li>目标：返回两个元素的下标。</li>
+<li>模型识别：对每个 value，需要快速查找 target - value 是否出现过，适合哈希表。</li>
+</ul>
+<h2 id="首次思路">首次思路</h2>
+<p>暴力枚举所有数对需要 $O(n^2)$ 时间。为了降低复杂度，可以在遍历时用哈希表记录已经见过的数值和下标。</p>
+<h2 id="解法">解法</h2>
+<h3 id="核心不变量">核心不变量</h3>
+<p>处理当前下标时，seen 只包含它之前的元素。因此命中补数时，两个下标一定不同。</p>
+<h3 id="步骤">步骤</h3>
+<ol>
+<li>计算当前数的补数 target - value。</li>
+<li>如果补数已在 seen 中，返回两个下标。</li>
+<li>否则将当前数和下标加入 seen。</li>
+</ol>
+<h3 id="代码">代码</h3>
+<h4 id="python">Python</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">twoSum</span>(self, nums: list[int], target: int) <span style="color:#f92672">-&gt;</span> list[int]:
+</span></span><span style="display:flex;"><span>        seen: dict[int, int] <span style="color:#f92672">=</span> {}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> index, value <span style="color:#f92672">in</span> enumerate(nums):
+</span></span><span style="display:flex;"><span>            complement <span style="color:#f92672">=</span> target <span style="color:#f92672">-</span> value
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> complement <span style="color:#f92672">in</span> seen:
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> [seen[complement], index]
+</span></span><span style="display:flex;"><span>            seen[value] <span style="color:#f92672">=</span> index
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> []
+</span></span></code></pre></div>
+<h3 id="复杂度">复杂度</h3>
+<ul>
+<li>时间复杂度：$O(n)$</li>
+<li>空间复杂度：$O(n)$</li>
+</ul>
+<h2 id="易错点">易错点</h2>
+<ul>
+<li>先写入 seen 再查找，在 target 等于两倍 value 时可能错误地重复使用当前元素。</li>
+<li>哈希表要保存下标，而不只是保存数值是否出现。</li>
+</ul>
+<h2 id="迁移题">迁移题</h2>
+<ul>
+<li>LeetCode 0167. 两数之和 II：输入有序数组</li>
+<li>LeetCode 0015. 三数之和</li>
+</ul>
+<h2 id="复习记录">复习记录</h2>
+<table>
+  <thead>
+      <tr>
+          <th>日期</th>
+          <th>独立完成</th>
+          <th style="text-align: right">耗时</th>
+          <th>遗忘点</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>2026-06-15</td>
+          <td>是</td>
+          <td style="text-align: right">-</td>
+          <td>首次建档</td>
+      </tr>
+  </tbody>
+</table>]]></content><category scheme="https://1024daniel.github.io/tags/leetcode" term="leetcode" label="LeetCode"/><category scheme="https://1024daniel.github.io/tags/%E6%95%B0%E7%BB%84" term="%E6%95%B0%E7%BB%84" label="数组"/><category scheme="https://1024daniel.github.io/tags/%E5%93%88%E5%B8%8C%E8%A1%A8" term="%E5%93%88%E5%B8%8C%E8%A1%A8" label="哈希表"/></entry><entry><title type="html">城市印象 合肥</title><link href="https://1024daniel.github.io/posts/scenes/%E5%9F%8E%E5%B8%82%E5%8D%B0%E8%B1%A1-%E5%90%88%E8%82%A5/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/scenes/%E5%9F%8E%E5%B8%82%E5%8D%B0%E8%B1%A1-%E5%90%88%E8%82%A5/</id><author><name>Daniel Diana</name></author><published>2026-06-14T23:52:52+08:00</published><updated>2026-06-14T23:52:52+08:00</updated><content type="html"><![CDATA[<p>合肥印象</p>
+<blockquote>
+</blockquote>
+<p>  2026.7出差合肥 在巢湖边上，但是都是工作内，没有跨周，所以没有周末去巢湖逛逛，还是比较可惜的<br>
+不过在云谷路这边陆陆续续呆了一段时间，在附近商圈逛了一下，记录一下合肥第一印象</p>
+<p><img loading='lazy' decoding="async" src="https://1024daniel.oss-cn-hangzhou.aliyuncs.com/album/%E5%90%88%E8%82%A5%E4%BA%91%E8%B0%B7%E8%B7%AF.jpg" alt=""  />
+<img loading='lazy' decoding="async" src="https://1024daniel.oss-cn-hangzhou.aliyuncs.com/album/%E5%90%88%E8%82%A5%E4%BA%91%E8%B0%B7%E8%B7%AF%E9%87%91%E8%9E%8D%E5%9F%8E%E5%B9%BF%E5%9C%BA.jpg" alt=""  /></p>
+<p>  因为出差期间刚好是世界杯小组赛开打时间，比较惊讶的是商圈直接有大屏幕放世界杯画面，也留了很多座位给大家来一起看世界杯，且就在商圈内，非常有氛围，作为一个商旅过客也融入其中的轻松自在</p>
+<p><img loading='lazy' decoding="async" src="https://1024daniel.oss-cn-hangzhou.aliyuncs.com/album/%E5%90%88%E8%82%A5%E4%BA%91%E8%B0%B7%E8%B7%AF%E9%87%91%E8%9E%8D%E5%9F%8E%E5%95%86%E5%9F%8E%E4%B8%96%E7%95%8C%E6%9D%AF%E7%9C%8B%E5%8F%B0.jpg" alt=""  /></p>]]></content><category scheme="https://1024daniel.github.io/tags/city" term="city" label="city"/></entry><entry><title type="html">rejection random sample kernel优化</title><link href="https://1024daniel.github.io/posts/ai/rejection_random_sample_kernel%E4%BC%98%E5%8C%96/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/ai/rejection_random_sample_kernel%E4%BC%98%E5%8C%96/</id><author><name>Daniel Diana</name></author><published>2026-06-11T16:10:38+08:00</published><updated>2026-06-11T16:10:38+08:00</updated><content type="html"><![CDATA[<p>投机推理算子rejection random sample kernel的优化实现</p>
+<h2 id="投机推理原理">投机推理原理</h2>
+<h2 id="投机推理在多机的scheduler-策略和优化">投机推理在多机的scheduler 策略和优化</h2>
+<h2 id="优化实现和效果">优化实现和效果</h2>
+<p><a class="link-preview-card" href="https://github.com/vllm-project/vllm-ascend/pull/5259/changes" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">feat: implement high-performance Triton kernels for rejection sampling: optimization for rejection_random_sample_kernel by 1024daniel · Pull Request #5259 · vllm-project/vllm-ascend</span>
+      <span class="link-preview-card__description">What this PR does / why we need it?
+This PR introduces optimized Triton implementations for the rejection_random_sample_kernel delivering superior performance compared to the existing Triton implementations. The new Triton kernels maintain full functional accuracy while delivering significant performance improvements across various batch sizes and MTP configurations.
+Does this PR introduce any user-facing change?
+Yes, this PR modifies rejection_sampler.py to use optimized Triton kernels:
+rejection_random_sample_kernel is modified and optimized
+How was this patch tested?
+performance benchmark results:
+
+
+
+
+
+
+
+Batch Size
+MTP
+origin implementation(us)
+optimized version(us)
+
+
+
+
+1
+1
+2.934
+3.64
+
+
+8
+1
+4.467
+4
+
+
+32
+1
+6.98
+4.54
+
+
+64
+1
+11.087
+6.42
+
+
+128
+1
+13.414
+7.84
+
+
+256
+1
+19.66
+8.487
+
+
+512
+1
+39.908
+11.62
+
+
+1024
+1
+81.781
+18.16
+
+
+2048
+1
+137.923
+32.934
+
+
+1
+2
+3.4
+4.02
+
+
+8
+2
+3.74
+4.24
+
+
+32
+2
+6.373
+7.394
+
+
+64
+2
+9.747
+6.46
+
+
+128
+2
+12.98
+7.76
+
+
+256
+2
+20.834
+9.787
+
+
+512
+2
+39.314
+13.56
+
+
+1024
+2
+83.135
+22.387
+
+
+2048
+2
+157.563
+40.607
+
+
+
+
+
+
+
+vLLM version: release/v0.13.0
+vLLM main: vllm-project/vllm@ad32e3e</span>
+    <span class="link-preview-card__meta">GitHub</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://avatars.githubusercontent.com/u/48235622?s=400&amp;v=4" alt="">
+    </span>
+</a>
+</p>
+<p><img loading='lazy' decoding="async" src="/imgs/rejection_random_sample_kernel-%e5%8e%9f%e7%90%86.drawio.svg" alt=""  /></p>
+<p><img loading='lazy' decoding="async" src="https://www.imdb.com/title/tt1428538/mediaviewer/rm347516672" alt=""  /></p>
+]]></content><category scheme="https://1024daniel.github.io/tags/triton" term="triton" label="triton"/></entry><entry><title type="html">What_is_attention</title><link href="https://1024daniel.github.io/posts/ai/what_is_attention/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/ai/what_is_attention/</id><author><name>Daniel Diana</name></author><published>2026-06-11T09:39:49+08:00</published><updated>2026-06-11T09:39:49+08:00</updated><content type="html"><![CDATA[<p>Details in Attention</p>
+<blockquote>
+</blockquote>
+<h3 id="qkv获取">qkv获取</h3>
+<p>输入 token: A B C D<br>
+embedding + position -&gt; layer 0 hidden states<br>
+在模型一层内attention内会对hidden states做线性投影</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>Q <span style="color:#f92672">=</span> hidden <span style="color:#f92672">@</span> Wq
+</span></span><span style="display:flex;"><span>K <span style="color:#f92672">=</span> hidden <span style="color:#f92672">@</span> Wk
+</span></span><span style="display:flex;"><span>V <span style="color:#f92672">=</span> hidden <span style="color:#f92672">@</span> Wv
+</span></span></code></pre></div><p>但是实际上实现一般都是fused QKV projection:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>QKV <span style="color:#f92672">=</span> hidden <span style="color:#f92672">@</span> Wqkv
+</span></span><span style="display:flex;"><span>Q, K, V <span style="color:#f92672">=</span> split(QKV)
+</span></span></code></pre></div>]]></content><category scheme="https://1024daniel.github.io/tags/attention" term="attention" label="attention"/></entry><entry><title type="html">研发必备 详设文档那些事</title><link href="https://1024daniel.github.io/posts/%E7%A0%94%E5%8F%91%E5%BF%85%E5%A4%87-%E8%AF%A6%E8%AE%BE%E6%96%87%E6%A1%A3%E9%82%A3%E4%BA%9B%E4%BA%8B/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/%E7%A0%94%E5%8F%91%E5%BF%85%E5%A4%87-%E8%AF%A6%E8%AE%BE%E6%96%87%E6%A1%A3%E9%82%A3%E4%BA%9B%E4%BA%8B/</id><author><name>Daniel Diana</name></author><published>2026-06-09T00:54:05+08:00</published><updated>2026-06-09T00:54:05+08:00</updated><content type="html">&lt;h3 id="设计原理图">设计原理图&lt;/h3>
+&lt;p>draw.io app编辑或者直接上传到google drive网页版编辑留存&lt;/p>
+</content></entry><entry><title type="html">GIT高效命令汇总</title><link href="https://1024daniel.github.io/posts/git%E9%AB%98%E6%95%88%E5%91%BD%E4%BB%A4%E6%B1%87%E6%80%BB/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/git%E9%AB%98%E6%95%88%E5%91%BD%E4%BB%A4%E6%B1%87%E6%80%BB/</id><author><name>Daniel Diana</name></author><published>2026-06-06T16:10:01+08:00</published><updated>2026-06-06T16:10:01+08:00</updated><content type="html"><![CDATA[<p>GIT不好记但是高效命令汇总</p>
+<blockquote>
+</blockquote>
+<p>更改commit message</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 修改最新commit的message</span>
+</span></span><span style="display:flex;"><span>git commit --amend -m <span style="color:#e6db74">&#34;new message&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># A&lt;-B-C-D 修改C的commit message， git rebase 界面直接先将pick改为r之后保存进入reword编辑界面修改message退出即可</span>
+</span></span><span style="display:flex;"><span>git rebase -i C^  <span style="color:#75715e"># git rebase -i D</span>
+</span></span></code></pre></div>]]></content><category scheme="https://1024daniel.github.io/tags/git" term="git" label="git"/></entry><entry><title type="html">本站进化记录-持续更新中</title><link href="https://1024daniel.github.io/posts/%E6%9C%AC%E7%AB%99%E8%BF%9B%E5%8C%96%E8%AE%B0%E5%BD%95/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/%E6%9C%AC%E7%AB%99%E8%BF%9B%E5%8C%96%E8%AE%B0%E5%BD%95/</id><author><name>Daniel Diana</name></author><published>2026-06-05T17:12:53+08:00</published><updated>2026-06-05T17:12:53+08:00</updated><content type="html"><![CDATA[<p>本站一些持续迭代优化记录</p>
+<blockquote>
+</blockquote>
+<h3 id="多图排版">多图排版</h3>
+<p><a href="http://snapic.cn/" target="_blank" rel="noopener nofollow noreferrer" >http://snapic.cn/</a></p>
+<p><a class="link-preview-card" href="https://immmmm.com/about-images-gird/" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">Hugo 多图排版这样来</span>
+      <span class="link-preview-card__description">之前采用的是 waterfall.js 和 imgStatus.js 方案，明显的一个弊端是得所有图片完全加载之后才会显示为瀑布流布局。
+现已改用 column-count 和 p:has(&gt; img:nth-child） 的纯 CSS 方案，代码少得不得了！
+缺点呢，图片是从上往下、从左往右顺序排列，会导致各列高度明显不一致。试用之后，可以接受！
+</span>
+    <span class="link-preview-card__meta">immmmm.com</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://r2.immmmm.com/2023/08/TinySnap-2023-08-24-17.08.16.webp" alt="">
+    </span>
+</a>
+</p>
+<h4 id="两张">两张</h4>
+<p><img loading='lazy' decoding="async" src="/imgs/american_cool_girl_with_classes.png" alt=""  />
+<img loading='lazy' decoding="async" src="/imgs/paul-pastourmatzis-hKOPVtGQZ4o-unsplash.jpg" alt=""  /></p>
+<h4 id="两张-1">两张</h4>
+<p><img loading='lazy' decoding="async" src="https://cn.bing.com/th?id=OHR.SessileOaks_EN-US1487454928_1280x768.jpg" alt=""  />
+<img loading='lazy' decoding="async" src="https://cn.bing.com/th?id=OHR.InscriptionWall_EN-US1392173431_1280x768.jpg" alt=""  /></p>
+<h4 id="三张">三张</h4>
+<p><img loading='lazy' decoding="async" src="https://cn.bing.com/th?id=OHR.DonkeyFeast_EN-US1153850805_1280x768.jpg" alt=""  />
+<img loading='lazy' decoding="async" src="https://cn.bing.com/th?id=OHR.RumeliHisari_EN-US4800002879_1280x768.jpg" alt=""  />
+<img loading='lazy' decoding="async" src="https://cn.bing.com/th?id=OHR.BisonWindCave_EN-US4537340482_1280x768.jpg" alt=""  /></p>
+<h4 id="四张">四张</h4>
+<p><img loading='lazy' decoding="async" src="https://cn.bing.com/th?id=OHR.Umschreibung_EN-US4693850900_768x1280.jpg" alt=""  />
+<img loading='lazy' decoding="async" src="https://cn.bing.com/th?id=OHR.HummockIce_EN-US4606231645_768x1280.jpg" alt=""  />
+<img loading='lazy' decoding="async" src="https://cn.bing.com/th?id=OHR.DonkeyFeast_EN-US1153850805_768x1280.jpg" alt=""  />
+<img loading='lazy' decoding="async" src="https://cn.bing.com/th?id=OHR.Breckenridge_EN-US4460042968_768x1280.jpg" alt=""  /></p>
+<h3 id="douban-action-movies-and-books">douban action movies and books</h3>
+<p><a class="link-preview-card" href="https://imnerd.org/doumark.html" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">豆瓣书影音同步 GitHub Action | 怡红院落</span>
+      <span class="link-preview-card__description">2023-07-12 更新：《关于豆瓣图片无法直接使用的说明》 简介 doumark-action 是我前段时间造的一个轮子。它是一款 GitHub Action，支持在 GitHub 中同步你的豆瓣书影音数据到本地的文</span>
+    <span class="link-preview-card__meta">怡红院落</span>
+  </span>
+</a>
+<br>
+主仓的海报url使用的自建cdn链接，但是存在限流和不稳定的问题，因此这里改为通过douban api将海报下载到github远程仓库地址<br>
+同时对应的csv文件中的海报的链接也更新为github raw resource url
+<a class="link-preview-card" href="https://github.com/1024daniel/doumark-action/commit/07a716293a5cbc5bf7d7a999f011549a42f3b820" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">fetch covers using douban api key · 1024daniel/doumark-action@07a7162</span>
+      <span class="link-preview-card__description">Douban movie/book/music/game marked data sync GitHub Action | 豆瓣观影/阅读/音乐/游戏记录同步 - fetch covers using douban api key · 1024daniel/doumark-action@07a7162</span>
+    <span class="link-preview-card__meta">GitHub</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/ce144e9c3b8bcb24cdf7855a9dae9b14bf75dba0577067d82704076f7e509c9c/1024daniel/doumark-action/commit/07a716293a5cbc5bf7d7a999f011549a42f3b820" alt="">
+    </span>
+</a>
+
+使用partial来整合主页和详情页豆瓣观影和阅读的内容 减少代码冗余
+<a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/beb4c80dd0774393c9bb2d9977af9cdec096e4bb" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
+      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
+    <span class="link-preview-card__meta">GitHub</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
+    </span>
+</a>
+</p>
+<h3 id="toc">TOC</h3>
+<p>修改见:https://github.com/1024daniel/1024daniel.github.io/commit/6379add4beb4706770cedb3311a887d21d08a113</p>
+<p>原来默认文章不会显示大纲导航，需要显示在front matter中添加 <code>toc = true</code>, 且显示在文章开头中间，长文章下滑toc会消失
+这里修改默认就显示toc，如果在front matter中添加<code>toc = false</code>会隐藏toc，对于短文章可以考虑设置，且设置toc sticky to right sidebar。
+注意这里主题的 .container 设置了 overflow: hidden，会让 position: sticky 失效，所以需要修改为</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-css" data-lang="css"><span style="display:flex;"><span>.<span style="color:#a6e22e">container</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">overflow-x</span>: <span style="color:#66d9ef">clip</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">overflow-y</span>: <span style="color:#66d9ef">visible</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>同时给 .post-body.has-toc 加了：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-css" data-lang="css"><span style="display:flex;"><span><span style="color:#f92672">overflow</span><span style="color:#f92672">:</span> <span style="color:#f92672">visible</span><span style="color:#f92672">;</span>
+</span></span></code></pre></div><h3 id="archives界面介绍">archives界面介绍</h3>
+<p>首先记住几个关键信息</p>
+<ul>
+<li>Section = content 下的顶层目录名</li>
+<li>Type = 内容类型（默认等于Section，可覆盖）</li>
+<li>Kind = 页面种类(page/section/home/taxonomy&hellip;)</li>
+</ul>
+<p>==注意content/posts/a/b.md的Section是posts, content/c.md的Section是&quot;&quot;==</p>
+<p>archives详细内容见模版中的<code>themes/hello-friend/layouts/archives/list.html</code>
+文章统计代码</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-html" data-lang="html"><span style="display:flex;"><span> 共计 {{ len (where .Site.RegularPages &#34;Section&#34; &#34;posts&#34;) }} 篇日志
+</span></span></code></pre></div><p>从所有普通页面(RegularPages)
+筛选 Section == posts， 也就是从content/posts下所有文章个数(包含子文件夹下面)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>    &lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;all-tags&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>      {{- range $name, $taxonomy := .Site.Taxonomies.tags -}}
+</span></span><span style="display:flex;"><span>      &lt;<span style="color:#f92672">a</span> <span style="color:#a6e22e">href</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/tags/{{ $name | urlize }}&#34;</span>&gt;#{{ $name }}&lt;<span style="color:#f92672">small</span>&gt;({{ .Count }})&lt;/<span style="color:#f92672">small</span>&gt;&lt;/<span style="color:#f92672">a</span>&gt;
+</span></span><span style="display:flex;"><span>      {{- end -}}
+</span></span><span style="display:flex;"><span>    &lt;/<span style="color:#f92672">div</span>&gt;
+</span></span></code></pre></div><p>列出所有的tags</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>{{- range  (where (where .Site.Pages &#34;Type&#34; &#34;in&#34; &#34;posts&#34;) &#34;Kind&#34; &#34;page&#34;).GroupByDate &#34;2006&#34; }}
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;post archive__group-posts &#34;</span>&gt;
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">&lt;!--content--&gt;</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">div</span>&gt;<span style="color:#75715e">&lt;!--posts-group end--&gt;</span>
+</span></span><span style="display:flex;"><span>{{ end }}
+</span></span></code></pre></div><p>Type默认值就是和Section值一致的，但是md文件内可以指定 type=&ldquo;notes&quot;来更换值
+这里是从所有页面中筛选posts类型且Kind为page的文章，对于_index.md类型文章Kind属于Section不会选中<br>
+文件名是 _index.md 时，Hugo 会把它作为当前目录的列表页/section 页处理，而不是普通文章页</p>
+<p>content/posts/_index.md对应的<code>.Kind == &quot;section&quot;   .Section == &quot;posts&quot;</code>, 是 section 页面，是branch, 用于描述 /posts/ 这个列表页<br>
+content/posts/a.md通常<code>.Kind == &quot;page&quot; .Section == &quot;posts&quot;</code>, 是 regular page, 是 leaf bundle page，也是普通内容页</p>
+<p>详情可以参考一下命令输出的类型结果示例</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>hugo list all | awk -F <span style="color:#e6db74">&#39;,&#39;</span> <span style="color:#e6db74">&#39; 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">BEGIN{
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">OFS=&#34;,&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">print &#34;path&#34;,&#34;title&#34;,&#34;section&#34;,&#34;kind&#34;,&#34;permalink&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">NR&gt;1{
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">print $1,$3,$10,$9,$8
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">}&#39;</span> &gt; tmp.csv
+</span></span><span style="display:flex;"><span>code tmp.csv
+</span></span></code></pre></div><p><img loading='lazy' decoding="async" src="/imgs/hugo%e6%96%87%e7%ab%a0%e7%b1%bb%e5%9e%8b%e7%a4%ba%e4%be%8b.png" alt="hugo文章类型示例"  /></p>
+<h3 id="近期光影改为aliyun-oss">近期光影改为aliyun oss</h3>
+<p>aliyun oss bucket公共读
+picgo
+oss 解除CORS(数据安全-跨域设置), 生产部署需要指定指定域名才能跨域访问，比如指定我们github page域名
+oss新增权限(权限控制-Bucket授权策略-新增授权) oss:ListObjects, oss:GetObject (很多oss默认设置公共读的话一般还是没有list权限，需要显示新增指定权限)</p>
+<p>主页中近期光影显示6张图片，layout/_default/index.html先定义id为album的div，部分图片是theme-lmm-home.js代码来获取到的，点击进去的显示从oss拉取的所有的图片是layout/_default/album.html中渲染的</p>
+<p>content
+决定生成哪些页面</p>
+<p>layouts
+决定这些页面怎么渲染</p>
+<p>所有toml指定了归档 url=&rsquo;/archives&rsquo;，有页面详细内容layout/archives/list.html，但是还是需要一个content/archive/_index.md来完成页面生成</p>
+<p>主页部分不渲染指定page，需要folder/_index.md来实现</p>
+<p>index.html.html改为index.html，使用新版hugo
+resources.Get resources.GetRemote</p>
+<p>album中图片不加上文字显示具体拍摄的内容会缺少灵魂，这里我们需要将拍摄内容展示在图片文件名中，这里最快速的操作方式是手机拍摄的照片直接通过chrome(阿里云app上传没法预览图片)登录阿里云oss控制平台，直接通过网页上传图片到指定的资源路径<br>
+raw image文件名默认就是拍摄时间，如果需要修改文件名可以通过电脑在网页端登录直接修改对应文件的文件名</p>
+<h3 id="album多图加载解决滑动卡顿-dom重建问题">album多图加载解决滑动卡顿 dom重建问题</h3>
+<ul>
+<li>页面展示用 OSS 缩略图：resize,w_720 + quality,q_82 + webp</li>
+<li>点击图片仍打开原图：缩略图放在 img src，原图放在外层 a href</li>
+<li>首屏前 18 张用 loading=&ldquo;eager&rdquo; 和 fetchpriority=&ldquo;high&quot;优先加载 避免刚打开页面时首屏一片空白</li>
+<li>后面的图片继续 loading=&ldquo;lazy&rdquo;</li>
+<li>OSS 文件列表缓存到 sessionStorage，30 分钟内重复打开不再重新解析列表</li>
+<li>滚动时不重建图片 DOM</li>
+</ul>
+<h3 id="增加全局搜功能">增加全局搜功能</h3>
+<p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/de687d0e517d9ea02567e4de5d8e381a8f93b48d" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
+      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
+    <span class="link-preview-card__meta">GitHub</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
+    </span>
+</a>
+<br>
+<a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/dcd539935c5f7a40a0f33ae91d03e92cd11bbcfb" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
+      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
+    <span class="link-preview-card__meta">GitHub</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
+    </span>
+</a>
+<br>
+<a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/cf279c346d5795991f2e36637e41a712d50b7177" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
+      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
+    <span class="link-preview-card__meta">GitHub</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
+    </span>
+</a>
+</p>
+<p>   主页menu搜索键直接🔍关键词，支持多关键词搜索，多关键词搜素直接空格间隔<br>
+关键词会在文章的title, tags, categories, summary, content和type进行检索命中，不同命中会增加不同权重的scores(相同高于包含, 标题高于内容等等)，且只有关键词都命中了才会有得分， 得分计算函数参考如下</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-js" data-lang="js"><span style="display:flex;"><span>  <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">scoreItem</span>(<span style="color:#a6e22e">item</span>, <span style="color:#a6e22e">terms</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">title</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">normalize</span>(<span style="color:#a6e22e">item</span>.<span style="color:#a6e22e">title</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">summary</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">normalize</span>(<span style="color:#a6e22e">item</span>.<span style="color:#a6e22e">summary</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">content</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">normalize</span>(<span style="color:#a6e22e">item</span>.<span style="color:#a6e22e">content</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">tags</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">item</span>.<span style="color:#a6e22e">tags</span> <span style="color:#f92672">||</span> []).<span style="color:#a6e22e">map</span>(<span style="color:#a6e22e">normalize</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">categories</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">item</span>.<span style="color:#a6e22e">categories</span> <span style="color:#f92672">||</span> []).<span style="color:#a6e22e">map</span>(<span style="color:#a6e22e">normalize</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">normalize</span>(<span style="color:#a6e22e">item</span>.<span style="color:#a6e22e">type</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">score</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">matchedTerms</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">terms</span>.<span style="color:#a6e22e">forEach</span>(<span style="color:#a6e22e">term</span> =&gt; {
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">termScore</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">title</span> <span style="color:#f92672">===</span> <span style="color:#a6e22e">term</span>) <span style="color:#a6e22e">termScore</span> <span style="color:#f92672">+=</span> <span style="color:#ae81ff">80</span>;
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">title</span>.<span style="color:#a6e22e">includes</span>(<span style="color:#a6e22e">term</span>)) <span style="color:#a6e22e">termScore</span> <span style="color:#f92672">+=</span> <span style="color:#ae81ff">50</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">tags</span>.<span style="color:#a6e22e">includes</span>(<span style="color:#a6e22e">term</span>)) <span style="color:#a6e22e">termScore</span> <span style="color:#f92672">+=</span> <span style="color:#ae81ff">70</span>;
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">tags</span>.<span style="color:#a6e22e">some</span>(<span style="color:#a6e22e">tag</span> =&gt; <span style="color:#a6e22e">tag</span>.<span style="color:#a6e22e">includes</span>(<span style="color:#a6e22e">term</span>))) <span style="color:#a6e22e">termScore</span> <span style="color:#f92672">+=</span> <span style="color:#ae81ff">35</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">categories</span>.<span style="color:#a6e22e">includes</span>(<span style="color:#a6e22e">term</span>)) <span style="color:#a6e22e">termScore</span> <span style="color:#f92672">+=</span> <span style="color:#ae81ff">45</span>;
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">categories</span>.<span style="color:#a6e22e">some</span>(<span style="color:#a6e22e">category</span> =&gt; <span style="color:#a6e22e">category</span>.<span style="color:#a6e22e">includes</span>(<span style="color:#a6e22e">term</span>))) <span style="color:#a6e22e">termScore</span> <span style="color:#f92672">+=</span> <span style="color:#ae81ff">24</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">summary</span>.<span style="color:#a6e22e">includes</span>(<span style="color:#a6e22e">term</span>)) <span style="color:#a6e22e">termScore</span> <span style="color:#f92672">+=</span> <span style="color:#ae81ff">18</span>;
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">content</span>.<span style="color:#a6e22e">includes</span>(<span style="color:#a6e22e">term</span>)) <span style="color:#a6e22e">termScore</span> <span style="color:#f92672">+=</span> <span style="color:#ae81ff">8</span>;
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">type</span>.<span style="color:#a6e22e">includes</span>(<span style="color:#a6e22e">term</span>)) <span style="color:#a6e22e">termScore</span> <span style="color:#f92672">+=</span> <span style="color:#ae81ff">4</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">termScore</span> <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>) <span style="color:#a6e22e">matchedTerms</span> <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">score</span> <span style="color:#f92672">+=</span> <span style="color:#a6e22e">termScore</span>;
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">matchedTerms</span> <span style="color:#f92672">===</span> <span style="color:#a6e22e">terms</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">?</span> <span style="color:#a6e22e">score</span> <span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span></code></pre></div><h3 id="文字背景高亮和颜色">文字背景高亮和颜色</h3>
+<p>
+<mark class="mark-yellow">黄色高亮</mark>
+<br>
+
+<mark class="mark-red">红色高亮</mark>
+<br>
+
+<mark class="mark-green">绿色高亮</mark>
+<br>
+
+<mark class="mark-blue">蓝色高亮</mark>
+<br>
+
+<mark class="mark-purple">紫色高亮</mark>
+</p>
+<p>
+<span class="text-red">红色文字</span>
+<br>
+
+<span class="text-green">绿色文字</span>
+<br>
+
+<span class="text-blue">蓝色文字</span>
+<br>
+
+<span class="text-purple">紫色文字</span>
+<br>
+
+<span class="text-orange">橙色文字</span>
+</p>
+<h3 id="leetcode总结页面">leetcode总结页面</h3>
+<p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/602a55227297ec3487aad3650d0d539e0e9c310c" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
+      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
+    <span class="link-preview-card__meta">GitHub</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
+    </span>
+</a>
+</p>
+<ol>
+<li>增加leetcode文章模版</li>
+<li>文章内通过shortcode自动渲染指定文件夹下内不同语言的解法</li>
+</ol>
+<p>这里新增了shortcodes: codefile</p>
+<h3 id="album-展示实际拍摄时间">album 展示实际拍摄时间</h3>
+<p>oss list接口返回的xml文件中只包含图片的最近修改时间，网页显示的时间不是实际拍摄时间<br>
+如果需要展示实际拍摄时间得需要单独的接口来针对指定图片的url进行获取，这是额外heavy操作，
+不过可以现在前台渲染最新修改时间 后台逐步刷新替换成实际的拍摄时间
+同时在网页鼠标悬停在左上角的时间会展示实际的拍摄时间</p>
+<h3 id="增加文件树">增加文件树</h3>
+<p>新增shortcode文件树来针对仓库代码结构进行整体显示分析
+样式如下<br>
+<div class="dir-tree" role="tree"><div class="dir-tree__row dir-tree__row--dir" role="treeitem" style="--level: 0;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H9l2 2h7.5A2.5 2.5 0 0 1 21 8.5v8A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5z"></path>
+            </svg></span>
+        <span class="dir-tree__name">vllm/v1/</span><span class="dir-tree__desc">The V1 engine root</span></div><div class="dir-tree__row dir-tree__row--dir" role="treeitem" style="--level: 1;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H9l2 2h7.5A2.5 2.5 0 0 1 21 8.5v8A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5z"></path>
+            </svg></span>
+        <span class="dir-tree__name">engine/</span><span class="dir-tree__desc">Request handling and coordination</span></div><div class="dir-tree__row" role="treeitem" style="--level: 2;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M6 3.5h8.5L19 8v12.5H6z"></path>
+              <path d="M14.5 3.5V8H19"></path>
+            </svg></span>
+        <span class="dir-tree__name">async_llm.py</span><span class="dir-tree__desc">Async API frontend</span></div><div class="dir-tree__row" role="treeitem" style="--level: 2;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M6 3.5h8.5L19 8v12.5H6z"></path>
+              <path d="M14.5 3.5V8H19"></path>
+            </svg></span>
+        <span class="dir-tree__name">core.py</span><span class="dir-tree__desc">Main engine loop</span></div><div class="dir-tree__row" role="treeitem" style="--level: 2;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M6 3.5h8.5L19 8v12.5H6z"></path>
+              <path d="M14.5 3.5V8H19"></path>
+            </svg></span>
+        <span class="dir-tree__name">detokenizer.py</span><span class="dir-tree__desc">Token-to-text conversion</span></div><div class="dir-tree__row dir-tree__row--dir" role="treeitem" style="--level: 1;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H9l2 2h7.5A2.5 2.5 0 0 1 21 8.5v8A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5z"></path>
+            </svg></span>
+        <span class="dir-tree__name">core/sched/</span><span class="dir-tree__desc">Scheduling decisions</span></div><div class="dir-tree__row" role="treeitem" style="--level: 2;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M6 3.5h8.5L19 8v12.5H6z"></path>
+              <path d="M14.5 3.5V8H19"></path>
+            </svg></span>
+        <span class="dir-tree__name">scheduler.py</span><span class="dir-tree__desc">Main scheduling logic</span></div><div class="dir-tree__row dir-tree__row--dir" role="treeitem" style="--level: 1;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H9l2 2h7.5A2.5 2.5 0 0 1 21 8.5v8A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5z"></path>
+            </svg></span>
+        <span class="dir-tree__name">core/</span><span class="dir-tree__desc">KV cache and memory management</span></div><div class="dir-tree__row" role="treeitem" style="--level: 2;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M6 3.5h8.5L19 8v12.5H6z"></path>
+              <path d="M14.5 3.5V8H19"></path>
+            </svg></span>
+        <span class="dir-tree__name">kv_cache_manager.py</span><span class="dir-tree__desc">Block allocation for KV cache</span></div><div class="dir-tree__row" role="treeitem" style="--level: 2;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M6 3.5h8.5L19 8v12.5H6z"></path>
+              <path d="M14.5 3.5V8H19"></path>
+            </svg></span>
+        <span class="dir-tree__name">block_pool.py</span><span class="dir-tree__desc">Prefix caching and block reuse</span></div><div class="dir-tree__row dir-tree__row--dir" role="treeitem" style="--level: 1;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H9l2 2h7.5A2.5 2.5 0 0 1 21 8.5v8A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5z"></path>
+            </svg></span>
+        <span class="dir-tree__name">attention/ops/</span><span class="dir-tree__desc">Triton attention kernels</span></div><div class="dir-tree__row" role="treeitem" style="--level: 2;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M6 3.5h8.5L19 8v12.5H6z"></path>
+              <path d="M14.5 3.5V8H19"></path>
+            </svg></span>
+        <span class="dir-tree__name">triton_prefill_attention.py</span><span class="dir-tree__desc">Prefill phase attention kernel</span></div><div class="dir-tree__row" role="treeitem" style="--level: 2;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M6 3.5h8.5L19 8v12.5H6z"></path>
+              <path d="M14.5 3.5V8H19"></path>
+            </svg></span>
+        <span class="dir-tree__name">triton_decode_attention.py</span><span class="dir-tree__desc">Decode phase attention kernel</span></div></div>
+</p>
+<h3 id="增加references-shortcode">增加references shortcode</h3>
+<p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/a67ec03ff1e53132f9f03277eb5d4aa47cb4f7f6" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
+      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
+    <span class="link-preview-card__meta">GitHub</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
+    </span>
+</a>
+</p>
+<h3 id="增加网页内嵌视频的渲染">增加网页内嵌视频的渲染</h3>
+<p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/7ea6075d82c7761314eee20059111efffdcc2b7f" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
+      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
+    <span class="link-preview-card__meta">GitHub</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
+    </span>
+</a>
+</p>
+<h3 id="资源文件位置规划">资源文件位置规划</h3>
+<p>这里的goods推荐在assets下参与构建，如果是markdown下直接引用的文件推荐放在static下面</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-html" data-lang="html"><span style="display:flex;"><span><span style="color:#75715e">&lt;!--读取assets下文件, image获取也需要通过resources接口--&gt;</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;home&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>    {{ $goods := resources.Get &#34;goods/goods.json&#34; | transform.Unmarshal }}
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">h3</span>&gt;&lt;<span style="color:#f92672">a</span> <span style="color:#a6e22e">href</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/goods/&#34;</span>&gt;近期好物&lt;/<span style="color:#f92672">a</span>&gt;&lt;/<span style="color:#f92672">h3</span>&gt;
+</span></span><span style="display:flex;"><span>    {{ with $goods.good }}
+</span></span><span style="display:flex;"><span>    {{ if ge (len .) 5 }}
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;goods&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>      {{ range first 5 $goods.good}}
+</span></span><span style="display:flex;"><span>      &lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;goods-bankuai img-hide&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>        {{with resources.Get .image}}
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;goods-duiqi&#34;</span>&gt;&lt;<span style="color:#f92672">img</span> <span style="color:#a6e22e">loading</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;lazy&#34;</span> <span style="color:#a6e22e">decoding</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;async&#34;</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{{ .RelPermalink }}&#34;</span>&gt;&lt;/<span style="color:#f92672">div</span>&gt;
+</span></span><span style="display:flex;"><span>        {{end}}
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;goods-jiage&#34;</span>&gt;{{ .jiage }}&lt;/<span style="color:#f92672">div</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;goods-title&#34;</span>&gt;&lt;<span style="color:#f92672">a</span> <span style="color:#a6e22e">href</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{{ .link }}&#34;</span>&gt;{{ .title }}&lt;/<span style="color:#f92672">a</span>&gt;&lt;/<span style="color:#f92672">div</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;goods-note&#34;</span>&gt;{{ .note }}&lt;/<span style="color:#f92672">div</span>&gt;
+</span></span><span style="display:flex;"><span>      &lt;/<span style="color:#f92672">div</span>&gt;
+</span></span><span style="display:flex;"><span>      {{ end }}
+</span></span><span style="display:flex;"><span>    &lt;/<span style="color:#f92672">div</span>&gt;
+</span></span><span style="display:flex;"><span>    {{ end }}
+</span></span><span style="display:flex;"><span>    {{ end }}
+</span></span><span style="display:flex;"><span>  &lt;/<span style="color:#f92672">div</span>&gt;
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">&lt;!--读取static中内容，static中内容会直接拷贝到public，所以网页能直接访问--&gt;</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;home&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>    {{ $goods := readFile &#34;goods/goods.json&#34; | transform.Unmarshal }}
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">h3</span>&gt;&lt;<span style="color:#f92672">a</span> <span style="color:#a6e22e">href</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/goods/&#34;</span>&gt;近期好物&lt;/<span style="color:#f92672">a</span>&gt;&lt;/<span style="color:#f92672">h3</span>&gt;
+</span></span><span style="display:flex;"><span>    {{ with $goods.good }}
+</span></span><span style="display:flex;"><span>    {{ if ge (len .) 5 }}
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;goods&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>      {{ range first 5 $goods.good}}
+</span></span><span style="display:flex;"><span>      &lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;goods-bankuai img-hide&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;goods-duiqi&#34;</span>&gt;&lt;<span style="color:#f92672">img</span> <span style="color:#a6e22e">loading</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;lazy&#34;</span> <span style="color:#a6e22e">decoding</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;async&#34;</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{{ .image }}&#34;</span>&gt;&lt;/<span style="color:#f92672">div</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;goods-jiage&#34;</span>&gt;{{ .jiage }}&lt;/<span style="color:#f92672">div</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;goods-title&#34;</span>&gt;&lt;<span style="color:#f92672">a</span> <span style="color:#a6e22e">href</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{{ .link }}&#34;</span>&gt;{{ .title }}&lt;/<span style="color:#f92672">a</span>&gt;&lt;/<span style="color:#f92672">div</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;goods-note&#34;</span>&gt;{{ .note }}&lt;/<span style="color:#f92672">div</span>&gt;
+</span></span><span style="display:flex;"><span>      &lt;/<span style="color:#f92672">div</span>&gt;
+</span></span><span style="display:flex;"><span>      {{ end }}
+</span></span><span style="display:flex;"><span>    &lt;/<span style="color:#f92672">div</span>&gt;
+</span></span><span style="display:flex;"><span>    {{ end }}
+</span></span><span style="display:flex;"><span>    {{ end }}
+</span></span><span style="display:flex;"><span>  &lt;/<span style="color:#f92672">div</span>&gt;
+</span></span></code></pre></div><h3 id="增加美食记录">增加美食记录</h3>
+<p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/f9c444c6bfc8e7c26129108e31e49ee3abb2cc50" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
+      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
+    <span class="link-preview-card__meta">GitHub</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
+    </span>
+</a>
+
+<a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/481d641eb407dae55b0e23ff311104a1965237a5" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
+      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
+    <span class="link-preview-card__meta">GitHub</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
+    </span>
+</a>
+</p>
+<p>增加美食界面记录 美食部分内容复用光影部分代码 同时将album.html内容模板化</p>
+<h3 id="针对阿里云oss加载优化">针对阿里云oss加载优化</h3>
+<p>阿里云oss Maximal size of image supported is 20971520，针对大尺寸的图片进行缩率图加载会存在错误<br>
+因此需要针对那些大尺寸图片在加载缩率图失败的情况下需要加载原图
+<a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/c53dcd094ca6ef68046dd07254978ff38b6b8d1a" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
+      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
+    <span class="link-preview-card__meta">GitHub</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
+    </span>
+</a>
+</p>
+<h3 id="album和dishes在主页和详情页代码抽象归一">album和dishes在主页和详情页代码抽象归一</h3>
+<p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/9da48f02c1e1c7702d08cdb7742a758f1c26c488" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
+      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
+    <span class="link-preview-card__meta">GitHub</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
+    </span>
+</a>
+</p>
+<h3 id="link-preview-card">link preview card</h3>
+<p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/5060355b89e6dcb97e70583e7327458c42ea9782" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
+      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
+    <span class="link-preview-card__meta">GitHub</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
+    </span>
+</a>
+</p>
+<h3 id="album节点图片显示严格按照capture-time排序">album节点图片显示严格按照capture time排序</h3>
+<p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/cf0a19666ed99085916d3a491c2f960b1cb491de" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
+      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
+    <span class="link-preview-card__meta">GitHub</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
+    </span>
+</a>
+</p>
+<p>按capture time时间排序才能对准timeline进行追溯光影，这里使用渐进式加载排序</p>
+<ul>
+<li>首屏立即展示，优先使用已有 EXIF 缓存排序。</li>
+<li>缺少缓存的 JPEG 在后台以 3 路并发读取拍摄时间。</li>
+<li>全部读取完成后统一重排一次，避免频繁跳动。</li>
+<li>没有 EXIF 或读取失败时，回退使用 OSS 修改时间。</li>
+<li>重排只移动现有 DOM，不会重新下载图片。</li>
+<li>已更新静态资源版本，避免浏览器继续使用旧脚本。</li>
+</ul>
+<h3 id="album展示按照紧密瀑布流布局">album展示按照紧密瀑布流布局</h3>
+<p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/edef3964e6bbdc58471b9ab1ad822b5d47b46ffb" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
+      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
+    <span class="link-preview-card__meta">GitHub</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
+    </span>
+</a>
+
+原来的 column-count 瀑布流会先从上到下填满一列，这里改为图片加载先优先左上角 之后每行加载<br>
+为了对齐减少空白，后面一行加载还是从左到右不过会优先填充当前高度最短的列， 桌面端保持 6 列，小屏幕保持 3 列<br>
+gallery-photos<br>
+├── 提供相册基础宽度和通用身份<br>
+├── 原始 columns 被 album-masonry 覆盖<br>
+│<br>
+page<br>
+├── 显示标题和时间<br>
+└── 提供详情页间距和移动端行为<br>
+│<br>
+album-masonry<br>
+├── 取消 CSS columns<br>
+├── 启用绝对定位，需要用绝对定位来选择最短高度进行填充保持full<br>
+└── 触发 JavaScript 瀑布流计算</p>
+<h3 id="搜索界面和归档界面tags云归一">搜索界面和归档界面tags云归一</h3>
+<p>把 tag 相关逻辑拆成了 3 个公共 partial：</p>
+<ul>
+<li>clean-tags.html clean-tags.html:1：统一清洗 tag，去掉空字符串和前后空格。</li>
+<li>tag-links.html tag-links.html:1：文章列表、详情、短代码里统一渲染 #tag 链接。</li>
+<li>tag-cloud.html tag-cloud.html:1：归档页和 tags 页统一渲染全站标签云。</li>
+</ul>
+<h3 id="批量加载非全量加载">批量加载非全量加载</h3>
+<p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/4fbf87b75ab43e51f8136c688b29e9cc5591ca5b" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
+      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
+    <span class="link-preview-card__meta">GitHub</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
+    </span>
+</a>
+</p>
+<p>对于云上的ablum中图片内容会越来越丰富，网页详情页加载虽然使用了缩略图，<br>
+但是数量多的话需要的流量以及处理都会多起来，对于访客来说并不需要加载所有的内容
+而是再客户往下持续滑动才加载额外的内容
+同时原来的list接口列出图片会存在最大值1000的限制，可能会存在加载的图片不完全，<br>
+这里ListObjectsV2 continuation token pagination来完成迭代获取所有的内容</p>
+<h3 id="faq">FAQ</h3>
+<p>hugo server -D 构建成功之后但是网页无法打开指定网站
+ping localhost发现无法ping通，查看本地的路由表，发现127.0.0.1被错误的指定到feth3804这个网卡</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#f92672">(</span>base<span style="color:#f92672">)</span> daniel@DanielMillers-MacBook-Pro triton-ascend % netstat -rn | grep <span style="color:#ae81ff">127</span>
+</span></span><span style="display:flex;"><span>default            127.0.0.1          UGScIg           feth3804       
+</span></span><span style="display:flex;"><span>1.2.43.167         127.0.0.1          UGHS                  lo0       
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">127</span>                127.0.0.1          UCS                   lo0       
+</span></span><span style="display:flex;"><span>127.0.0.1/32       link#24            UCS              feth3804      !
+</span></span><span style="display:flex;"><span>127.0.0.1          link#24            UHLWIir          feth3804      !
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>base<span style="color:#f92672">)</span> daniel@DanielMillers-MacBook-Pro triton-ascend % ifconfig feth3804
+</span></span><span style="display:flex;"><span>feth3804: flags<span style="color:#f92672">=</span>8843&lt;UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST&gt; metric <span style="color:#ae81ff">5000</span> mtu <span style="color:#ae81ff">2800</span>
+</span></span><span style="display:flex;"><span>	options<span style="color:#f92672">=</span>8&lt;VLAN_HWTAGGING&gt;
+</span></span><span style="display:flex;"><span>	ether 42:ff:ff:0c:5d:ff
+</span></span><span style="display:flex;"><span>	inet 192.168.193.34 netmask 0xffffff00 broadcast 192.168.193.255
+</span></span><span style="display:flex;"><span>	peer: feth8804
+</span></span><span style="display:flex;"><span>	media: autoselect <span style="color:#f92672">(</span>10Gbase-T &lt;full-duplex&gt;<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>	status: active
+</span></span></code></pre></div><p>通过删除127.0.0.1路由重置之后解决</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#f92672">(</span>base<span style="color:#f92672">)</span> daniel@DanielMillers-MacBook-Pro triton-ascend % sudo route delete -host 127.0.0.1
+</span></span><span style="display:flex;"><span>Password:
+</span></span><span style="display:flex;"><span>delete host 127.0.0.1
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>base<span style="color:#f92672">)</span> daniel@DanielMillers-MacBook-Pro triton-ascend % netstat -rn | grep <span style="color:#ae81ff">127</span>
+</span></span><span style="display:flex;"><span>default            127.0.0.1          UGScIg           feth3804       
+</span></span><span style="display:flex;"><span>1.2.43.167         127.0.0.1          UGHS                  lo0       
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">127</span>                127.0.0.1          UCS                   lo0       
+</span></span><span style="display:flex;"><span>127.0.0.1          127.0.0.1          UHW3I                 lo0     <span style="color:#ae81ff">20</span>
+</span></span></code></pre></div>]]></content><category scheme="https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99" term="%E5%BB%BA%E7%AB%99" label="建站"/></entry><entry><title type="html">背靠背dp通信问题</title><link href="https://1024daniel.github.io/posts/ai/%E8%83%8C%E9%9D%A0%E8%83%8Cdp%E9%80%9A%E4%BF%A1%E9%97%AE%E9%A2%98/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/ai/%E8%83%8C%E9%9D%A0%E8%83%8Cdp%E9%80%9A%E4%BF%A1%E9%97%AE%E9%A2%98/</id><author><name>Daniel Diana</name></author><published>2026-06-01T15:03:02+08:00</published><updated>2026-06-01T15:03:02+08:00</updated><content type="html"><![CDATA[<p>从背靠背机跨节点dp通信问题看dp组通信拓扑</p>
+<blockquote>
+</blockquote>
+<p>A3组多机需要灵渠交换机和相关插线背板之类的，但是客户侧机房灵渠环境还未就位，先用双台A3设备通过两卡之间通过光纤直连不走交换机搭建双机环境<br>
+双机拉起GLM5.1，测试发现tp16dp2并行策略能正常拉起服务，但是tp8dp4无法拉起服务。</p>
+<p><img loading='lazy' decoding="async" src="/imgs/A3%e8%83%8c%e9%9d%a0%e8%83%8cdp%e9%80%9a%e4%bf%a1%e6%8b%93%e6%89%91.png" alt="alt text"  /></p>
+<p>获取双机每张npu卡的ip, 通信拓扑如上图所示获取昇腾plog日志，获取常见通信算子的报错信息，发现存在很多all gather算子的通信超时问题，且端到端的ip为上图中红色字体的ip<br>
+dp4情况下机器A的n, n+4卡和机器B的n,n+4卡会建立一个4卡的dp组。由于物理连线限制，机器A的n卡和机器B的n卡，机器A的n+4卡和机器B的n+4卡之间通信是ok的，交叉通信是存在问题的</p>]]></content></entry><entry><title type="html">Flashcomm开发实现</title><link href="https://1024daniel.github.io/posts/ai/flashcomm%E5%BC%80%E5%8F%91%E5%AE%9E%E7%8E%B0/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/ai/flashcomm%E5%BC%80%E5%8F%91%E5%AE%9E%E7%8E%B0/</id><author><name>Daniel Diana</name></author><published>2026-05-30T09:47:48+08:00</published><updated>2026-05-30T09:47:48+08:00</updated><content type="html"><![CDATA[<p>大模型推理中的AllReduce通信优化技术在vLLM-Ascend中的实现和应用</p>
+<p><a class="link-preview-card" href="https://gitcode.com/ascend-tribe/ascend-inference-cluster/blob/main/FlashComm/ascend-inference-cluster-flashcomm.md" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">ascend-inference-cluster/FlashComm/ascend-inference-cluster-flashcomm.md-代码预览-ascend-inference-cluster:基于昇腾的超大规模MoE模型推理部署项目 - AtomGit</span>
+      <span class="link-preview-card__description">ascend-inference-cluster/FlashComm/ascend-inference-cluster-flashcomm.md-代码预览-用户可借助该项目实现超大规模MoE模型的高效推理部署，助力大模型应用落地。项目提供昇腾亲和的负载均衡、通算融合、创新算子等核心技术，开源代码支持性能优化与生态共建。</span>
+    <span class="link-preview-card__meta">gitcode.com</span>
+  </span>
+</a>
+</p>
+<h2 id="原理和设计">原理和设计</h2>
+<p><img loading='lazy' decoding="async" src="https://raw.gitcode.com/ascend-tribe/ascend-inference-cluster/files/main/FlashComm/figures/flashcomm_mla.png" alt=""  /></p>
+<p>相较于连续调用ReduceScatter和AllGather两个算子， 在并发数较小、数据量不大的场景下，使用AllReduce算子可以减少数据传输次数，降低通信启动开销，优化通信时延；但在数据量较大的场景，使用AllReduce算子并没有太大优势。而且调用AllReduce算子，相当于绑定了ReduceScatter和AllGather算子，这样的绑定调用缺乏一定的灵活性：</p>
+<ul>
+<li>从通信量考虑：ReduceScatter需要对多卡数据进行累加操作，为了保证精度，一般要求ReduceScatter传输的数据类型为FP16/BF16。但是AllGather只执行数据汇聚操作，是完全没有精度变化的，或可做到更低比特通信。</li>
+<li>从计算量考虑：经过AllReduce通信之后，同一个通信域内的所有卡将拥有相同的数据，在真正进行TP/EP的矩阵计算之前，各卡会进行相同的计算，如LayerNorm， Dynamic Quant， 以及MLA模块中的QKV降维映射等，这里的冗余计算会带来计算资源的浪费和时延增加。</li>
+</ul>
+<h2 id="vllm-ascend中的实现细节">vLLM-Ascend中的实现细节</h2>
+<p><a class="link-preview-card" href="https://github.com/vllm-project/vllm-ascend/pull/2802/changes" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">[main] flashcomm_v1 optim in Qwen Dense Models by rjg-lyh · Pull Request #2802 · vllm-project/vllm-ascend</span>
+      <span class="link-preview-card__description">What this PR does / why we need it?
+Flashcomm_v1 optim in Qwen Dense Models.
+Does this PR introduce any user-facing change?
+No.
+How was this patch tested?
+CI passed with new added/existing test.
+
+vLLM version: v0.10.1.1
+vLLM main: vllm-project/vllm@5e537f4</span>
+    <span class="link-preview-card__meta">GitHub</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://avatars.githubusercontent.com/u/83491835?s=400&amp;v=4" alt="">
+    </span>
+</a>
+</p>
+<p><img loading='lazy' decoding="async" src="/imgs/flashcomm1.png" alt="alt text"  /></p>
+<p>attention和MLP后面原来都需要调用allreduce算子来进行汇聚各卡上面的结果， 详情可以参考
+<mark class="mark-blue"><a href="/posts/ai/transformers/#rowparallellinear">transformers介绍</a></mark>
+<br>
+这里flashcomm1优化主要是</p>
+<ul>
+<li>将同一层attention最后的all reduce拆分为等价的reduce scatter和all gather，后norm操作放入通信算子中间，每张卡只需要计算部分数据。</li>
+<li>MLP后面的 all reduce也做类似操作，只是all gather操作放在下一层开始来进行</li>
+</ul>
+<p>注意</p>
+<ol>
+<li>self attention前的all gather实现在AscendQKVParallelLinear</li>
+<li>attention后和mlp后的reduce scatter都是现在AddRMSNormW8A8Quant</li>
+<li>mlp前的all gather实现在AscendMergedColumnParallelLinear</li>
+<li>由于normquant输入是bf16/fp16类型输出是int8，之后再进行all gather可以减少通信量</li>
+</ol>
+<h2 id="faq">FAQ</h2>
+<ol>
+<li>为啥norm插入all reduce，之后计算是等价的?
+首先rmsnorm定义,
+其次这里reduce scatter是sequence paralle，按照token维度切分，每个 token 的 hidden dimension 仍然完整保留（Sequence Parallel 形式），而不是把 RMSNorm 所在的 hidden dimension 切碎</li>
+</ol>
+]]></content><category scheme="https://1024daniel.github.io/tags/vllm" term="vllm" label="vLLM"/></entry><entry><title type="html">Mac服务查询命令</title><link href="https://1024daniel.github.io/posts/mac%E6%9C%8D%E5%8A%A1%E6%9F%A5%E8%AF%A2%E5%91%BD%E4%BB%A4/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/mac%E6%9C%8D%E5%8A%A1%E6%9F%A5%E8%AF%A2%E5%91%BD%E4%BB%A4/</id><author><name>Daniel Diana</name></author><published>2026-05-28T18:36:13+08:00</published><updated>2026-05-28T18:36:13+08:00</updated><content type="html"><![CDATA[<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 查询lan投影等服务</span>
+</span></span><span style="display:flex;"><span>dns-sd -B _airplay._tcp
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 查询打印机</span>
+</span></span><span style="display:flex;"><span>dns-sd -B _ipp._tcp
+</span></span><span style="display:flex;"><span>dns-sd -B _smb._tcp
+</span></span><span style="display:flex;"><span>dns-sd -B _ssh._tcp
+</span></span><span style="display:flex;"><span>dns-sd -B _googlecast._tcp
+</span></span></code></pre></div><h3 id="查看那些应用阻止了系统休眠">查看那些应用阻止了系统休眠</h3>
+<p><code>pmset -g assertions</code></p>
+<p><img loading='lazy' decoding="async" src="/imgs/mac_pmset_command.png" alt="alt text"  /></p>
+]]></content><category scheme="https://1024daniel.github.io/tags/mac" term="mac" label="mac"/></entry><entry><title type="html">Github_workflow</title><link href="https://1024daniel.github.io/posts/github_workflow/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/github_workflow/</id><author><name>Daniel Diana</name></author><published>2026-05-24T01:48:54+08:00</published><updated>2026-05-24T01:48:54+08:00</updated><content type="html">&lt;p>从github hugo workflow为切入口介绍一下github workflow&lt;/p>
+&lt;blockquote>
+&lt;/blockquote></content></entry><entry><title type="html">vLLM_attention_backend</title><link href="https://1024daniel.github.io/posts/ai/vllm_attention_backend/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/ai/vllm_attention_backend/</id><author><name>Daniel Diana</name></author><published>2026-05-22T02:14:20+08:00</published><updated>2026-05-22T02:14:20+08:00</updated><content type="html"><![CDATA[<p>分析vllm中attention backend的选择</p>
+<blockquote>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get_attn_backend</span>(
+</span></span><span style="display:flex;"><span>    head_size: int,
+</span></span><span style="display:flex;"><span>    dtype: torch<span style="color:#f92672">.</span>dtype,
+</span></span><span style="display:flex;"><span>    kv_cache_dtype: str <span style="color:#f92672">|</span> <span style="color:#66d9ef">None</span>,
+</span></span><span style="display:flex;"><span>    use_mla: bool <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>,
+</span></span><span style="display:flex;"><span>    has_sink: bool <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>,
+</span></span><span style="display:flex;"><span>    use_sparse: bool <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>,
+</span></span><span style="display:flex;"><span>    use_mm_prefix: bool <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>,
+</span></span><span style="display:flex;"><span>    use_per_head_quant_scales: bool <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>,
+</span></span><span style="display:flex;"><span>    attn_type: str <span style="color:#f92672">|</span> <span style="color:#66d9ef">None</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>,
+</span></span><span style="display:flex;"><span>    num_heads: int <span style="color:#f92672">|</span> <span style="color:#66d9ef">None</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>,
+</span></span><span style="display:flex;"><span>) <span style="color:#f92672">-&gt;</span> type[AttentionBackend]:
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;Selects which attention backend to use and lazily imports it.&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> kv_cache_dtype <span style="color:#f92672">is</span> <span style="color:#f92672">not</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>        valid_cache_dtypes <span style="color:#f92672">=</span> get_args(CacheDType)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">assert</span> kv_cache_dtype <span style="color:#f92672">in</span> valid_cache_dtypes, (
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Invalid kv_cache_dtype: </span><span style="color:#e6db74">{</span>kv_cache_dtype<span style="color:#e6db74">}</span><span style="color:#e6db74">. &#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Valid values are: </span><span style="color:#e6db74">{</span>valid_cache_dtypes<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">from</span> vllm.config <span style="color:#f92672">import</span> get_current_vllm_config
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    vllm_config <span style="color:#f92672">=</span> get_current_vllm_config()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    cache_config <span style="color:#f92672">=</span> vllm_config<span style="color:#f92672">.</span>cache_config
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> cache_config <span style="color:#f92672">is</span> <span style="color:#f92672">not</span> <span style="color:#66d9ef">None</span> <span style="color:#f92672">and</span> cache_config<span style="color:#f92672">.</span>user_specified_block_size:
+</span></span><span style="display:flex;"><span>        block_size <span style="color:#f92672">=</span> cache_config<span style="color:#f92672">.</span>block_size
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>        block_size <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    attn_selector_config <span style="color:#f92672">=</span> AttentionSelectorConfig(
+</span></span><span style="display:flex;"><span>        head_size<span style="color:#f92672">=</span>head_size,
+</span></span><span style="display:flex;"><span>        dtype<span style="color:#f92672">=</span>dtype,
+</span></span><span style="display:flex;"><span>        kv_cache_dtype<span style="color:#f92672">=</span>cast(CacheDType <span style="color:#f92672">|</span> <span style="color:#66d9ef">None</span>, kv_cache_dtype),
+</span></span><span style="display:flex;"><span>        block_size<span style="color:#f92672">=</span>block_size,
+</span></span><span style="display:flex;"><span>        use_mla<span style="color:#f92672">=</span>use_mla,
+</span></span><span style="display:flex;"><span>        has_sink<span style="color:#f92672">=</span>has_sink,
+</span></span><span style="display:flex;"><span>        use_sparse<span style="color:#f92672">=</span>use_sparse,
+</span></span><span style="display:flex;"><span>        use_mm_prefix<span style="color:#f92672">=</span>use_mm_prefix,
+</span></span><span style="display:flex;"><span>        use_per_head_quant_scales<span style="color:#f92672">=</span>use_per_head_quant_scales,
+</span></span><span style="display:flex;"><span>        attn_type<span style="color:#f92672">=</span>attn_type <span style="color:#f92672">or</span> AttentionType<span style="color:#f92672">.</span>DECODER,
+</span></span><span style="display:flex;"><span>    )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> _cached_get_attn_backend(
+</span></span><span style="display:flex;"><span>        backend<span style="color:#f92672">=</span>vllm_config<span style="color:#f92672">.</span>attention_config<span style="color:#f92672">.</span>backend,
+</span></span><span style="display:flex;"><span>        attn_selector_config<span style="color:#f92672">=</span>attn_selector_config,
+</span></span><span style="display:flex;"><span>        num_heads<span style="color:#f92672">=</span>num_heads,
+</span></span><span style="display:flex;"><span>    )
+</span></span></code></pre></div>]]></content><category scheme="https://1024daniel.github.io/tags/vllm" term="vllm" label="vLLM"/></entry><entry><title type="html">Ascend_profiling解读</title><link href="https://1024daniel.github.io/posts/ai/ascend_profiling%E8%A7%A3%E8%AF%BB/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/ai/ascend_profiling%E8%A7%A3%E8%AF%BB/</id><author><name>Daniel Diana</name></author><published>2026-05-21T10:50:34+08:00</published><updated>2026-05-21T10:50:34+08:00</updated><content type="html">&lt;p>kernel_detail:
+aic_mac_ratio cube计算利用率
+aic_mte2_ratio
+aiv_vec_ratio vec计算利用率
+aiv_mte2_&lt;/p>
+</content></entry><entry><title type="html">Cann一些优化特性总结</title><link href="https://1024daniel.github.io/posts/ai/cann%E4%B8%80%E4%BA%9B%E4%BC%98%E5%8C%96%E7%89%B9%E6%80%A7%E6%80%BB%E7%BB%93/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/ai/cann%E4%B8%80%E4%BA%9B%E4%BC%98%E5%8C%96%E7%89%B9%E6%80%A7%E6%80%BB%E7%BB%93/</id><author><name>Daniel Diana</name></author><published>2026-05-20T17:27:42+08:00</published><updated>2026-05-20T17:27:42+08:00</updated><content type="html"></content></entry><entry><title type="html">vLLM Ascend调优方法论</title><link href="https://1024daniel.github.io/posts/ai/vllm-ascend%E8%B0%83%E4%BC%98%E6%96%B9%E6%B3%95%E8%AE%BA/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/ai/vllm-ascend%E8%B0%83%E4%BC%98%E6%96%B9%E6%B3%95%E8%AE%BA/</id><author><name>Daniel Diana</name></author><published>2026-05-19T14:31:59+08:00</published><updated>2026-05-19T14:31:59+08:00</updated><content type="html"><![CDATA[<p>vLLM Ascend常见参数说明以及调优建议</p>
+<h1 id="1调优方法论">1.调优方法论</h1>
+<p>参考文档:
+<a class="link-preview-card" href="https://www.hiascend.com/" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">昇腾社区官网-昇腾万里 让智能无所不及</span>
+      <span class="link-preview-card__description">昇腾社区是基于昇腾系列处理器和基础软件构建的全栈 AI计算基础设施、行业应用及服务，包括昇腾系列处理器、系列硬件、CANN异构计算架构、AI计算框架、应用使能、开发工具链、管理运维工具、行业应用及服务等全产业链。</span>
+    <span class="link-preview-card__meta">hiascend.com</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://www.hiascend.com//www.hiascend.com/_static3/logo.BmJjMz5z.png" alt="">
+    </span>
+</a>
+
+<a class="link-preview-card" href="https://docs.vllm.ai/projects/ascend/en/latest/" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">vLLM Ascend</span>
+      <span class="link-preview-card__description">vLLM Ascend plugin - a community-maintained hardware plugin for running vLLM on the Ascend NPU.</span>
+    <span class="link-preview-card__meta">docs.vllm.ai</span>
+  </span>
+</a>
+</p>
+<h2 id="11环境变量类">1.1环境变量类</h2>
+<h3 id="111-task_queue_enable1">1.1.1 TASK_QUEUE_ENABLE=1</h3>
+<p>torch_npu特性，使能task_queue算子下发队列优化,</p>
+<p><img loading='lazy' decoding="async" src="/imgs/torch_npu%e9%bb%98%e8%ae%a4%e4%b8%80%e7%ba%a7%e6%b5%81%e6%b0%b4.png" alt="alt text"  />
+<img loading='lazy' decoding="async" src="/imgs/torch_npu%e4%ba%8c%e7%ba%a7%e6%b5%81%e6%b0%b4.png" alt="alt text"  /></p>
+<h3 id="112-hccl_op_expansion_modeaiv">1.1.2 HCCL_OP_EXPANSION_MODE=&ldquo;AIV&rdquo;</h3>
+<p>AllReduce、AlltoAll、AlltoAllV、AlltoAllVC、AllGather、ReduceScatter、AllGatherV、ReduceScatterV等通信算子的编排展开位置在Device侧的Vector Core计算单元</p>
+<h3 id="113-jemalloc">1.1.3 jemalloc</h3>
+<p>export LD_PRELOAD=/usr/lib/aarch64-linux-gnu/libjemalloc.so.2:$LD_PRELOAD
+减少内存碎片</p>
+<h3 id="114-omp_num_threads">1.1.4 OMP_NUM_THREADS</h3>
+<p>对于cpu核数充足的情况下不宜设置过大，否则会导致cpu bond和影响其他业务,推荐设置1或者8</p>
+<h3 id="115-pytorch_npu_alloc_conf">1.1.5 PYTORCH_NPU_ALLOC_CONF</h3>
+<p>推荐设置True
+此设置将指示缓存分配器创建特定的内存块分配，这些内存块后续可以扩展，以便能更好地处理内存使用中频繁变更使用内存大小的情况</p>
+<h3 id="116-hccl_buffsize">1.1.6 HCCL_BUFFSIZE</h3>
+<p>推荐设置1024
+集合通信网络中，每一个HCCL通信域都会占用HCCL_BUFFSIZE大小的缓存区。若集群网络中存在较多的HCCL通信域，此缓存区占用量就会增多，可能存在影响模型数据正常存放的风险，此种场景下，可通过此环境变量减少通信域占用的缓存区大小；若业务的模型数据量较小，但通信数据量较大，则可通过此环境变量增大HCCL通信域占用的缓存区大小，提升数据通信效率。</p>
+<h3 id="117-权重预取">1.1.7 权重预取</h3>
+<p>export VLLM_ASCEND_ENABLE_PREFETCH_MLP=1
+针对Qwen3 Qwen3.5 dense类模型
+权重预取指先于矩阵乘操作，把矩阵乘的权重提前从HBM预取到L2 Cache，来缓解小batchsize场景下，矩阵乘操作的显存带宽瓶颈，提高矩阵乘的效率。权重预取降低算子的MTE2瓶颈，提高算子的cube利用率</p>
+<h3 id="118-稠密类模型通算融合优化">1.1.8 稠密类模型通算融合优化</h3>
+<p>export VLLM_ASCEND_ENABLE_DENSE_OPTIMIZE=1</p>
+<h3 id="119-vllm_ascend_enable_fused_mc2">1.1.9 VLLM_ASCEND_ENABLE_FUSED_MC2</h3>
+<p><img loading='lazy' decoding="async" src="/imgs/fused_mc2%e7%ba%a6%e6%9d%9f.png" alt="alt text"  /></p>
+<p>针对moe类模型通算融合优化
+• 单节点多卡部署
+export VLLM_ASCEND_ENABLE_FUSED_MC2=1
+• 多节点部署
+export VLLM_ASCEND_ENABLE_FUSED_MC2=1
+• PD分离部署
+P实例：export VLLM_ASCEND_ENABLE_FUSED_MC2=1
+D实例：export VLLM_ASCEND_ENABLE_FUSED_MC2=2</p>
+<h3 id="1110-flashcomm">1.1.10 Flashcomm</h3>
+<p>在算子通信阶段和transformer计算阶段，通过调整AllReduce&ndash;&gt;ReduceScatter+AllGather，减少了计算量和通信量</p>
+<p><img loading='lazy' decoding="async" src="/imgs/flashcomm%e5%8e%9f%e7%90%86.png" alt="alt text"  /></p>
+<h2 id="12-vllm参数类">1.2 vllm参数类</h2>
+<h3 id="121-dp数量">1.2.1 DP数量</h3>
+<p>&ndash;data-parallel-size 
+【描述】：设置dp数量，可增加最大并发数，运行时的并发数=max-num-seqs * data-parallel-size。 通常tp*dp=总卡数。
+【可配置值】：1~最大卡数。
+【推荐配置】：低并发设置小一点，高并发需求场景可相应调大，优先高吞吐调大</p>
+<h3 id="122-tp数量">1.2.2 TP数量</h3>
+<p>&ndash;tensor-parallel-size
+【描述】：设置tp数量，通常tp*dp=总卡数。权重将被TP切分，减少运行时的计算量，一般情况下TP数不超过kv head数量，超过kv head数量时，将会有冗余重复kv权重被分配。
+【可配置值】：1~最大卡数。
+【推荐配置】：当模型权重参数量过大放不下，输入长优先ttft，可提高TP的切分数量。</p>
+<h3 id="123-max-model-len">1.2.3 max-model-len</h3>
+<p>【描述】：表示设置的上下文长度，即推理时单条请求的输入+输出的最大tokens值，输入超过该数量会直接返回警告，拒绝该请求。max-model-len的值必须小于模型权重中config.json文件中的&quot;seq_length&quot;的值，否则推理预测会报错。
+【可配置值】：(0，seq_length]，最大值为模型权重文件中config.json的seq_length值
+【推荐配置】：具体按业务场景设置。</p>
+<h3 id="124-max-num-seqs">1.2.4 max-num-seqs</h3>
+<p>【描述】：表示每个dp实例允许处理的最大请求条数。若同时发给服务的请求数超过该上限，多余的请求将会处于waiting状态等候下一批batch处理，而不参与实际调度。注意处于waiting状态的时间同样会被记入TTFT/TPOT等指标中。
+【可配置值】：数字
+【推荐配置】：按具体业务场景配置，一般建议&ndash;max-num-seqs * &ndash;data-parallel-size &gt;= 实际总并发数。</p>
+<h3 id="125-max-num-batched-tokens">1.2.5 max-num-batched-tokens</h3>
+<p>【描述】：表示单次batch模型所能处理的最多token数量，请求输入长度&gt;&ndash;max-num-batched-tokens时，将会按&ndash;max-num-batched-tokens分成多轮计算，即超过后的请求会等到下一个batch处理。
+【可配置值】：数字
+【推荐配置】：
+vllm开启的ChunkPrefill/SplitFuse特性，在同一batch中会优先调度decode请求，若有空余再调度prefill请求。一般情况下，若&ndash;max-num-batched-tokens设置的较大，整体时延更低，但显存（激活值占用）压力更大，如果max_num_batched_tokens持续增加到kv-cache不够用时，触发重计算，TTFT会大幅劣化。
+【特性逻辑】</p>
+<p><img loading='lazy' decoding="async" src="/imgs/chunk_prefill%e5%8e%9f%e7%90%86%e7%a4%ba%e6%84%8f%e5%9b%be.png" alt="alt text"  /></p>
+<p>如上图所示，在GPU并行过程中不切分prefill会导致产生bubbles。chunked prefill 做出了两步优化：</p>
+<ol>
+<li>首先将长短不一的 prompts 拆分为长短一致的 chunks 进行 prefill；（减少长短不一导致的bubble）</li>
+<li>其次这些 chunks 间的气泡可以插入/捎带（piggyback）其他完成了 prefill 的 prompts 的 decode 需求。（减少Decode等待的bubble）
+3.优先处理解码请求。系统会将所有待处理的解码请求批量整合到当前批次中，然后再调度任何预填充请求。
+在PD混部场景：A2 双机 deepseek_r1_w8a8，输入3.5k输出1.5k， 10并发下
+（1）如果max_num_batched_tokens小于请求输入长度，TTFT和TPOT都有所劣化。
+（2）如果max_num_batched_tokens略大于请求输入长度为4096，TPOT达到最优。
+（3）如果max_num_batched_tokens持续增加，TPOT小幅增大，TTFT小幅减小。
+（4）如果max_num_batched_tokens持续增加到kv-cache不够用时，TTFT会大幅劣化。如何判断是否kv-cache不够，在启动服务时，会输出日志当前max_model_length下，最多能支撑的单卡并发数为5.10x，则整个实例支撑的并发数为=单卡并发数<em>DP数=5.10</em>2=10.2。当实例支撑的并发数&gt;=aisbench设置的最大并发数，则会导致kv-cache不够用，触发重计算，性能劣化。
+kv-cache够用判断：启动服务时，会有打屏信息</li>
+</ol>
+<p>vllm不支持指定chunk size，默认chunk size就是max-num-batched-tokens，改值设置大一点，prefill一次计算更多，TTFT时延更低，反之，decode不容易被长rompt阻塞，tpot时延更低</p>
+<p><img loading='lazy' decoding="async" src="/imgs/vllm%e6%8b%89%e8%b5%b7%e8%af%b7%e6%b1%82%e6%95%b0%e4%bc%b0%e7%ae%97%e6%97%a5%e5%bf%97.png" alt="alt text"  /></p>
+<h3 id="126-gpu-memory-utilization">1.2.6 gpu-memory-utilization</h3>
+<p>【描述】：代表vLLM将多大比例的HBM用于实际推理，其本质作用是用于计算可用kv_cache大小。在warm up阶段（vLLM称作profile run），vLLM会记录一次输入大小为&ndash;max-num-batched-tokens的推理过程中的显存峰值占用，再由 &ndash;gpu-memory-utilization * HBM大小 - 显存峰值 得到可用kv_cache大小。由此可见，&ndash;gpu-memory-utilization设置的越大，可使用的kv_cache越多。但由于warm up阶段和实际推理阶段的显存占用可能不同（例如存在EP负载不均现象），&ndash;gpu-memory-utilization设置的过大会导致实际推理时可能出现OOM现象。
+【可配置值】：0.1<del>1.0
+【推荐配置】：0.8</del>0.95，若在实际推理时出现OOM现象，优先把gpu-memory-utilization值稍微调小。</p>
+<h3 id="127-async-scheduling">1.2.7 async-scheduling</h3>
+<p>【描述】：把推理前的调度阶段和上一次推理阶段做并行，减少输入准备耗时，所以开启异步调度，减少token间的空泡。
+【可配置值】：参数本身，&ndash;async-scheduling</p>
+<h3 id="128-compilation-config">1.2.8 compilation-config</h3>
+<p>【描述】：包含aclgraph图模式相关配置，影响较大的主要是&quot;cudagraph_mode&quot;及&quot;cudagraph_capture_sizes&quot;，其含义如下：
+&ldquo;cudagraph_mode&rdquo;：代表具体图模式，目前支持&quot;PIECEWISE&quot;、&ldquo;FULL_DECODE_ONLY&rdquo;。图模式主要用于降低算子下发开销，目前推荐使用&quot;FULL_DECODE_ONLY&quot;。
+&ldquo;cudagraph_capture_sizes&rdquo;：表示图模式的不同档位，默认为[1,2,4,8,16,24,32,40, &hellip;, &ndash;max-num-seqs]。图模式中，不同档位的图的输入是固定的，介于档位之间的自动pad至下一档位。当前推荐使用默认设置，仅部分场景需要单独设置以获取最优性能。
+示例： &ndash;compilation_config &lsquo;{&ldquo;cudagraph_mode&rdquo;: &ldquo;FULL_DECODE_ONLY&rdquo;,&ldquo;cudagraph_capture_sizes&rdquo;:[1,8,16]}&rsquo;
+【可配置值】：&ldquo;PIECEWISE&rdquo;,&ldquo;FULL_DECODE_ONLY&rdquo;
+【推荐配置】：&ndash;compilation-config &lsquo;{&ldquo;cudagraph_mode&rdquo;:&ldquo;FULL_DECODE_ONLY&rdquo;, &ldquo;cudagraph_capture_sizes&rdquo;:[4,8,12,16,20,24,28,32,36,40,44,48,52,56,60,64]}&rsquo;,capture_sizes需要设置尽量大，chunk prefill开启之后组的batch会比实际并发数要高的多，不设置会默认生成，可以对比测试性能</p>
+<h1 id="2不同场景推荐配置">2.不同场景推荐配置</h1>
+<p>针对不同输入输出侧重ttft和tpot配置
+增大tp针对参数量大长输入可减少ttft
+增大dp可针对高并发提升吞吐，吞吐优先加大DP，延迟优先减小DP
+chunk-prefill优先decode减少tpot耗时
+在线对话，低itl，开启chunked prefill，max_num_batched_tokens设置2048-4096
+批量处理,吞吐优先，ttft宽松，max_num_batched_tokens可以设置大(8192+)</p>
+<h2 id="21-小参数量模型">2.1 小参数量模型</h2>
+<p><img loading='lazy' decoding="async" src="/imgs/%e5%b0%8f%e5%8f%82%e6%95%b0%e9%87%8f%e6%a8%a1%e5%9e%8bvllm%e5%90%af%e5%8a%a8%e8%84%9a%e6%9c%ac%e7%a4%ba%e4%be%8b.png" alt="alt text"  />
+原则，以上相关优化特性都上，无论moe还是dense类，moe类优化针对dense不生效，如果存在兼容性问题再剔除相关特性</p>
+<h2 id="22-大参数量模型">2.2 大参数量模型</h2>
+<p><img loading='lazy' decoding="async" src="/imgs/%e5%a4%a7%e5%8f%82%e6%95%b0%e9%87%8f%e6%a8%a1%e5%9e%8bvllm%e5%90%af%e5%8a%a8%e8%84%9a%e6%9c%ac%e7%a4%ba%e4%be%8b.png" alt="alt text"  />
+原则，优化特性叠加，针对moe类大参数量模型尤其是共享专家多流multistream_overlap_shared_expert，通算融合大算子VLLM_ASCEND_ENABLE_FUSED_MC2特性
+针对极致性能和高性价比，需要PD分离特性</p>
+<h1 id="3qwen35-27b调优实践">3.Qwen3.5-27B调优实践</h1>
+<h2 id="1测试需指定最大并发数">1.测试需指定最大并发数</h2>
+<p><img loading='lazy' decoding="async" src="/imgs/%e4%b8%8d%e9%99%90%e5%88%b6%e5%b9%b6%e5%8f%91%e6%95%b0%e8%af%b7%e6%b1%82%e5%a0%86%e7%a7%af%e5%9b%be%e7%a4%ba.png" alt="alt text"  />
+<img loading='lazy' decoding="async" src="/imgs/%e9%99%90%e5%88%b6%e5%b9%b6%e5%8f%91%e6%95%b0%e8%af%b7%e6%b1%82%e5%a0%86%e7%a7%af%e5%9b%be%e7%a4%ba.png" alt="alt text"  /></p>
+<p>无指定最大并发，如果指定rr为5，如果一个请求端到端耗时30s，到这个请求尾部，实际正在处理的请求数是30*5=150个，会存在请求堆积，ttft拉长</p>
+<h2 id="2开启nz优化matmul">2.开启NZ，优化matmul</h2>
+<p>matmul weight转换为昇腾硬件亲和格式，减少数据搬运至L1 cache占用优化matmul计算效率</p>
+<p><img loading='lazy' decoding="async" src="/imgs/ascend_nz%e6%a0%bc%e5%bc%8f%e7%a4%ba%e6%84%8f%e5%9b%be.png" alt="alt text"  /></p>
+<h2 id="3max_num_seqs设置增大并发48max_num_seqs从32设置到128">3.max_num_seqs设置增大(并发48，max_num_seqs从32设置到128)</h2>
+<p>max_num_seqs需要大于并发数，否则是限制了prefill处理效率，导致prefill排队，减少ttft耗时(11.6s-&gt;1.09s)，tpot略微增加(43ms-&gt;54ms)</p>
+<p>输入512输出512,48并发，ttft 1.029s(424s-&gt;1.029s) tpot 53.9ms，总吞吐797（提升(797/543-1=46.7%）</p>]]></content><category scheme="https://1024daniel.github.io/tags/vllm" term="vllm" label="vLLM"/></entry><entry><title type="html">介绍Transformers架构</title><link href="https://1024daniel.github.io/posts/ai/transformers/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/ai/transformers/</id><author><name>Daniel Diana</name></author><published>2026-05-07T16:25:20+08:00</published><updated>2026-05-07T16:25:20+08:00</updated><content type="html"><![CDATA[<p>introduce to transformers</p>
+<section class="reference-box" aria-label="Reference">
+  <div class="reference-box__head">
+    <div class="reference-box__eyebrow">Reference</div>
+    <span class="reference-box__count">3</span>
+  </div>
+  <ol class="reference-list"><li class="reference-list__item">
+          <a class="reference-list__link" href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener noreferrer">
+            <span class="reference-list__url">https://arxiv.org/abs/1706.03762</span>
+            <span class="reference-list__host">arxiv.org</span>
+          </a>
+        </li><li class="reference-list__item">
+          <a class="reference-list__link" href="https://sgurwinderr.com/learn-ai/vllm-triton-optimization/" target="_blank" rel="noopener noreferrer">
+            <span class="reference-list__url">https://sgurwinderr.com/learn-ai/vllm-triton-optimization/</span>
+            <span class="reference-list__host">sgurwinderr.com</span>
+          </a>
+        </li><li class="reference-list__item">
+          <a class="reference-list__link" href="https://qiankunli.github.io/2023/10/30/from_attention_to_transformer.html" target="_blank" rel="noopener noreferrer">
+            <span class="reference-list__url">https://qiankunli.github.io/2023/10/30/from_attention_to_transformer.html</span>
+            <span class="reference-list__host">qiankunli.github.io</span>
+          </a>
+        </li>
+  </ol>
+</section>
+
+<h2 id="transformers总体结构">transformers总体结构</h2>
+<p><span class="video-embed">
+    <iframe src="https://www.youtube.com/embed/wjZofJX0v4M" title="https://www.youtube.com/watch?v=wjZofJX0v4M" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    <a class="video-embed__link" href="https://www.youtube.com/watch?v=wjZofJX0v4M" target="_blank" rel="noopener nofollow noreferrer">https://www.youtube.com/watch?v=wjZofJX0v4M</a>
+  </span></p>
+<p><a class="link-preview-card" href="https://zhuanlan.zhihu.com/p/338817680" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">https://zhuanlan.zhihu.com/p/338817680</span>
+    <span class="link-preview-card__meta">zhuanlan.zhihu.com</span>
+  </span>
+</a>
+</p>
+<h2 id="从token维度矩阵shape来介绍模型推理">从token维度，矩阵shape来介绍模型推理</h2>
+<p>qkv直接从输入的seqlence获取和权重W获取，attention来获取当前语句的上下文信息，经过MLP获取到下一个token的分布，经过采样之后输出下一个token加入到seqlence</p>
+<h3 id="attention">Attention</h3>
+<p>Attention mechanisms are at the core of Transformer models.</p>
+<p><img loading='lazy' decoding="async" src="/imgs/attention_and_mlp.png" alt="alt text"  /></p>
+<p>  Attention 的职责：跨 token 通信
+当前 token 用自己的 Q，去和所有历史 token 的 K 算相似度，然后按权重把它们的 V 加权求和，&ldquo;混入&quot;自身。经过这一步，h₃&rsquo; 里已经包含了 h₁、h₂ 贡献的上下文信息。
+关键点：这一步是 token 之间唯一发生信息流动的地方。</p>
+<h4 id="mha-mqa-gqa-mla">MHA MQA GQA MLA</h4>
+<p><a class="link-preview-card" href="https://medium.com/@r9644360/learn-and-code-mha-mqa-and-gqa-a-guide-to-efficient-attention-mechanisms-in-transformers-ff621fe76680" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">https://medium.com/@r9644360/learn-and-code-mha-mqa-and-gqa-a-guide-to-efficient-attention-mechanisms-in-transformers-ff621fe76680</span>
+    <span class="link-preview-card__meta">medium.com</span>
+  </span>
+</a>
+</p>
+<p>   attention算法目前主要有三种变体</p>
+<p><img loading='lazy' decoding="async" src="https://miro.medium.com/v2/resize:fit:720/format:webp/1*O0Ideg5bfyXw2QviVRpLLQ.png" alt=""  /></p>
+<ul>
+<li>Multi-Head Attention (MHA) — Each head has independent key-value pairs.</li>
+<li>Multi-Query Attention (MQA) — All heads share the same key-value pairs, reducing memory usage.</li>
+<li>Grouped Query Attention (GQA) — A balance between MHA and MQA, where attention heads are grouped to share key-value pairs.</li>
+</ul>
+<table>
+  <thead>
+      <tr>
+          <th>条件</th>
+          <th>类型</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>num_key_value_heads == num_attention_heads</td>
+          <td>MHA</td>
+      </tr>
+      <tr>
+          <td>1 &lt; num_key_value_heads &lt; num_attention_heads</td>
+          <td>GQA</td>
+      </tr>
+      <tr>
+          <td>num_key_value_heads == 1</td>
+          <td>MQA</td>
+      </tr>
+  </tbody>
+</table>
+<h4 id="flash-attention">flash-attention</h4>
+<p>芯片有算力上限和带宽上限，一个算法所需要的浮点运算总量在不考虑带宽限制所需要的时间为$T_{cal}$, 反之对于所需要的内存交换总量所需要花费的时间为$T_{load}$<br>
+如果$T_{cal} < T_{load}$就说明该算法存在访存瓶颈，针对访存进行优化会有明显的效果<br>
+flash-attention就是针对self-atention算法主要在访存上面的优化</p>
+<p>todo:
+(公式推导以及必要的图示，性能一般收益量化)</p>
+<h3 id="mlp">MLP</h3>
+<p>  MLP 的职责：逐 token 的特征变换
+MLP 拿到的输入 h₃&rsquo; 已经是一个&quot;融合了上下文的表示&rdquo;，它对这个向量做非线性变换——完全不看其他 token，也不再有跨序列的通信。
+它做的事更像是：把 Attention 整合好的语义信息，投射到模型&quot;知道的概念空间&quot;里。研究者发现 MLP 的权重像一个键值记忆库——某些神经元对应特定知识（比如&quot;巴黎是法国首都&quot;），Attention 定位到相关语境后，MLP 负责把对应的知识&quot;读出来&quot;。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Qwen2MoeMLP</span>(nn<span style="color:#f92672">.</span>Module):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(
+</span></span><span style="display:flex;"><span>        self,
+</span></span><span style="display:flex;"><span>        hidden_size: int,
+</span></span><span style="display:flex;"><span>        intermediate_size: int,
+</span></span><span style="display:flex;"><span>        hidden_act: str,
+</span></span><span style="display:flex;"><span>        quant_config: QuantizationConfig <span style="color:#f92672">|</span> <span style="color:#66d9ef">None</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>,
+</span></span><span style="display:flex;"><span>        reduce_results: bool <span style="color:#f92672">=</span> <span style="color:#66d9ef">True</span>,
+</span></span><span style="display:flex;"><span>        expert_gate: torch<span style="color:#f92672">.</span>nn<span style="color:#f92672">.</span>Linear <span style="color:#f92672">|</span> <span style="color:#66d9ef">None</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>,
+</span></span><span style="display:flex;"><span>        is_sequence_parallel: bool <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>,
+</span></span><span style="display:flex;"><span>        prefix: str <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>,
+</span></span><span style="display:flex;"><span>    ) <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>        super()<span style="color:#f92672">.</span><span style="color:#a6e22e">__init__</span>()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>gate_up_proj <span style="color:#f92672">=</span> MergedColumnParallelLinear(
+</span></span><span style="display:flex;"><span>            hidden_size,
+</span></span><span style="display:flex;"><span>            [intermediate_size] <span style="color:#f92672">*</span> <span style="color:#ae81ff">2</span>,
+</span></span><span style="display:flex;"><span>            bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>,
+</span></span><span style="display:flex;"><span>            quant_config<span style="color:#f92672">=</span>quant_config,
+</span></span><span style="display:flex;"><span>            disable_tp<span style="color:#f92672">=</span>is_sequence_parallel,
+</span></span><span style="display:flex;"><span>            prefix<span style="color:#f92672">=</span><span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>prefix<span style="color:#e6db74">}</span><span style="color:#e6db74">.gate_up_proj&#34;</span>,
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>down_proj <span style="color:#f92672">=</span> RowParallelLinear(
+</span></span><span style="display:flex;"><span>            intermediate_size,
+</span></span><span style="display:flex;"><span>            hidden_size,
+</span></span><span style="display:flex;"><span>            bias<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>,
+</span></span><span style="display:flex;"><span>            quant_config<span style="color:#f92672">=</span>quant_config,
+</span></span><span style="display:flex;"><span>            reduce_results<span style="color:#f92672">=</span>reduce_results,
+</span></span><span style="display:flex;"><span>            disable_tp<span style="color:#f92672">=</span>is_sequence_parallel,
+</span></span><span style="display:flex;"><span>            prefix<span style="color:#f92672">=</span><span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>prefix<span style="color:#e6db74">}</span><span style="color:#e6db74">.down_proj&#34;</span>,
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> hidden_act <span style="color:#f92672">!=</span> <span style="color:#e6db74">&#34;silu&#34;</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">ValueError</span>(
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Unsupported activation: </span><span style="color:#e6db74">{</span>hidden_act<span style="color:#e6db74">}</span><span style="color:#e6db74">. Only silu is supported for now.&#34;</span>
+</span></span><span style="display:flex;"><span>            )
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>act_fn <span style="color:#f92672">=</span> SiluAndMul()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>expert_gate <span style="color:#f92672">=</span> expert_gate
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">forward</span>(self, x):
+</span></span><span style="display:flex;"><span>        gate_up, _ <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>gate_up_proj(x)
+</span></span><span style="display:flex;"><span>        out <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>act_fn(gate_up)
+</span></span><span style="display:flex;"><span>        out, _ <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>down_proj(out)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> self<span style="color:#f92672">.</span>expert_gate <span style="color:#f92672">is</span> <span style="color:#f92672">not</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>            out <span style="color:#f92672">=</span> F<span style="color:#f92672">.</span>sigmoid(self<span style="color:#f92672">.</span>expert_gate(x)[<span style="color:#ae81ff">0</span>]) <span style="color:#f92672">*</span> out
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> out
+</span></span></code></pre></div><p><img loading='lazy' decoding="async" src="/imgs/mlp.png" alt="alt text"  /></p>
+<p>三步合起来就是让模型在高维空间里做一次有选择性的非线性查找，然后把结果写回到 token 的 hidden state。</p>
+<h4 id="columnparallellinear">ColumnParallelLinear</h4>
+<p>ColumnParallelLinear是按输出维度切分, 之后</p>
+<p><img loading='lazy' decoding="async" src="https://awsdocs-neuron.readthedocs-hosted.com/en/latest/_images/tp.png" alt=""  /></p>
+<h4 id="rowparallellinear">RowParallelLinear</h4>
+<p>这里的RowParallelLinear是切输入维度(这里的输入维度指的是举证运算的维度)
+我们以矩阵运算<code>C(m*n)=A(m*k)@B(k*n)</code>, 这里切的就是k轴， 每张卡都到的结果和C的shape保持一致，不过是partial result，需要一次all reduce sum操作</p>
+<p>先从列维度切权重A，每张卡计算的结果相当于按列切分数据，之后从行维度切分权重B, 之后每张卡计算结果相当于只做了矩阵运算中的wise matmul，没有sum操作，所以最终需要一个all reduce sum操作
+$\begin{bmatrix}
+A_{11}
+\\A_{21}
+\end{bmatrix}
+*
+\begin{bmatrix}
+B_{11}  B_{12}
+\end{bmatrix}$</p>
+<p><img loading='lazy' decoding="async" src="/imgs/%e5%a4%96%e7%a7%af%e6%b1%82%e5%92%8c%e5%88%86%e8%a7%a3.png" alt="alt text"  />
+核心思路:
+将 A（m×k）按列切分，得到 k 个列向量 a₁, a₂, …, aₖ，每个是 m×1；同时将 B（k×n）按行切分，得到 k 个行向量 b₁ᵀ, b₂ᵀ, …, bₖᵀ，每个是 1×n。
+然后将对应的列向量与行向量做外积（⊗），每对产生一个 m×n 的秩-1矩阵，最后把 k 个秩-1矩阵加起来，就是结果 C</p>
+<p>这里的每个外积，也就是$a_{i}b_{i}^{T}$，是一个秩-1矩阵， 这个矩阵的两行之间成比例（第一行 = 第二行 × 2），所以它的&quot;独立方向&quot;只有一个——秩为1。它不是随机的一堆数，而是由一根列方向和一根行方向完全决定的&quot;织物&quot;。</p>
+<p><img loading='lazy' decoding="async" src="/imgs/%e7%a7%a9-1%e7%9f%a9%e9%98%b5.png" alt="alt text"  /></p>
+<p>核心直觉：秩-1矩阵是&quot;一根方向×另一根方向&quot;编织出来的。
+想象一块布：纵线是列向量 a，横线是行向量 bᵀ，每个交叉点的数值就是两根线的乘积。这块布的&quot;信息量&quot;极度压缩——</p>
+<p>所有列都是 a 的倍数，列空间只是一条直线；
+所有行都是 bᵀ 的倍数，行空间也只是一条直线；
+所以整张矩阵只需 m+n 个数（两个向量）就能完整描述，而不是 m×n 个独立数。</p>
+<h4 id="mlp详情">MLP详情</h4>
+<p><code>https://awsdocs-neuron.readthedocs-hosted.com/en/latest/libraries/neuronx-distributed/tensor_parallelism_overview.html</code></p>
+<p><img loading='lazy' decoding="async" src="https://awsdocs-neuron.readthedocs-hosted.com/en/latest/_images/mlp.png" alt=""  /></p>
+<p>通过Megatron-LM paper中对于MLP的示意图可以看到，在两层MLP中，
+<strong>第一层使用column parallel，第二层使用row parallel，可以消除层间不必要通信, 即减少一次ColumParallelLinear后面的all gather操作</strong></p>]]></content><category scheme="https://1024daniel.github.io/tags/transformers" term="transformers" label="transformers"/></entry><entry><title type="html">vLLM--modern high-throughput LLM inference system</title><link href="https://1024daniel.github.io/posts/ai/vllm/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/ai/vllm/</id><author><name>Daniel Diana</name></author><published>2026-05-07T16:20:29+08:00</published><updated>2026-05-07T16:20:29+08:00</updated><content type="html"><![CDATA[<p>introduce to vLLM</p>
+<section class="reference-box" aria-label="Reference">
+  <div class="reference-box__head">
+    <div class="reference-box__eyebrow">Reference</div>
+    <span class="reference-box__count">3</span>
+  </div>
+  <ol class="reference-list"><li class="reference-list__item">
+          <a class="reference-list__link" href="https://www.aleksagordic.com/blog/vllm" target="_blank" rel="noopener noreferrer">
+            <span class="reference-list__url">https://www.aleksagordic.com/blog/vllm</span>
+            <span class="reference-list__host">aleksagordic.com</span>
+          </a>
+        </li><li class="reference-list__item">
+          <a class="reference-list__link" href="https://sgurwinderr.com/learn-ai/vllm-triton-optimization/" target="_blank" rel="noopener noreferrer">
+            <span class="reference-list__url">https://sgurwinderr.com/learn-ai/vllm-triton-optimization/</span>
+            <span class="reference-list__host">sgurwinderr.com</span>
+          </a>
+        </li><li class="reference-list__item">
+          <a class="reference-list__link" href="https://deepwiki.com/vllm-project/vllm" target="_blank" rel="noopener noreferrer">
+            <span class="reference-list__url">https://deepwiki.com/vllm-project/vllm</span>
+            <span class="reference-list__host">deepwiki.com</span>
+          </a>
+        </li>
+  </ol>
+</section>
+
+<h2 id="vllm主流程">vLLM主流程</h2>
+<p>主流程解析</p>
+<p>  vLLM 的主流程可以分为请求调度、模型执行和结果返回三部分。
+请求进入后，Scheduler 会根据 max_num_seqs、max_num_batched_tokens 和 KV Cache 空间，把请求组成 batch，并区分 Prefill 和 Decode 阶段。</p>
+<p>在模型执行阶段，每一层 Transformer 先对 hidden states 做归一化，然后通过 QKV Linear 生成 Q、K、V；Q 和 K 经过 RoPE 位置编码，K、V 写入 Paged KV Cache。随后执行 Attention：Prefill 会计算整段输入，Decode 阶段只计算当前 token 的 Q，并读取历史 KV Cache。Attention 输出经过输出投影和残差连接。</p>
+<p>接着进入 MLP，一般是 Gate/Up Projection、激活函数，例如 SiLU，再做 Down Projection，最后加残差。所有 Transformer 层执行完成后，通过 LM Head 得到 logits，再进行采样，生成下一个 token。</p>
+<p>生成的 token 会重新进入 Scheduler。未结束的请求继续参加下一轮 Decode，直到遇到 EOS、达到最大长度或被停止。vLLM 的核心优化主要是 Continuous Batching、PagedAttention、KV Cache 管理，以及 CUDA Graph 等。</p>
+<p>更简化地概括就是：</p>
+<p>请求调度 → QKV 生成 → RoPE → KV Cache 写入/读取 → Attention → MLP → LM Head → Sampling → 下一轮 Decode</p>
+<p><img loading='lazy' decoding="async" src="/imgs/vllm%e6%9e%b6%e6%9e%84%e5%9b%be.png" alt=""  /></p>
+<h2 id="asyncllm">AsyncLLM</h2>
+<h2 id="enginecore">EngineCore</h2>
+<h2 id="scheduler">Scheduler</h2>
+<h2 id="worker">Worker</h2>
+<div class="dir-tree" role="tree"><div class="dir-tree__row dir-tree__row--dir" role="treeitem" style="--level: 0;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H9l2 2h7.5A2.5 2.5 0 0 1 21 8.5v8A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5z"></path>
+            </svg></span>
+        <span class="dir-tree__name">vllm/v1/</span><span class="dir-tree__desc">The V1 engine root</span></div><div class="dir-tree__row dir-tree__row--dir" role="treeitem" style="--level: 1;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H9l2 2h7.5A2.5 2.5 0 0 1 21 8.5v8A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5z"></path>
+            </svg></span>
+        <span class="dir-tree__name">engine/</span><span class="dir-tree__desc">Request handling and coordination</span></div><div class="dir-tree__row" role="treeitem" style="--level: 2;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M6 3.5h8.5L19 8v12.5H6z"></path>
+              <path d="M14.5 3.5V8H19"></path>
+            </svg></span>
+        <span class="dir-tree__name">async_llm.py</span><span class="dir-tree__desc">Async API frontend</span></div><div class="dir-tree__row" role="treeitem" style="--level: 2;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M6 3.5h8.5L19 8v12.5H6z"></path>
+              <path d="M14.5 3.5V8H19"></path>
+            </svg></span>
+        <span class="dir-tree__name">core.py</span><span class="dir-tree__desc">Main engine loop</span></div><div class="dir-tree__row" role="treeitem" style="--level: 2;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M6 3.5h8.5L19 8v12.5H6z"></path>
+              <path d="M14.5 3.5V8H19"></path>
+            </svg></span>
+        <span class="dir-tree__name">detokenizer.py</span><span class="dir-tree__desc">Token-to-text conversion</span></div><div class="dir-tree__row dir-tree__row--dir" role="treeitem" style="--level: 1;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H9l2 2h7.5A2.5 2.5 0 0 1 21 8.5v8A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5z"></path>
+            </svg></span>
+        <span class="dir-tree__name">core/sched/</span><span class="dir-tree__desc">Scheduling decisions</span></div><div class="dir-tree__row" role="treeitem" style="--level: 2;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M6 3.5h8.5L19 8v12.5H6z"></path>
+              <path d="M14.5 3.5V8H19"></path>
+            </svg></span>
+        <span class="dir-tree__name">scheduler.py</span><span class="dir-tree__desc">Main scheduling logic</span></div><div class="dir-tree__row dir-tree__row--dir" role="treeitem" style="--level: 1;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H9l2 2h7.5A2.5 2.5 0 0 1 21 8.5v8A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5z"></path>
+            </svg></span>
+        <span class="dir-tree__name">core/</span><span class="dir-tree__desc">KV cache and memory management</span></div><div class="dir-tree__row" role="treeitem" style="--level: 2;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M6 3.5h8.5L19 8v12.5H6z"></path>
+              <path d="M14.5 3.5V8H19"></path>
+            </svg></span>
+        <span class="dir-tree__name">kv_cache_manager.py</span><span class="dir-tree__desc">Block allocation for KV cache</span></div><div class="dir-tree__row" role="treeitem" style="--level: 2;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M6 3.5h8.5L19 8v12.5H6z"></path>
+              <path d="M14.5 3.5V8H19"></path>
+            </svg></span>
+        <span class="dir-tree__name">block_pool.py</span><span class="dir-tree__desc">Prefix caching and block reuse</span></div><div class="dir-tree__row dir-tree__row--dir" role="treeitem" style="--level: 1;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H9l2 2h7.5A2.5 2.5 0 0 1 21 8.5v8A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5z"></path>
+            </svg></span>
+        <span class="dir-tree__name">attention/ops/</span><span class="dir-tree__desc">Triton attention kernels</span></div><div class="dir-tree__row" role="treeitem" style="--level: 2;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M6 3.5h8.5L19 8v12.5H6z"></path>
+              <path d="M14.5 3.5V8H19"></path>
+            </svg></span>
+        <span class="dir-tree__name">triton_prefill_attention.py</span><span class="dir-tree__desc">Prefill phase attention kernel</span></div><div class="dir-tree__row" role="treeitem" style="--level: 2;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M6 3.5h8.5L19 8v12.5H6z"></path>
+              <path d="M14.5 3.5V8H19"></path>
+            </svg></span>
+        <span class="dir-tree__name">triton_decode_attention.py</span><span class="dir-tree__desc">Decode phase attention kernel</span></div></div>
+
+<h2 id="权重参数和在vllm中shape变化">权重参数和在vLLM中shape变化</h2>
+<h2 id="cudagraph">cudagraph</h2>
+<p><a class="link-preview-card" href="https://www.armcvai.cn/2024-12-05/vllm-cuda-graph.html" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">vllm 优化之 cuda_graph 详解 - Tw93</span>
+      <span class="link-preview-card__description">从事 LLM 推理部署、视觉算法开发、模型压缩部署以及算法SDK开发工作,终身学习践行者。LLM_Infer_Optimizecuda graph 解决了可能存在的所有 CPU 开销的来源：如用户编写的逻辑、PyTorch 调度逻辑、内存分配开销以及 GPU 驱动/内核开销（静态图优势）。</span>
+    <span class="link-preview-card__meta">Zhang</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://gw.alicdn.com/imgextra/i1/O1CN016ppOn21DVGJ1mVHho_!!6000000000221-0-tps-420-420.jpg" alt="">
+    </span>
+</a>
+</p>
+<p>不设置指定cudagraph sizes默认的配置逻辑</p>]]></content><category scheme="https://1024daniel.github.io/tags/vllm" term="vllm" label="vLLM"/></entry><entry><title type="html">Hugo-最快的静态网页构建框架</title><link href="https://1024daniel.github.io/posts/hugo/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/hugo/</id><author><name>Daniel Diana</name></author><published>2026-05-07T16:12:41+08:00</published><updated>2026-05-07T16:12:41+08:00</updated><content type="html"><![CDATA[<p>how to setup hugo website</p>
+<h3 id="hugo-offical-docs">hugo offical docs</h3>
+<p><img loading='lazy' decoding="async" src="https://modelscope.cn/models/danielmiller/tmp/resolve/master/npu-smi.png" alt=""  /></p>
+<p><a class="link-preview-card" href="https://gohugo.io/documentation/" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">Hugo Documentation</span>
+      <span class="link-preview-card__description">
+Hugo is the world</span>
+    <span class="link-preview-card__meta">gohugo.io</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://gohugo.io/opengraph/gohugoio-card-base-1_hu_82ae2c5867f21b81.png" alt="">
+    </span>
+</a>
+</p>
+<h3 id="hugo-directory">hugo directory</h3>
+<table>
+  <thead>
+      <tr>
+          <th><strong>场景</strong></th>
+          <th><strong>应该放哪</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>markdown 直接引用图片</td>
+          <td>static</td>
+      </tr>
+      <tr>
+          <td>template 中读取 JSON</td>
+          <td>assets</td>
+      </tr>
+      <tr>
+          <td>SCSS</td>
+          <td>assets</td>
+      </tr>
+      <tr>
+          <td>需要 resize/webp/fingerprint 图片</td>
+          <td>assets</td>
+      </tr>
+      <tr>
+          <td>浏览器直接访问资源</td>
+          <td>static</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="hugo-website-menu">hugo website menu</h3>
+<p><a class="link-preview-card" href="https://gohugo.io/configuration/menus/" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">Configure menus</span>
+      <span class="link-preview-card__description">
+Centrally define menu entries for one or more menus.
+</span>
+    <span class="link-preview-card__meta">gohugo.io</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://gohugo.io/opengraph/gohugoio-card-base-1_hu_8eed0282bb418de2.png" alt="">
+    </span>
+</a>
+</p>
+<h3 id="hugo-commands">hugo commands</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e"># content模版见archetypes/default.md</span>
+</span></span><span style="display:flex;"><span>hugo new content content/posts/vLLM.md
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 本地调试</span>
+</span></span><span style="display:flex;"><span>hugo server -D
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 对齐github workflow，生产环境</span>
+</span></span><span style="display:flex;"><span>hugo --minify -D
+</span></span><span style="display:flex;"><span>cd public
+</span></span><span style="display:flex;"><span>python3 -m http.server <span style="color:#ae81ff">8000</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>hugo server --templateMetrics --templateMetricsHints
+</span></span></code></pre></div><h3 id="go-template">go template</h3>
+<h3 id="shortcode">shortcode</h3>
+<p>shortcode定义一般直接放在layouts/shortcodes下面，例如下面的layouts/shortcodes/leetcode-link.html文件</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-go-html-template" data-lang="go-html-template"><span style="display:flex;"><span><span style="color:#75715e">{{-</span> <span style="color:#66d9ef">with</span> <span style="color:#a6e22e">.Page.Params.problem_url</span> <span style="color:#75715e">-}}</span>
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">p</span>&gt;&lt;<span style="color:#f92672">strong</span>&gt;原题链接：&lt;/<span style="color:#f92672">strong</span>&gt;&lt;<span style="color:#f92672">a</span> <span style="color:#a6e22e">href</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#75715e">{{</span> <span style="color:#a6e22e">.</span> <span style="color:#75715e">}}</span><span style="color:#e6db74">&#34;</span> <span style="color:#a6e22e">target</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;_blank&#34;</span> <span style="color:#a6e22e">rel</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;noopener noreferrer&#34;</span>&gt;<span style="color:#75715e">{{</span> <span style="color:#a6e22e">$.Page.Title</span> <span style="color:#75715e">}}</span>&lt;/<span style="color:#f92672">a</span>&gt;&lt;/<span style="color:#f92672">p</span>&gt;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">{{-</span> <span style="color:#66d9ef">else</span> <span style="color:#75715e">-}}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">{{-</span> <span style="color:#a6e22e">errorf</span> <span style="color:#e6db74">&#34;leetcode-link shortcode requires problem_url in front matter: %s&#34;</span> <span style="color:#a6e22e">.Position</span> <span style="color:#75715e">-}}</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">{{-</span> <span style="color:#66d9ef">end</span> <span style="color:#75715e">-}}</span>
+</span></span></code></pre></div><ul>
+<li>这里的减号用于清除模板标签前后的空白字符和换行</li>
+<li>.Page.Params.problem_url 表示读取当前页面 Front Matter 中的 problem_url 参数</li>
+<li>href=&quot;{{ . }}&quot;：链接地址是 problem_url</li>
+<li>rel=&ldquo;noopener noreferrer&rdquo;：避免新页面访问原页面的 window.opener，也减少来源信息泄露</li>
+<li>{{ $.Page.Title }}：显示当前页面标题， 进入 with 后，模板上下文 . 已经变成了 problem_url 字符串， 因此需要$来表示模版执行的根上下文</li>
+</ul>
+<p>后续在具体的md文章中在front matter中提供problem_url title等字段之后在文章中使用<br>
+<code>{{&lt; leetcode-link &gt;}}</code>即可以完成渲染</p>
+<h3 id="partial">partial</h3>
+<p>partial主要是用于主题模版中重复结构，比如主页、详情页、列表页都要渲染同一种卡片列表。它通常由 .html 模板调用，而不是由文章正文调用，shortcode一般是有正文md文件中调用的
+partial用法参考<br>
+<a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io/commit/beb4c80dd0774393c9bb2d9977af9cdec096e4bb" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">1024daniel/1024daniel.github.io</span>
+      <span class="link-preview-card__description">Contribute to 1024daniel/1024daniel.github.io development by creating an account on GitHub.</span>
+    <span class="link-preview-card__meta">GitHub</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://opengraph.githubassets.com/79a3eb000929c38383421b8980ac3d3655ab17158c4412ae6067dc990a6af1ce/1024daniel/1024daniel.github.io" alt="">
+    </span>
+</a>
+</p>
+<h3 id="markdown渲染钩子">markdown渲染钩子</h3>
+<p>  layouts/_default/_markup/文件下面的文件是markdown的渲染钩子文件<br>
+当 Hugo 把 .md 文章渲染成 HTML 时，遇到某些 Markdown 元素，会优先用这里的模板来自定义输出<br>
+这些文件不会直接对应某个页面，而是在 Hugo 渲染 Markdown 内容时被“插入调用”。<br>
+所以它们很适合做全站统一规则：链接、图片、标题、代码块、表格等都可以通过 _markup 目录扩展</p>
+<p>render-link.html就是渲染md中的链接文件</p>]]></content><category scheme="https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99" term="%E5%BB%BA%E7%AB%99" label="建站"/></entry></feed>

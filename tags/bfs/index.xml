@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/tags/bfs/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/tags/bfs/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><updated>2026-07-13T17:14:45+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/tags/bfs/</id><entry><title type="html">LeetCode 0743. 网络延迟时间</title><link href="https://1024daniel.github.io/posts/leetcode/leetcode-0743-network-delay-time/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/leetcode/leetcode-0743-network-delay-time/</id><author><name>Daniel Diana</name></author><published>2026-06-15T01:15:03+08:00</published><updated>2026-06-15T01:15:03+08:00</updated><content type="html"><![CDATA[<p><strong>原题链接：</strong><a href="https://leetcode.cn/problems/network-delay-time/" target="_blank" rel="noopener noreferrer">LeetCode 0743. 网络延迟时间</a></p>
+<blockquote>
+</blockquote>
+<h2 id="题目信号">题目信号</h2>
+<ul>
+<li>已知：</li>
+<li>目标：</li>
+<li>数据范围：</li>
+<li>模型识别：</li>
+</ul>
+<h2 id="首次思路">首次思路</h2>
+<p>记录真实推导过程，包括失败方案和卡点。</p>
+<h2 id="解法">解法</h2>
+<h3 id="核心不变量">核心不变量</h3>
+<p>用一句话说明算法为什么正确。</p>
+<h3 id="步骤">步骤</h3>
+<ol>
+<li>创建map存储存储输入给到单向链路信息， 方便算法内检索</li>
+<li>创建map/list 来存储从初始起点出发到各个节点的最短路径时间，在算法推进持续更新和检索</li>
+<li>创建最小heap，元素是一个键值对，键为到指定节点的时间，值为指定节点</li>
+<li>算法持续查询heap是否为空，否则持续从heap找出剩余最短路径的node，更新②，同时基于当前node检索①来看所有方向的节点，加入到③中的heap，推动下一次的迭代</li>
+<li>待所有的节点迭代完，如果②中存储的节点数也就是能遍历的节点数不是总结点数，说明signal无法达到所有的节点</li>
+<li>否者直接返回②中的最长时间即可，因为遍历所有节点只需要达到最远的node即可</li>
+</ol>
+<h3 id="代码">代码</h3>
+<p>自动展示 solution_path 目录下的所有语言实现：</p>
+<h4 id="c">C++</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;vector&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;queue&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> <span style="color:#66d9ef">namespace</span> std;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> networkDelayTime(vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;&amp;</span> times, <span style="color:#66d9ef">int</span> n, <span style="color:#66d9ef">int</span> k) {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 节点固定，无需unordered_map，直接用vector存储邻接表，减少hash计算和内存开销
+</span></span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span>pair<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span>,<span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;&gt;</span> graph(n <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> t : times) {
+</span></span><span style="display:flex;"><span>            graph[t[<span style="color:#ae81ff">0</span>]].push_back({t[<span style="color:#ae81ff">1</span>], t[<span style="color:#ae81ff">2</span>]});
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> dist(n <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, INT_MAX);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        priority_queue<span style="color:#f92672">&lt;</span>
+</span></span><span style="display:flex;"><span>            pair<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span>,<span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span>,
+</span></span><span style="display:flex;"><span>            vector<span style="color:#f92672">&lt;</span>pair<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span>,<span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;</span>,
+</span></span><span style="display:flex;"><span>            greater<span style="color:#f92672">&lt;</span>pair<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span>,<span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&gt;</span> pq;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        pq.push({<span style="color:#ae81ff">0</span>, k});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span> (<span style="color:#f92672">!</span>pq.empty()) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">auto</span> [curTime, node] <span style="color:#f92672">=</span> pq.top();
+</span></span><span style="display:flex;"><span>            pq.pop();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (curTime <span style="color:#f92672">&gt;=</span> dist[node]) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">continue</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            dist[node] <span style="color:#f92672">=</span> curTime;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> [nei, w] <span style="color:#f92672">:</span> graph[node]) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (curTime <span style="color:#f92672">+</span> w <span style="color:#f92672">&lt;</span> dist[nei]) {
+</span></span><span style="display:flex;"><span>                    pq.push({curTime <span style="color:#f92672">+</span> w, nei});
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> ans <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; i <span style="color:#f92672">&lt;=</span> n; i<span style="color:#f92672">++</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (dist[i] <span style="color:#f92672">==</span> INT_MAX) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            ans <span style="color:#f92672">=</span> max(ans, dist[i]);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ans;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h4 id="python">Python</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> typing <span style="color:#f92672">import</span> List
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> heapq
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> collections <span style="color:#f92672">import</span> defaultdict
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">networkDelayTime</span>(self, times: List[List[int]], n: int, k: int) <span style="color:#f92672">-&gt;</span> int:
+</span></span><span style="display:flex;"><span>        graph <span style="color:#f92672">=</span> defaultdict(list)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> u, v, w <span style="color:#f92672">in</span> times:
+</span></span><span style="display:flex;"><span>            graph[u]<span style="color:#f92672">.</span>append((v, w))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># dist[node] 表示从 k 到 node 的最短传播时间</span>
+</span></span><span style="display:flex;"><span>        dist <span style="color:#f92672">=</span> {}
+</span></span><span style="display:flex;"><span>        heap <span style="color:#f92672">=</span> [(<span style="color:#ae81ff">0</span>, k)]  <span style="color:#75715e"># 当前耗时, 当前节点， 最小堆</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span> heap:
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># 按时间长度从小到大弹出节点，也就是时间顺序在dist从存入节点和时间</span>
+</span></span><span style="display:flex;"><span>            time, node <span style="color:#f92672">=</span> heapq<span style="color:#f92672">.</span>heappop(heap)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> node <span style="color:#f92672">in</span> dist:
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            dist[node] <span style="color:#f92672">=</span> time
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> nei, w <span style="color:#f92672">in</span> graph[node]:
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> nei <span style="color:#f92672">not</span> <span style="color:#f92672">in</span> dist:
+</span></span><span style="display:flex;"><span>                    heapq<span style="color:#f92672">.</span>heappush(heap, (time <span style="color:#f92672">+</span> w, nei))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> len(dist) <span style="color:#f92672">!=</span> n:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">## 这里默认signal是从k节点所有方向发出的，所以只要达到最长的节点就可以了</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> max(dist<span style="color:#f92672">.</span>values())
+</span></span></code></pre></div>
+<h3 id="复杂度">复杂度</h3>
+<ul>
+<li>时间复杂度：$O()$</li>
+<li>空间复杂度：$O()$</li>
+</ul>
+<h2 id="易错点">易错点</h2>
+<ul>
+<li></li>
+</ul>
+<h2 id="迁移题">迁移题</h2>
+<ul>
+<li></li>
+</ul>
+<h2 id="复习记录">复习记录</h2>
+<table>
+  <thead>
+      <tr>
+          <th>日期</th>
+          <th>独立完成</th>
+          <th style="text-align: right">耗时</th>
+          <th>遗忘点</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td></td>
+          <td></td>
+          <td style="text-align: right"></td>
+          <td></td>
+      </tr>
+  </tbody>
+</table>]]></content><category scheme="https://1024daniel.github.io/tags/leetcode" term="leetcode" label="LeetCode"/><category scheme="https://1024daniel.github.io/tags/%E6%A0%91%E4%B8%8E%E5%9B%BE" term="%E6%A0%91%E4%B8%8E%E5%9B%BE" label="树与图"/><category scheme="https://1024daniel.github.io/tags/bfs" term="bfs" label="BFS"/></entry></feed>

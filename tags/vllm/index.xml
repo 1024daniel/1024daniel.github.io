@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/tags/vllm/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/tags/vllm/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><updated>2026-07-13T17:14:45+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/tags/vllm/</id><entry><title type="html">Flashcomm开发实现</title><link href="https://1024daniel.github.io/posts/ai/flashcomm%E5%BC%80%E5%8F%91%E5%AE%9E%E7%8E%B0/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/ai/flashcomm%E5%BC%80%E5%8F%91%E5%AE%9E%E7%8E%B0/</id><author><name>Daniel Diana</name></author><published>2026-05-30T09:47:48+08:00</published><updated>2026-05-30T09:47:48+08:00</updated><content type="html"><![CDATA[<p>大模型推理中的AllReduce通信优化技术在vLLM-Ascend中的实现和应用</p>
+<p><a class="link-preview-card" href="https://gitcode.com/ascend-tribe/ascend-inference-cluster/blob/main/FlashComm/ascend-inference-cluster-flashcomm.md" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">ascend-inference-cluster/FlashComm/ascend-inference-cluster-flashcomm.md-代码预览-ascend-inference-cluster:基于昇腾的超大规模MoE模型推理部署项目 - AtomGit</span>
+      <span class="link-preview-card__description">ascend-inference-cluster/FlashComm/ascend-inference-cluster-flashcomm.md-代码预览-用户可借助该项目实现超大规模MoE模型的高效推理部署，助力大模型应用落地。项目提供昇腾亲和的负载均衡、通算融合、创新算子等核心技术，开源代码支持性能优化与生态共建。</span>
+    <span class="link-preview-card__meta">gitcode.com</span>
+  </span>
+</a>
+</p>
+<h2 id="原理和设计">原理和设计</h2>
+<p><img loading='lazy' decoding="async" src="https://raw.gitcode.com/ascend-tribe/ascend-inference-cluster/files/main/FlashComm/figures/flashcomm_mla.png" alt=""  /></p>
+<p>相较于连续调用ReduceScatter和AllGather两个算子， 在并发数较小、数据量不大的场景下，使用AllReduce算子可以减少数据传输次数，降低通信启动开销，优化通信时延；但在数据量较大的场景，使用AllReduce算子并没有太大优势。而且调用AllReduce算子，相当于绑定了ReduceScatter和AllGather算子，这样的绑定调用缺乏一定的灵活性：</p>
+<ul>
+<li>从通信量考虑：ReduceScatter需要对多卡数据进行累加操作，为了保证精度，一般要求ReduceScatter传输的数据类型为FP16/BF16。但是AllGather只执行数据汇聚操作，是完全没有精度变化的，或可做到更低比特通信。</li>
+<li>从计算量考虑：经过AllReduce通信之后，同一个通信域内的所有卡将拥有相同的数据，在真正进行TP/EP的矩阵计算之前，各卡会进行相同的计算，如LayerNorm， Dynamic Quant， 以及MLA模块中的QKV降维映射等，这里的冗余计算会带来计算资源的浪费和时延增加。</li>
+</ul>
+<h2 id="vllm-ascend中的实现细节">vLLM-Ascend中的实现细节</h2>
+<p><a class="link-preview-card" href="https://github.com/vllm-project/vllm-ascend/pull/2802/changes" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">[main] flashcomm_v1 optim in Qwen Dense Models by rjg-lyh · Pull Request #2802 · vllm-project/vllm-ascend</span>
+      <span class="link-preview-card__description">What this PR does / why we need it?
+Flashcomm_v1 optim in Qwen Dense Models.
+Does this PR introduce any user-facing change?
+No.
+How was this patch tested?
+CI passed with new added/existing test.
+
+vLLM version: v0.10.1.1
+vLLM main: vllm-project/vllm@5e537f4</span>
+    <span class="link-preview-card__meta">GitHub</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://avatars.githubusercontent.com/u/83491835?s=400&amp;v=4" alt="">
+    </span>
+</a>
+</p>
+<p><img loading='lazy' decoding="async" src="/imgs/flashcomm1.png" alt="alt text"  /></p>
+<p>attention和MLP后面原来都需要调用allreduce算子来进行汇聚各卡上面的结果， 详情可以参考
+<mark class="mark-blue"><a href="/posts/ai/transformers/#rowparallellinear">transformers介绍</a></mark>
+<br>
+这里flashcomm1优化主要是</p>
+<ul>
+<li>将同一层attention最后的all reduce拆分为等价的reduce scatter和all gather，后norm操作放入通信算子中间，每张卡只需要计算部分数据。</li>
+<li>MLP后面的 all reduce也做类似操作，只是all gather操作放在下一层开始来进行</li>
+</ul>
+<p>注意</p>
+<ol>
+<li>self attention前的all gather实现在AscendQKVParallelLinear</li>
+<li>attention后和mlp后的reduce scatter都是现在AddRMSNormW8A8Quant</li>
+<li>mlp前的all gather实现在AscendMergedColumnParallelLinear</li>
+<li>由于normquant输入是bf16/fp16类型输出是int8，之后再进行all gather可以减少通信量</li>
+</ol>
+<h2 id="faq">FAQ</h2>
+<ol>
+<li>为啥norm插入all reduce，之后计算是等价的?
+首先rmsnorm定义,
+其次这里reduce scatter是sequence paralle，按照token维度切分，每个 token 的 hidden dimension 仍然完整保留（Sequence Parallel 形式），而不是把 RMSNorm 所在的 hidden dimension 切碎</li>
+</ol>
+]]></content><category scheme="https://1024daniel.github.io/tags/vllm" term="vllm" label="vLLM"/></entry><entry><title type="html">vLLM_attention_backend</title><link href="https://1024daniel.github.io/posts/ai/vllm_attention_backend/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/ai/vllm_attention_backend/</id><author><name>Daniel Diana</name></author><published>2026-05-22T02:14:20+08:00</published><updated>2026-05-22T02:14:20+08:00</updated><content type="html"><![CDATA[<p>分析vllm中attention backend的选择</p>
+<blockquote>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get_attn_backend</span>(
+</span></span><span style="display:flex;"><span>    head_size: int,
+</span></span><span style="display:flex;"><span>    dtype: torch<span style="color:#f92672">.</span>dtype,
+</span></span><span style="display:flex;"><span>    kv_cache_dtype: str <span style="color:#f92672">|</span> <span style="color:#66d9ef">None</span>,
+</span></span><span style="display:flex;"><span>    use_mla: bool <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>,
+</span></span><span style="display:flex;"><span>    has_sink: bool <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>,
+</span></span><span style="display:flex;"><span>    use_sparse: bool <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>,
+</span></span><span style="display:flex;"><span>    use_mm_prefix: bool <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>,
+</span></span><span style="display:flex;"><span>    use_per_head_quant_scales: bool <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>,
+</span></span><span style="display:flex;"><span>    attn_type: str <span style="color:#f92672">|</span> <span style="color:#66d9ef">None</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>,
+</span></span><span style="display:flex;"><span>    num_heads: int <span style="color:#f92672">|</span> <span style="color:#66d9ef">None</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>,
+</span></span><span style="display:flex;"><span>) <span style="color:#f92672">-&gt;</span> type[AttentionBackend]:
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;Selects which attention backend to use and lazily imports it.&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> kv_cache_dtype <span style="color:#f92672">is</span> <span style="color:#f92672">not</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>        valid_cache_dtypes <span style="color:#f92672">=</span> get_args(CacheDType)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">assert</span> kv_cache_dtype <span style="color:#f92672">in</span> valid_cache_dtypes, (
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Invalid kv_cache_dtype: </span><span style="color:#e6db74">{</span>kv_cache_dtype<span style="color:#e6db74">}</span><span style="color:#e6db74">. &#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Valid values are: </span><span style="color:#e6db74">{</span>valid_cache_dtypes<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">from</span> vllm.config <span style="color:#f92672">import</span> get_current_vllm_config
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    vllm_config <span style="color:#f92672">=</span> get_current_vllm_config()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    cache_config <span style="color:#f92672">=</span> vllm_config<span style="color:#f92672">.</span>cache_config
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> cache_config <span style="color:#f92672">is</span> <span style="color:#f92672">not</span> <span style="color:#66d9ef">None</span> <span style="color:#f92672">and</span> cache_config<span style="color:#f92672">.</span>user_specified_block_size:
+</span></span><span style="display:flex;"><span>        block_size <span style="color:#f92672">=</span> cache_config<span style="color:#f92672">.</span>block_size
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>        block_size <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    attn_selector_config <span style="color:#f92672">=</span> AttentionSelectorConfig(
+</span></span><span style="display:flex;"><span>        head_size<span style="color:#f92672">=</span>head_size,
+</span></span><span style="display:flex;"><span>        dtype<span style="color:#f92672">=</span>dtype,
+</span></span><span style="display:flex;"><span>        kv_cache_dtype<span style="color:#f92672">=</span>cast(CacheDType <span style="color:#f92672">|</span> <span style="color:#66d9ef">None</span>, kv_cache_dtype),
+</span></span><span style="display:flex;"><span>        block_size<span style="color:#f92672">=</span>block_size,
+</span></span><span style="display:flex;"><span>        use_mla<span style="color:#f92672">=</span>use_mla,
+</span></span><span style="display:flex;"><span>        has_sink<span style="color:#f92672">=</span>has_sink,
+</span></span><span style="display:flex;"><span>        use_sparse<span style="color:#f92672">=</span>use_sparse,
+</span></span><span style="display:flex;"><span>        use_mm_prefix<span style="color:#f92672">=</span>use_mm_prefix,
+</span></span><span style="display:flex;"><span>        use_per_head_quant_scales<span style="color:#f92672">=</span>use_per_head_quant_scales,
+</span></span><span style="display:flex;"><span>        attn_type<span style="color:#f92672">=</span>attn_type <span style="color:#f92672">or</span> AttentionType<span style="color:#f92672">.</span>DECODER,
+</span></span><span style="display:flex;"><span>    )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> _cached_get_attn_backend(
+</span></span><span style="display:flex;"><span>        backend<span style="color:#f92672">=</span>vllm_config<span style="color:#f92672">.</span>attention_config<span style="color:#f92672">.</span>backend,
+</span></span><span style="display:flex;"><span>        attn_selector_config<span style="color:#f92672">=</span>attn_selector_config,
+</span></span><span style="display:flex;"><span>        num_heads<span style="color:#f92672">=</span>num_heads,
+</span></span><span style="display:flex;"><span>    )
+</span></span></code></pre></div>]]></content><category scheme="https://1024daniel.github.io/tags/vllm" term="vllm" label="vLLM"/></entry><entry><title type="html">vLLM Ascend调优方法论</title><link href="https://1024daniel.github.io/posts/ai/vllm-ascend%E8%B0%83%E4%BC%98%E6%96%B9%E6%B3%95%E8%AE%BA/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/ai/vllm-ascend%E8%B0%83%E4%BC%98%E6%96%B9%E6%B3%95%E8%AE%BA/</id><author><name>Daniel Diana</name></author><published>2026-05-19T14:31:59+08:00</published><updated>2026-05-19T14:31:59+08:00</updated><content type="html"><![CDATA[<p>vLLM Ascend常见参数说明以及调优建议</p>
+<h1 id="1调优方法论">1.调优方法论</h1>
+<p>参考文档:
+<a class="link-preview-card" href="https://www.hiascend.com/" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">昇腾社区官网-昇腾万里 让智能无所不及</span>
+      <span class="link-preview-card__description">昇腾社区是基于昇腾系列处理器和基础软件构建的全栈 AI计算基础设施、行业应用及服务，包括昇腾系列处理器、系列硬件、CANN异构计算架构、AI计算框架、应用使能、开发工具链、管理运维工具、行业应用及服务等全产业链。</span>
+    <span class="link-preview-card__meta">hiascend.com</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://www.hiascend.com//www.hiascend.com/_static3/logo.BmJjMz5z.png" alt="">
+    </span>
+</a>
+
+<a class="link-preview-card" href="https://docs.vllm.ai/projects/ascend/en/latest/" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">vLLM Ascend</span>
+      <span class="link-preview-card__description">vLLM Ascend plugin - a community-maintained hardware plugin for running vLLM on the Ascend NPU.</span>
+    <span class="link-preview-card__meta">docs.vllm.ai</span>
+  </span>
+</a>
+</p>
+<h2 id="11环境变量类">1.1环境变量类</h2>
+<h3 id="111-task_queue_enable1">1.1.1 TASK_QUEUE_ENABLE=1</h3>
+<p>torch_npu特性，使能task_queue算子下发队列优化,</p>
+<p><img loading='lazy' decoding="async" src="/imgs/torch_npu%e9%bb%98%e8%ae%a4%e4%b8%80%e7%ba%a7%e6%b5%81%e6%b0%b4.png" alt="alt text"  />
+<img loading='lazy' decoding="async" src="/imgs/torch_npu%e4%ba%8c%e7%ba%a7%e6%b5%81%e6%b0%b4.png" alt="alt text"  /></p>
+<h3 id="112-hccl_op_expansion_modeaiv">1.1.2 HCCL_OP_EXPANSION_MODE=&ldquo;AIV&rdquo;</h3>
+<p>AllReduce、AlltoAll、AlltoAllV、AlltoAllVC、AllGather、ReduceScatter、AllGatherV、ReduceScatterV等通信算子的编排展开位置在Device侧的Vector Core计算单元</p>
+<h3 id="113-jemalloc">1.1.3 jemalloc</h3>
+<p>export LD_PRELOAD=/usr/lib/aarch64-linux-gnu/libjemalloc.so.2:$LD_PRELOAD
+减少内存碎片</p>
+<h3 id="114-omp_num_threads">1.1.4 OMP_NUM_THREADS</h3>
+<p>对于cpu核数充足的情况下不宜设置过大，否则会导致cpu bond和影响其他业务,推荐设置1或者8</p>
+<h3 id="115-pytorch_npu_alloc_conf">1.1.5 PYTORCH_NPU_ALLOC_CONF</h3>
+<p>推荐设置True
+此设置将指示缓存分配器创建特定的内存块分配，这些内存块后续可以扩展，以便能更好地处理内存使用中频繁变更使用内存大小的情况</p>
+<h3 id="116-hccl_buffsize">1.1.6 HCCL_BUFFSIZE</h3>
+<p>推荐设置1024
+集合通信网络中，每一个HCCL通信域都会占用HCCL_BUFFSIZE大小的缓存区。若集群网络中存在较多的HCCL通信域，此缓存区占用量就会增多，可能存在影响模型数据正常存放的风险，此种场景下，可通过此环境变量减少通信域占用的缓存区大小；若业务的模型数据量较小，但通信数据量较大，则可通过此环境变量增大HCCL通信域占用的缓存区大小，提升数据通信效率。</p>
+<h3 id="117-权重预取">1.1.7 权重预取</h3>
+<p>export VLLM_ASCEND_ENABLE_PREFETCH_MLP=1
+针对Qwen3 Qwen3.5 dense类模型
+权重预取指先于矩阵乘操作，把矩阵乘的权重提前从HBM预取到L2 Cache，来缓解小batchsize场景下，矩阵乘操作的显存带宽瓶颈，提高矩阵乘的效率。权重预取降低算子的MTE2瓶颈，提高算子的cube利用率</p>
+<h3 id="118-稠密类模型通算融合优化">1.1.8 稠密类模型通算融合优化</h3>
+<p>export VLLM_ASCEND_ENABLE_DENSE_OPTIMIZE=1</p>
+<h3 id="119-vllm_ascend_enable_fused_mc2">1.1.9 VLLM_ASCEND_ENABLE_FUSED_MC2</h3>
+<p><img loading='lazy' decoding="async" src="/imgs/fused_mc2%e7%ba%a6%e6%9d%9f.png" alt="alt text"  /></p>
+<p>针对moe类模型通算融合优化
+• 单节点多卡部署
+export VLLM_ASCEND_ENABLE_FUSED_MC2=1
+• 多节点部署
+export VLLM_ASCEND_ENABLE_FUSED_MC2=1
+• PD分离部署
+P实例：export VLLM_ASCEND_ENABLE_FUSED_MC2=1
+D实例：export VLLM_ASCEND_ENABLE_FUSED_MC2=2</p>
+<h3 id="1110-flashcomm">1.1.10 Flashcomm</h3>
+<p>在算子通信阶段和transformer计算阶段，通过调整AllReduce&ndash;&gt;ReduceScatter+AllGather，减少了计算量和通信量</p>
+<p><img loading='lazy' decoding="async" src="/imgs/flashcomm%e5%8e%9f%e7%90%86.png" alt="alt text"  /></p>
+<h2 id="12-vllm参数类">1.2 vllm参数类</h2>
+<h3 id="121-dp数量">1.2.1 DP数量</h3>
+<p>&ndash;data-parallel-size 
+【描述】：设置dp数量，可增加最大并发数，运行时的并发数=max-num-seqs * data-parallel-size。 通常tp*dp=总卡数。
+【可配置值】：1~最大卡数。
+【推荐配置】：低并发设置小一点，高并发需求场景可相应调大，优先高吞吐调大</p>
+<h3 id="122-tp数量">1.2.2 TP数量</h3>
+<p>&ndash;tensor-parallel-size
+【描述】：设置tp数量，通常tp*dp=总卡数。权重将被TP切分，减少运行时的计算量，一般情况下TP数不超过kv head数量，超过kv head数量时，将会有冗余重复kv权重被分配。
+【可配置值】：1~最大卡数。
+【推荐配置】：当模型权重参数量过大放不下，输入长优先ttft，可提高TP的切分数量。</p>
+<h3 id="123-max-model-len">1.2.3 max-model-len</h3>
+<p>【描述】：表示设置的上下文长度，即推理时单条请求的输入+输出的最大tokens值，输入超过该数量会直接返回警告，拒绝该请求。max-model-len的值必须小于模型权重中config.json文件中的&quot;seq_length&quot;的值，否则推理预测会报错。
+【可配置值】：(0，seq_length]，最大值为模型权重文件中config.json的seq_length值
+【推荐配置】：具体按业务场景设置。</p>
+<h3 id="124-max-num-seqs">1.2.4 max-num-seqs</h3>
+<p>【描述】：表示每个dp实例允许处理的最大请求条数。若同时发给服务的请求数超过该上限，多余的请求将会处于waiting状态等候下一批batch处理，而不参与实际调度。注意处于waiting状态的时间同样会被记入TTFT/TPOT等指标中。
+【可配置值】：数字
+【推荐配置】：按具体业务场景配置，一般建议&ndash;max-num-seqs * &ndash;data-parallel-size &gt;= 实际总并发数。</p>
+<h3 id="125-max-num-batched-tokens">1.2.5 max-num-batched-tokens</h3>
+<p>【描述】：表示单次batch模型所能处理的最多token数量，请求输入长度&gt;&ndash;max-num-batched-tokens时，将会按&ndash;max-num-batched-tokens分成多轮计算，即超过后的请求会等到下一个batch处理。
+【可配置值】：数字
+【推荐配置】：
+vllm开启的ChunkPrefill/SplitFuse特性，在同一batch中会优先调度decode请求，若有空余再调度prefill请求。一般情况下，若&ndash;max-num-batched-tokens设置的较大，整体时延更低，但显存（激活值占用）压力更大，如果max_num_batched_tokens持续增加到kv-cache不够用时，触发重计算，TTFT会大幅劣化。
+【特性逻辑】</p>
+<p><img loading='lazy' decoding="async" src="/imgs/chunk_prefill%e5%8e%9f%e7%90%86%e7%a4%ba%e6%84%8f%e5%9b%be.png" alt="alt text"  /></p>
+<p>如上图所示，在GPU并行过程中不切分prefill会导致产生bubbles。chunked prefill 做出了两步优化：</p>
+<ol>
+<li>首先将长短不一的 prompts 拆分为长短一致的 chunks 进行 prefill；（减少长短不一导致的bubble）</li>
+<li>其次这些 chunks 间的气泡可以插入/捎带（piggyback）其他完成了 prefill 的 prompts 的 decode 需求。（减少Decode等待的bubble）
+3.优先处理解码请求。系统会将所有待处理的解码请求批量整合到当前批次中，然后再调度任何预填充请求。
+在PD混部场景：A2 双机 deepseek_r1_w8a8，输入3.5k输出1.5k， 10并发下
+（1）如果max_num_batched_tokens小于请求输入长度，TTFT和TPOT都有所劣化。
+（2）如果max_num_batched_tokens略大于请求输入长度为4096，TPOT达到最优。
+（3）如果max_num_batched_tokens持续增加，TPOT小幅增大，TTFT小幅减小。
+（4）如果max_num_batched_tokens持续增加到kv-cache不够用时，TTFT会大幅劣化。如何判断是否kv-cache不够，在启动服务时，会输出日志当前max_model_length下，最多能支撑的单卡并发数为5.10x，则整个实例支撑的并发数为=单卡并发数<em>DP数=5.10</em>2=10.2。当实例支撑的并发数&gt;=aisbench设置的最大并发数，则会导致kv-cache不够用，触发重计算，性能劣化。
+kv-cache够用判断：启动服务时，会有打屏信息</li>
+</ol>
+<p>vllm不支持指定chunk size，默认chunk size就是max-num-batched-tokens，改值设置大一点，prefill一次计算更多，TTFT时延更低，反之，decode不容易被长rompt阻塞，tpot时延更低</p>
+<p><img loading='lazy' decoding="async" src="/imgs/vllm%e6%8b%89%e8%b5%b7%e8%af%b7%e6%b1%82%e6%95%b0%e4%bc%b0%e7%ae%97%e6%97%a5%e5%bf%97.png" alt="alt text"  /></p>
+<h3 id="126-gpu-memory-utilization">1.2.6 gpu-memory-utilization</h3>
+<p>【描述】：代表vLLM将多大比例的HBM用于实际推理，其本质作用是用于计算可用kv_cache大小。在warm up阶段（vLLM称作profile run），vLLM会记录一次输入大小为&ndash;max-num-batched-tokens的推理过程中的显存峰值占用，再由 &ndash;gpu-memory-utilization * HBM大小 - 显存峰值 得到可用kv_cache大小。由此可见，&ndash;gpu-memory-utilization设置的越大，可使用的kv_cache越多。但由于warm up阶段和实际推理阶段的显存占用可能不同（例如存在EP负载不均现象），&ndash;gpu-memory-utilization设置的过大会导致实际推理时可能出现OOM现象。
+【可配置值】：0.1<del>1.0
+【推荐配置】：0.8</del>0.95，若在实际推理时出现OOM现象，优先把gpu-memory-utilization值稍微调小。</p>
+<h3 id="127-async-scheduling">1.2.7 async-scheduling</h3>
+<p>【描述】：把推理前的调度阶段和上一次推理阶段做并行，减少输入准备耗时，所以开启异步调度，减少token间的空泡。
+【可配置值】：参数本身，&ndash;async-scheduling</p>
+<h3 id="128-compilation-config">1.2.8 compilation-config</h3>
+<p>【描述】：包含aclgraph图模式相关配置，影响较大的主要是&quot;cudagraph_mode&quot;及&quot;cudagraph_capture_sizes&quot;，其含义如下：
+&ldquo;cudagraph_mode&rdquo;：代表具体图模式，目前支持&quot;PIECEWISE&quot;、&ldquo;FULL_DECODE_ONLY&rdquo;。图模式主要用于降低算子下发开销，目前推荐使用&quot;FULL_DECODE_ONLY&quot;。
+&ldquo;cudagraph_capture_sizes&rdquo;：表示图模式的不同档位，默认为[1,2,4,8,16,24,32,40, &hellip;, &ndash;max-num-seqs]。图模式中，不同档位的图的输入是固定的，介于档位之间的自动pad至下一档位。当前推荐使用默认设置，仅部分场景需要单独设置以获取最优性能。
+示例： &ndash;compilation_config &lsquo;{&ldquo;cudagraph_mode&rdquo;: &ldquo;FULL_DECODE_ONLY&rdquo;,&ldquo;cudagraph_capture_sizes&rdquo;:[1,8,16]}&rsquo;
+【可配置值】：&ldquo;PIECEWISE&rdquo;,&ldquo;FULL_DECODE_ONLY&rdquo;
+【推荐配置】：&ndash;compilation-config &lsquo;{&ldquo;cudagraph_mode&rdquo;:&ldquo;FULL_DECODE_ONLY&rdquo;, &ldquo;cudagraph_capture_sizes&rdquo;:[4,8,12,16,20,24,28,32,36,40,44,48,52,56,60,64]}&rsquo;,capture_sizes需要设置尽量大，chunk prefill开启之后组的batch会比实际并发数要高的多，不设置会默认生成，可以对比测试性能</p>
+<h1 id="2不同场景推荐配置">2.不同场景推荐配置</h1>
+<p>针对不同输入输出侧重ttft和tpot配置
+增大tp针对参数量大长输入可减少ttft
+增大dp可针对高并发提升吞吐，吞吐优先加大DP，延迟优先减小DP
+chunk-prefill优先decode减少tpot耗时
+在线对话，低itl，开启chunked prefill，max_num_batched_tokens设置2048-4096
+批量处理,吞吐优先，ttft宽松，max_num_batched_tokens可以设置大(8192+)</p>
+<h2 id="21-小参数量模型">2.1 小参数量模型</h2>
+<p><img loading='lazy' decoding="async" src="/imgs/%e5%b0%8f%e5%8f%82%e6%95%b0%e9%87%8f%e6%a8%a1%e5%9e%8bvllm%e5%90%af%e5%8a%a8%e8%84%9a%e6%9c%ac%e7%a4%ba%e4%be%8b.png" alt="alt text"  />
+原则，以上相关优化特性都上，无论moe还是dense类，moe类优化针对dense不生效，如果存在兼容性问题再剔除相关特性</p>
+<h2 id="22-大参数量模型">2.2 大参数量模型</h2>
+<p><img loading='lazy' decoding="async" src="/imgs/%e5%a4%a7%e5%8f%82%e6%95%b0%e9%87%8f%e6%a8%a1%e5%9e%8bvllm%e5%90%af%e5%8a%a8%e8%84%9a%e6%9c%ac%e7%a4%ba%e4%be%8b.png" alt="alt text"  />
+原则，优化特性叠加，针对moe类大参数量模型尤其是共享专家多流multistream_overlap_shared_expert，通算融合大算子VLLM_ASCEND_ENABLE_FUSED_MC2特性
+针对极致性能和高性价比，需要PD分离特性</p>
+<h1 id="3qwen35-27b调优实践">3.Qwen3.5-27B调优实践</h1>
+<h2 id="1测试需指定最大并发数">1.测试需指定最大并发数</h2>
+<p><img loading='lazy' decoding="async" src="/imgs/%e4%b8%8d%e9%99%90%e5%88%b6%e5%b9%b6%e5%8f%91%e6%95%b0%e8%af%b7%e6%b1%82%e5%a0%86%e7%a7%af%e5%9b%be%e7%a4%ba.png" alt="alt text"  />
+<img loading='lazy' decoding="async" src="/imgs/%e9%99%90%e5%88%b6%e5%b9%b6%e5%8f%91%e6%95%b0%e8%af%b7%e6%b1%82%e5%a0%86%e7%a7%af%e5%9b%be%e7%a4%ba.png" alt="alt text"  /></p>
+<p>无指定最大并发，如果指定rr为5，如果一个请求端到端耗时30s，到这个请求尾部，实际正在处理的请求数是30*5=150个，会存在请求堆积，ttft拉长</p>
+<h2 id="2开启nz优化matmul">2.开启NZ，优化matmul</h2>
+<p>matmul weight转换为昇腾硬件亲和格式，减少数据搬运至L1 cache占用优化matmul计算效率</p>
+<p><img loading='lazy' decoding="async" src="/imgs/ascend_nz%e6%a0%bc%e5%bc%8f%e7%a4%ba%e6%84%8f%e5%9b%be.png" alt="alt text"  /></p>
+<h2 id="3max_num_seqs设置增大并发48max_num_seqs从32设置到128">3.max_num_seqs设置增大(并发48，max_num_seqs从32设置到128)</h2>
+<p>max_num_seqs需要大于并发数，否则是限制了prefill处理效率，导致prefill排队，减少ttft耗时(11.6s-&gt;1.09s)，tpot略微增加(43ms-&gt;54ms)</p>
+<p>输入512输出512,48并发，ttft 1.029s(424s-&gt;1.029s) tpot 53.9ms，总吞吐797（提升(797/543-1=46.7%）</p>]]></content><category scheme="https://1024daniel.github.io/tags/vllm" term="vllm" label="vLLM"/></entry><entry><title type="html">vLLM--modern high-throughput LLM inference system</title><link href="https://1024daniel.github.io/posts/ai/vllm/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/ai/vllm/</id><author><name>Daniel Diana</name></author><published>2026-05-07T16:20:29+08:00</published><updated>2026-05-07T16:20:29+08:00</updated><content type="html"><![CDATA[<p>introduce to vLLM</p>
+<section class="reference-box" aria-label="Reference">
+  <div class="reference-box__head">
+    <div class="reference-box__eyebrow">Reference</div>
+    <span class="reference-box__count">3</span>
+  </div>
+  <ol class="reference-list"><li class="reference-list__item">
+          <a class="reference-list__link" href="https://www.aleksagordic.com/blog/vllm" target="_blank" rel="noopener noreferrer">
+            <span class="reference-list__url">https://www.aleksagordic.com/blog/vllm</span>
+            <span class="reference-list__host">aleksagordic.com</span>
+          </a>
+        </li><li class="reference-list__item">
+          <a class="reference-list__link" href="https://sgurwinderr.com/learn-ai/vllm-triton-optimization/" target="_blank" rel="noopener noreferrer">
+            <span class="reference-list__url">https://sgurwinderr.com/learn-ai/vllm-triton-optimization/</span>
+            <span class="reference-list__host">sgurwinderr.com</span>
+          </a>
+        </li><li class="reference-list__item">
+          <a class="reference-list__link" href="https://deepwiki.com/vllm-project/vllm" target="_blank" rel="noopener noreferrer">
+            <span class="reference-list__url">https://deepwiki.com/vllm-project/vllm</span>
+            <span class="reference-list__host">deepwiki.com</span>
+          </a>
+        </li>
+  </ol>
+</section>
+
+<h2 id="vllm主流程">vLLM主流程</h2>
+<p>主流程解析</p>
+<p>  vLLM 的主流程可以分为请求调度、模型执行和结果返回三部分。
+请求进入后，Scheduler 会根据 max_num_seqs、max_num_batched_tokens 和 KV Cache 空间，把请求组成 batch，并区分 Prefill 和 Decode 阶段。</p>
+<p>在模型执行阶段，每一层 Transformer 先对 hidden states 做归一化，然后通过 QKV Linear 生成 Q、K、V；Q 和 K 经过 RoPE 位置编码，K、V 写入 Paged KV Cache。随后执行 Attention：Prefill 会计算整段输入，Decode 阶段只计算当前 token 的 Q，并读取历史 KV Cache。Attention 输出经过输出投影和残差连接。</p>
+<p>接着进入 MLP，一般是 Gate/Up Projection、激活函数，例如 SiLU，再做 Down Projection，最后加残差。所有 Transformer 层执行完成后，通过 LM Head 得到 logits，再进行采样，生成下一个 token。</p>
+<p>生成的 token 会重新进入 Scheduler。未结束的请求继续参加下一轮 Decode，直到遇到 EOS、达到最大长度或被停止。vLLM 的核心优化主要是 Continuous Batching、PagedAttention、KV Cache 管理，以及 CUDA Graph 等。</p>
+<p>更简化地概括就是：</p>
+<p>请求调度 → QKV 生成 → RoPE → KV Cache 写入/读取 → Attention → MLP → LM Head → Sampling → 下一轮 Decode</p>
+<p><img loading='lazy' decoding="async" src="/imgs/vllm%e6%9e%b6%e6%9e%84%e5%9b%be.png" alt=""  /></p>
+<h2 id="asyncllm">AsyncLLM</h2>
+<h2 id="enginecore">EngineCore</h2>
+<h2 id="scheduler">Scheduler</h2>
+<h2 id="worker">Worker</h2>
+<div class="dir-tree" role="tree"><div class="dir-tree__row dir-tree__row--dir" role="treeitem" style="--level: 0;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H9l2 2h7.5A2.5 2.5 0 0 1 21 8.5v8A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5z"></path>
+            </svg></span>
+        <span class="dir-tree__name">vllm/v1/</span><span class="dir-tree__desc">The V1 engine root</span></div><div class="dir-tree__row dir-tree__row--dir" role="treeitem" style="--level: 1;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H9l2 2h7.5A2.5 2.5 0 0 1 21 8.5v8A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5z"></path>
+            </svg></span>
+        <span class="dir-tree__name">engine/</span><span class="dir-tree__desc">Request handling and coordination</span></div><div class="dir-tree__row" role="treeitem" style="--level: 2;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M6 3.5h8.5L19 8v12.5H6z"></path>
+              <path d="M14.5 3.5V8H19"></path>
+            </svg></span>
+        <span class="dir-tree__name">async_llm.py</span><span class="dir-tree__desc">Async API frontend</span></div><div class="dir-tree__row" role="treeitem" style="--level: 2;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M6 3.5h8.5L19 8v12.5H6z"></path>
+              <path d="M14.5 3.5V8H19"></path>
+            </svg></span>
+        <span class="dir-tree__name">core.py</span><span class="dir-tree__desc">Main engine loop</span></div><div class="dir-tree__row" role="treeitem" style="--level: 2;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M6 3.5h8.5L19 8v12.5H6z"></path>
+              <path d="M14.5 3.5V8H19"></path>
+            </svg></span>
+        <span class="dir-tree__name">detokenizer.py</span><span class="dir-tree__desc">Token-to-text conversion</span></div><div class="dir-tree__row dir-tree__row--dir" role="treeitem" style="--level: 1;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H9l2 2h7.5A2.5 2.5 0 0 1 21 8.5v8A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5z"></path>
+            </svg></span>
+        <span class="dir-tree__name">core/sched/</span><span class="dir-tree__desc">Scheduling decisions</span></div><div class="dir-tree__row" role="treeitem" style="--level: 2;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M6 3.5h8.5L19 8v12.5H6z"></path>
+              <path d="M14.5 3.5V8H19"></path>
+            </svg></span>
+        <span class="dir-tree__name">scheduler.py</span><span class="dir-tree__desc">Main scheduling logic</span></div><div class="dir-tree__row dir-tree__row--dir" role="treeitem" style="--level: 1;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H9l2 2h7.5A2.5 2.5 0 0 1 21 8.5v8A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5z"></path>
+            </svg></span>
+        <span class="dir-tree__name">core/</span><span class="dir-tree__desc">KV cache and memory management</span></div><div class="dir-tree__row" role="treeitem" style="--level: 2;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M6 3.5h8.5L19 8v12.5H6z"></path>
+              <path d="M14.5 3.5V8H19"></path>
+            </svg></span>
+        <span class="dir-tree__name">kv_cache_manager.py</span><span class="dir-tree__desc">Block allocation for KV cache</span></div><div class="dir-tree__row" role="treeitem" style="--level: 2;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M6 3.5h8.5L19 8v12.5H6z"></path>
+              <path d="M14.5 3.5V8H19"></path>
+            </svg></span>
+        <span class="dir-tree__name">block_pool.py</span><span class="dir-tree__desc">Prefix caching and block reuse</span></div><div class="dir-tree__row dir-tree__row--dir" role="treeitem" style="--level: 1;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H9l2 2h7.5A2.5 2.5 0 0 1 21 8.5v8A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5z"></path>
+            </svg></span>
+        <span class="dir-tree__name">attention/ops/</span><span class="dir-tree__desc">Triton attention kernels</span></div><div class="dir-tree__row" role="treeitem" style="--level: 2;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M6 3.5h8.5L19 8v12.5H6z"></path>
+              <path d="M14.5 3.5V8H19"></path>
+            </svg></span>
+        <span class="dir-tree__name">triton_prefill_attention.py</span><span class="dir-tree__desc">Prefill phase attention kernel</span></div><div class="dir-tree__row" role="treeitem" style="--level: 2;">
+        <span class="dir-tree__indent" aria-hidden="true"></span>
+        <span class="dir-tree__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">
+              <path d="M6 3.5h8.5L19 8v12.5H6z"></path>
+              <path d="M14.5 3.5V8H19"></path>
+            </svg></span>
+        <span class="dir-tree__name">triton_decode_attention.py</span><span class="dir-tree__desc">Decode phase attention kernel</span></div></div>
+
+<h2 id="权重参数和在vllm中shape变化">权重参数和在vLLM中shape变化</h2>
+<h2 id="cudagraph">cudagraph</h2>
+<p><a class="link-preview-card" href="https://www.armcvai.cn/2024-12-05/vllm-cuda-graph.html" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">vllm 优化之 cuda_graph 详解 - Tw93</span>
+      <span class="link-preview-card__description">从事 LLM 推理部署、视觉算法开发、模型压缩部署以及算法SDK开发工作,终身学习践行者。LLM_Infer_Optimizecuda graph 解决了可能存在的所有 CPU 开销的来源：如用户编写的逻辑、PyTorch 调度逻辑、内存分配开销以及 GPU 驱动/内核开销（静态图优势）。</span>
+    <span class="link-preview-card__meta">Zhang</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://gw.alicdn.com/imgextra/i1/O1CN016ppOn21DVGJ1mVHho_!!6000000000221-0-tps-420-420.jpg" alt="">
+    </span>
+</a>
+</p>
+<p>不设置指定cudagraph sizes默认的配置逻辑</p>]]></content><category scheme="https://1024daniel.github.io/tags/vllm" term="vllm" label="vLLM"/></entry></feed>
