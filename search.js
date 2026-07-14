@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const searchInput = document.querySelector('#searchBoxInput');
   const searchResult = document.querySelector('#searchResult');
   const searchCount = document.querySelector('#searchCount');
-  const searchTags = document.querySelector('#searchTags');
 
   let indexData = null;
 
@@ -22,7 +21,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function parseLocationSearch() {
     const params = new URLSearchParams(window.location.search);
-    return params.get('q') || '';
+    const tag = params.get('tag');
+
+    if (tag) return { query: `#${tag}`, mode: 'tag' };
+    return { query: params.get('q') || '', mode: 'text' };
+  }
+
+  function getSearchMode(query) {
+    return String(query || '').trim().startsWith('#') ? 'tag' : 'text';
   }
 
   function getTerms(query) {
@@ -36,24 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (indexData) return indexData;
 
     const resp = await fetch('/index.json');
-    indexData = await resp.json();
+    indexData = uniqueItems(await resp.json());
     return indexData;
-  }
-
-  function getTags(items) {
-    const tagMap = new Map();
-
-    items.forEach(item => {
-      (item.tags || []).forEach(tag => {
-        const normalizedTag = String(tag || '').trim();
-        if (!normalizedTag) return;
-
-        tagMap.set(normalizedTag, (tagMap.get(normalizedTag) || 0) + 1);
-      });
-    });
-
-    return [...tagMap.entries()]
-      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'zh-CN'));
   }
 
   function scoreItem(item, terms) {
@@ -90,8 +80,23 @@ document.addEventListener('DOMContentLoaded', () => {
     return matchedTerms === terms.length ? score : 0;
   }
 
+  function matchesTag(item, query) {
+    const tag = normalize(query).replace(/^#/, '');
+    return tag && (item.tags || []).map(normalize).includes(tag);
+  }
+
   function getItemKey(item) {
     return item.permalink || `${item.section || item.type || ''}:${item.title || ''}`;
+  }
+
+  function uniqueItems(items) {
+    const itemMap = new Map();
+
+    items.forEach(item => {
+      itemMap.set(getItemKey(item), item);
+    });
+
+    return [...itemMap.values()];
   }
 
   function uniqueResults(results) {
@@ -124,17 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return `${start > 0 ? '…' : ''}${escapeHtml(snippet)}${start + 130 < text.length ? '…' : ''}`;
   }
 
-  function renderTags(tags) {
-    if (!tags.length) {
-      searchTags.innerHTML = '';
-      return;
-    }
-
-    searchTags.innerHTML = tags.map(([tag, count]) => {
-      return `<button class="search-tag" type="button" data-tag="${escapeHtml(tag)}">#${escapeHtml(tag)}<small>${count}</small></button>`;
-    }).join('');
-  }
-
   function renderResults(results, terms) {
     if (!results.length) {
       return '<div class="search-empty">没有找到匹配内容</div>';
@@ -161,38 +155,43 @@ document.addEventListener('DOMContentLoaded', () => {
     }).join('');
   }
 
-  function updateURL(query) {
-    const url = query ? `${location.pathname}?q=${encodeURIComponent(query)}` : location.pathname;
+  function updateURL(query, mode) {
+    const param = mode === 'tag' ? 'tag' : 'q';
+    const value = mode === 'tag' ? String(query).trim().replace(/^#/, '') : query;
+    const url = value ? `${location.pathname}?${param}=${encodeURIComponent(value)}` : location.pathname;
     history.pushState('', '', url);
   }
 
-  async function search(query, syncURL) {
+  async function search(query, mode, syncURL) {
     const items = await getIndex();
     const terms = getTerms(query);
-
-    renderTags(getTags(items));
 
     if (!terms.length) {
       searchResult.innerHTML = '';
       searchCount.innerHTML = `共收录 ${items.length} 篇内容`;
-      if (syncURL) updateURL('');
+      if (syncURL) updateURL('', mode);
       return;
     }
 
     const results = uniqueResults(items
-      .map(item => ({ item, score: scoreItem(item, terms) }))
+      .map(item => ({
+        item,
+        score: mode === 'tag' ? (matchesTag(item, query) ? 1 : 0) : scoreItem(item, terms)
+      }))
       .filter(result => result.score > 0))
-      .sort((a, b) => b.score - a.score || b.item.date.localeCompare(a.item.date))
-      .slice(0, 50);
+      .sort((a, b) => b.score - a.score || b.item.date.localeCompare(a.item.date));
+    const visibleResults = results.slice(0, 50);
 
-    searchResult.innerHTML = renderResults(results, terms);
-    searchCount.innerHTML = `共查询到 ${results.length} 篇内容`;
+    searchResult.innerHTML = renderResults(visibleResults, terms);
+    searchCount.innerHTML = mode === 'tag'
+      ? `标签 #${escapeHtml(String(query).trim().replace(/^#/, ''))} 下共 ${results.length} 篇内容`
+      : `共查询到 ${results.length} 篇内容`;
 
-    if (syncURL) updateURL(query);
+    if (syncURL) updateURL(query, mode);
   }
 
-  function runSearch(syncURL) {
-    search(searchInput.value, syncURL).catch(() => {
+  function runSearch(syncURL, mode = getSearchMode(searchInput.value)) {
+    search(searchInput.value, mode, syncURL).catch(() => {
       searchCount.innerHTML = '搜索索引加载失败';
       searchResult.innerHTML = '';
     });
@@ -208,15 +207,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const tagButton = event.target.closest('[data-tag]');
     if (!tagButton) return;
 
-    searchInput.value = tagButton.dataset.tag;
+    searchInput.value = `#${tagButton.dataset.tag}`;
     runSearch(true);
   });
 
   window.addEventListener('popstate', () => {
-    searchInput.value = parseLocationSearch();
-    runSearch(false);
+    const state = parseLocationSearch();
+    searchInput.value = state.query;
+    runSearch(false, state.mode);
   });
 
-  searchInput.value = parseLocationSearch();
-  runSearch(false);
+  const initialState = parseLocationSearch();
+  searchInput.value = initialState.query;
+  runSearch(false, initialState.mode);
 });
