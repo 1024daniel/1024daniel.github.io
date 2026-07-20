@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/posts/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/posts/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><updated>2026-07-19T20:09:58+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/posts/</id><entry><title type="html">湘湖</title><link href="https://1024daniel.github.io/posts/scenes/%E6%B9%98%E6%B9%96/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/scenes/%E6%B9%98%E6%B9%96/</id><author><name>Daniel Diana</name></author><published>2026-06-20T00:09:07+08:00</published><updated>2026-06-20T00:09:07+08:00</updated><content type="html"><![CDATA[<p>2022年5月份来到杭州，第一个来到的景区就是湘湖，后面也有很长一段时间住在湘湖边的融泽府，湘湖风景很美，很静谧，非常适合骑行</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/posts/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/posts/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><updated>2026-07-20T20:26:23+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/posts/</id><entry><title type="html">湘湖</title><link href="https://1024daniel.github.io/posts/scenes/%E6%B9%98%E6%B9%96/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/scenes/%E6%B9%98%E6%B9%96/</id><author><name>Daniel Diana</name></author><published>2026-06-20T00:09:07+08:00</published><updated>2026-06-20T00:09:07+08:00</updated><content type="html"><![CDATA[<p>2022年5月份来到杭州，第一个来到的景区就是湘湖，后面也有很长一段时间住在湘湖边的融泽府，湘湖风景很美，很静谧，非常适合骑行</p>
 <blockquote>
 </blockquote>
 <h3 id="我的湘湖印象">我的湘湖印象</h3>
@@ -1250,9 +1250,13 @@ chunk-prefill优先decode减少tpot耗时
 <h4 id="mha-mqa-gqa-mla">MHA MQA GQA MLA</h4>
 <p><a class="link-preview-card" href="https://medium.com/@r9644360/learn-and-code-mha-mqa-and-gqa-a-guide-to-efficient-attention-mechanisms-in-transformers-ff621fe76680" target="_blank" rel="noopener nofollow noreferrer">
   <span class="link-preview-card__content">
-    <span class="link-preview-card__title">https://medium.com/@r9644360/learn-and-code-mha-mqa-and-gqa-a-guide-to-efficient-attention-mechanisms-in-transformers-ff621fe76680</span>
-    <span class="link-preview-card__meta">medium.com</span>
+    <span class="link-preview-card__title">Learn and Code MHA, MQA, and GQA: A Guide to Efficient Attention Mechanisms in Transformers</span>
+      <span class="link-preview-card__description">Learn and Code MHA, MQA, and GQA: A Guide to Efficient Attention Mechanisms in Transformers 1. Introduction Attention mechanisms are at the core of Transformer models. Three primary variations of …</span>
+    <span class="link-preview-card__meta">Medium</span>
   </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://miro.medium.com/v2/resize:fit:903/1*O0Ideg5bfyXw2QviVRpLLQ.png" alt="">
+    </span>
 </a>
 </p>
 <p>   attention算法目前主要有三种变体</p>
