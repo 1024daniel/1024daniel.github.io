@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/tags/city/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/tags/city/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><updated>2026-07-24T20:25:34+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/tags/city/</id><entry><title type="html">城市印象 合肥</title><link href="https://1024daniel.github.io/posts/scenes/%E5%9F%8E%E5%B8%82%E5%8D%B0%E8%B1%A1-%E5%90%88%E8%82%A5/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/scenes/%E5%9F%8E%E5%B8%82%E5%8D%B0%E8%B1%A1-%E5%90%88%E8%82%A5/</id><author><name>Daniel Diana</name></author><published>2026-06-14T23:52:52+08:00</published><updated>2026-06-14T23:52:52+08:00</updated><content type="html"><![CDATA[<p>合肥印象</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/tags/city/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/tags/city/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><updated>2026-07-25T07:12:32+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/tags/city/</id><entry><title type="html">城市印象 合肥</title><link href="https://1024daniel.github.io/posts/scenes/%E5%9F%8E%E5%B8%82%E5%8D%B0%E8%B1%A1-%E5%90%88%E8%82%A5/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/scenes/%E5%9F%8E%E5%B8%82%E5%8D%B0%E8%B1%A1-%E5%90%88%E8%82%A5/</id><author><name>Daniel Diana</name></author><published>2026-06-14T23:52:52+08:00</published><updated>2026-06-14T23:52:52+08:00</updated><content type="html"><![CDATA[<p>合肥印象</p>
 <blockquote>
 </blockquote>
 <p>  2026.7出差合肥 在巢湖边上，但是都是工作内，没有跨周，所以没有周末去巢湖逛逛，还是比较可惜的<br>
@@ -6,4 +6,40 @@
 <p><img loading='lazy' decoding="async" src="https://1024daniel.oss-cn-hangzhou.aliyuncs.com/album/%E5%90%88%E8%82%A5%E4%BA%91%E8%B0%B7%E8%B7%AF.jpg" alt=""  />
 <img loading='lazy' decoding="async" src="https://1024daniel.oss-cn-hangzhou.aliyuncs.com/album/%E5%90%88%E8%82%A5%E4%BA%91%E8%B0%B7%E8%B7%AF%E9%87%91%E8%9E%8D%E5%9F%8E%E5%B9%BF%E5%9C%BA.jpg" alt=""  /></p>
 <p>  因为出差期间刚好是世界杯小组赛开打时间，比较惊讶的是商圈直接有大屏幕放世界杯画面，也留了很多座位给大家来一起看世界杯，且就在商圈内，非常有氛围，作为一个商旅过客也融入其中的轻松自在</p>
-<p><img loading='lazy' decoding="async" src="https://1024daniel.oss-cn-hangzhou.aliyuncs.com/album/%E5%90%88%E8%82%A5%E4%BA%91%E8%B0%B7%E8%B7%AF%E9%87%91%E8%9E%8D%E5%9F%8E%E5%95%86%E5%9F%8E%E4%B8%96%E7%95%8C%E6%9D%AF%E7%9C%8B%E5%8F%B0.jpg" alt=""  /></p>]]></content><category scheme="https://1024daniel.github.io/tags/city" term="city" label="city"/></entry></feed>
+<p><img loading='lazy' decoding="async" src="https://1024daniel.oss-cn-hangzhou.aliyuncs.com/album/%E5%90%88%E8%82%A5%E4%BA%91%E8%B0%B7%E8%B7%AF%E9%87%91%E8%9E%8D%E5%9F%8E%E5%95%86%E5%9F%8E%E4%B8%96%E7%95%8C%E6%9D%AF%E7%9C%8B%E5%8F%B0.jpg" alt=""  /></p>
+<div class="oss-album-embed">
+    <h3 class="oss-album-embed__title">
+      <span>合肥</span>
+    </h3>
+
+  <div
+    id="oss-album-0"
+    class="oss-album-embed__photos"
+    data-prefix="album/合肥"
+  ></div>
+    <p class="oss-album-embed__more">
+      <a href="/album/%e5%90%88%e8%82%a5">查看全部 →</a>
+    </p>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const albumDom = document.querySelector("#oss-album-0");
+  if (!albumDom) return;
+
+  const prefix = albumDom.dataset.prefix || "album/";
+
+  window.OssAlbum && window.OssAlbum.render({
+    selector: "#oss-album-0",
+    prefix,
+    limit:  16 ,
+    emptyText: "这里还没有照片。",
+    errorText: "相册加载失败，请稍后再试。",
+    wrapperClass: "gallery-photos page album-masonry",
+    itemClass: "gallery-photo visible",
+    eagerCount: Math.min( 16 , 8),
+    batchSize: Math.min( 16 , 30),
+    loadMoreRootMargin: "200px 0px"
+  });
+});
+</script>]]></content><category scheme="https://1024daniel.github.io/tags/city" term="city" label="city"/></entry></feed>

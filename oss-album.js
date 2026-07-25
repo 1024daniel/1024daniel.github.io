@@ -7,7 +7,7 @@
 
   function normalizePrefix(prefix) {
     const value = prefix || "album/";
-    return value.endsWith("/") ? value : `${value}/`;
+    return value.endsWith("*") ? value.slice(0, -1) : value;
   }
 
   function escapeHtml(text) {
