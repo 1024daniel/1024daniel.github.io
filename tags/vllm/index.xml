@@ -1,4 +1,41 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/tags/vllm/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/tags/vllm/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><updated>2026-07-26T06:59:31+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/tags/vllm/</id><entry><title type="html">Flashcomm开发实现</title><link href="https://1024daniel.github.io/posts/ai/flashcomm%E5%BC%80%E5%8F%91%E5%AE%9E%E7%8E%B0/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/ai/flashcomm%E5%BC%80%E5%8F%91%E5%AE%9E%E7%8E%B0/</id><author><name>Daniel Diana</name></author><published>2026-05-30T09:47:48+08:00</published><updated>2026-05-30T09:47:48+08:00</updated><content type="html"><![CDATA[<p>大模型推理中的AllReduce通信优化技术在vLLM-Ascend中的实现和应用</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/tags/vllm/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/tags/vllm/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><updated>2026-07-26T15:46:50+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/tags/vllm/</id><entry><title type="html">vLLM Ascend分解</title><link href="https://1024daniel.github.io/posts/ai/vllm-ascend%E5%88%86%E8%A7%A3/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/ai/vllm-ascend%E5%88%86%E8%A7%A3/</id><author><name>Daniel Diana</name></author><published>2026-06-02T15:36:48+08:00</published><updated>2026-06-02T15:36:48+08:00</updated><content type="html"><![CDATA[<p>vLLM Ascend的架构，如何和vLLM主仓配合的还有一些优化特性拆解分析</p>
+<h3 id="关键实现替换">关键实现替换</h3>
+<p>在 vLLM 的 CustomOp Registry 中注册 Ascend 后端的算子实现，使模型构建阶段自动将通用层替换为 Ascend 优化层</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>    <span style="color:#66d9ef">global</span> REGISTERED_ASCEND_OPS
+</span></span><span style="display:flex;"><span>    REGISTERED_ASCEND_OPS <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;QuickGELU&#34;</span>: AscendQuickGELU,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;SiluAndMul&#34;</span>: AscendSiluAndMul,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;RotaryEmbedding&#34;</span>: AscendRotaryEmbedding,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;MRotaryEmbedding&#34;</span>: AscendMRotaryEmbedding,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;ColumnParallelLinear&#34;</span>: AscendColumnParallelLinear,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;RowParallelLinear&#34;</span>: AscendRowParallelLinear,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;YaRNScalingRotaryEmbedding&#34;</span>: AscendYaRNRotaryEmbedding,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;MergedColumnParallelLinear&#34;</span>: AscendMergedColumnParallelLinear,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;QKVParallelLinear&#34;</span>: AscendQKVParallelLinear,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;ReplicatedLinear&#34;</span>: AscendReplicatedLinear,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;DeepseekScalingRotaryEmbedding&#34;</span>: AscendDeepseekScalingRotaryEmbedding,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;VocabParallelEmbedding&#34;</span>: AscendVocabParallelEmbedding,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;ParallelLMHead&#34;</span>: AscendParallelLMHead,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;LogitsProcessor&#34;</span>: AscendLogitsProcessor,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;RMSNorm&#34;</span>: AscendRMSNorm,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;GemmaRMSNorm&#34;</span>: AscendGemmaRMSNorm,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;FusedMoE&#34;</span>: AscendFusedMoE,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;SharedFusedMoE&#34;</span>: AscendSharedFusedMoE,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;MultiHeadLatentAttentionWrapper&#34;</span>: AscendMultiHeadLatentAttention,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;MMEncoderAttention&#34;</span>: AscendMMEncoderAttention,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;ApplyRotaryEmb&#34;</span>: AscendApplyRotaryEmb,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;RMSNormGated&#34;</span>: AscendRMSNormGated,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;Conv3dLayer&#34;</span>: AscendConv3dLayer,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;RelPosAttention&#34;</span>: AscendRelPosAttention,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;CustomQwen2Decoder&#34;</span>: AscendCustomQwen2Decoder,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;GatedDeltaNetAttention&#34;</span>: AscendGatedDeltaNetAttention,
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> name, op_cls <span style="color:#f92672">in</span> REGISTERED_ASCEND_OPS<span style="color:#f92672">.</span>items():
+</span></span><span style="display:flex;"><span>        CustomOp<span style="color:#f92672">.</span>register_oot(_decorated_op_cls<span style="color:#f92672">=</span>op_cls, name<span style="color:#f92672">=</span>name)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># NOTE: Keep this at last to ensure all custom actions are registered</span>
+</span></span><span style="display:flex;"><span>    _ASCEND_CUSTOMOP_IS_REIGISTERED <span style="color:#f92672">=</span> <span style="color:#66d9ef">True</span>
+</span></span></code></pre></div>]]></content><category scheme="https://1024daniel.github.io/tags/vllm" term="vllm" label="vLLM"/></entry><entry><title type="html">Flashcomm开发实现</title><link href="https://1024daniel.github.io/posts/ai/flashcomm%E5%BC%80%E5%8F%91%E5%AE%9E%E7%8E%B0/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/ai/flashcomm%E5%BC%80%E5%8F%91%E5%AE%9E%E7%8E%B0/</id><author><name>Daniel Diana</name></author><published>2026-05-30T09:47:48+08:00</published><updated>2026-05-30T09:47:48+08:00</updated><content type="html"><![CDATA[<p>大模型推理中的AllReduce通信优化技术在vLLM-Ascend中的实现和应用</p>
 <p><a class="link-preview-card" href="https://gitcode.com/ascend-tribe/ascend-inference-cluster/blob/main/FlashComm/ascend-inference-cluster-flashcomm.md" target="_blank" rel="noopener nofollow noreferrer">
   <span class="link-preview-card__content">
     <span class="link-preview-card__title">ascend-inference-cluster/FlashComm/ascend-inference-cluster-flashcomm.md-代码预览-ascend-inference-cluster:基于昇腾的超大规模MoE模型推理部署项目 - AtomGit</span>

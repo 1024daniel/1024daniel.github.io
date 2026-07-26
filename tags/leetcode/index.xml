@@ -1,4 +1,119 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/tags/leetcode/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/tags/leetcode/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><updated>2026-07-26T06:59:31+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/tags/leetcode/</id><entry><title type="html">LeetCode 0743. 网络延迟时间</title><link href="https://1024daniel.github.io/posts/leetcode/leetcode-0743-network-delay-time/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/leetcode/leetcode-0743-network-delay-time/</id><author><name>Daniel Diana</name></author><published>2026-06-15T01:15:03+08:00</published><updated>2026-06-15T01:15:03+08:00</updated><content type="html"><![CDATA[<p><strong>原题链接：</strong><a href="https://leetcode.cn/problems/network-delay-time/" target="_blank" rel="noopener noreferrer">LeetCode 0743. 网络延迟时间</a></p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/tags/leetcode/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/tags/leetcode/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><updated>2026-07-26T15:46:50+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/tags/leetcode/</id><entry><title type="html">LeetCode 0088. 合并两个有序数组</title><link href="https://1024daniel.github.io/posts/leetcode/leetcode-0088-merge-sorted-array/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/leetcode/leetcode-0088-merge-sorted-array/</id><author><name>Daniel Diana</name></author><published>2026-07-23T14:02:01+08:00</published><updated>2026-07-23T14:02:01+08:00</updated><content type="html"><![CDATA[<p><strong>原题链接：</strong><a href="https://leetcode.cn/problems/merge-sorted-array/" target="_blank" rel="noopener noreferrer">LeetCode 0088. 合并两个有序数组</a></p>
+<blockquote>
+</blockquote>
+<h2 id="题目信号">题目信号</h2>
+<ul>
+<li>已知：</li>
+<li>目标：</li>
+<li>数据范围：</li>
+<li>模型识别：</li>
+</ul>
+<h2 id="首次思路">首次思路</h2>
+<p>记录真实推导过程，包括失败方案和卡点。</p>
+<h2 id="解法">解法</h2>
+<h3 id="核心不变量">核心不变量</h3>
+<p>用一句话说明算法为什么正确。</p>
+<h3 id="步骤">步骤</h3>
+<ol>
+<li></li>
+<li></li>
+<li></li>
+</ol>
+<h3 id="代码">代码</h3>
+<p>创建 solution.py、solution.cpp 等文件后，启用下面的 shortcode：</p>
+<h4 id="python">Python</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> typing <span style="color:#f92672">import</span> List
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">merge</span>(self, nums1: List[int], m: int, nums2: List[int], n: int) <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        Do not return anything, modify nums1 in-place instead.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>        i, j <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># 遍历条件是nums1和nums2中所有元素都没有遍历完，注意nums1因为有动态插入操作，所以遍历条件是i &lt; m+j</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span> i <span style="color:#f92672">&lt;</span> m<span style="color:#f92672">+</span>j <span style="color:#f92672">and</span> j <span style="color:#f92672">&lt;</span> n:
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># 只有当nums1[i] &gt;= nums2[j]时，才需要将nums2[j]插入到nums1中</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> nums1[i] <span style="color:#f92672">&gt;=</span> nums2[j]:
+</span></span><span style="display:flex;"><span>                nums1[i<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>:m<span style="color:#f92672">+</span>j<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> nums1[i:m<span style="color:#f92672">+</span>j]
+</span></span><span style="display:flex;"><span>                nums1[i] <span style="color:#f92672">=</span> nums2[j]
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e"># 注意主逻辑是遍历nums1，只有存在插入操作才需要更新nums2索引</span>
+</span></span><span style="display:flex;"><span>                j <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>            i <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># 当遍历完nums1有效元素中可插入位置之后，剩余的位置都是nums2中剩余的元素，直接将nums2剩余元素插入到nums1中即可</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> j <span style="color:#f92672">&lt;</span> n:
+</span></span><span style="display:flex;"><span>            nums1[i:] <span style="color:#f92672">=</span> nums2[j:]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution0</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">merge</span>(
+</span></span><span style="display:flex;"><span>        self,
+</span></span><span style="display:flex;"><span>        nums1: List[int],
+</span></span><span style="display:flex;"><span>        m: int,
+</span></span><span style="display:flex;"><span>        nums2: List[int],
+</span></span><span style="display:flex;"><span>        n: int
+</span></span><span style="display:flex;"><span>    ) <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>        i <span style="color:#f92672">=</span> m <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>          <span style="color:#75715e"># nums1 有效部分末尾</span>
+</span></span><span style="display:flex;"><span>        j <span style="color:#f92672">=</span> n <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>          <span style="color:#75715e"># nums2 末尾</span>
+</span></span><span style="display:flex;"><span>        k <span style="color:#f92672">=</span> m <span style="color:#f92672">+</span> n <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>      <span style="color:#75715e"># 最终数组末尾</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span> i <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">and</span> j <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> nums1[i] <span style="color:#f92672">&gt;</span> nums2[j]:
+</span></span><span style="display:flex;"><span>                nums1[k] <span style="color:#f92672">=</span> nums1[i]
+</span></span><span style="display:flex;"><span>                i <span style="color:#f92672">-=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>                nums1[k] <span style="color:#f92672">=</span> nums2[j]
+</span></span><span style="display:flex;"><span>                j <span style="color:#f92672">-=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            k <span style="color:#f92672">-=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># nums2 如果还有剩余，复制到 nums1 前面</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span> j <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># nums1[k] = nums2[j]</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># j -= 1</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># k -= 1</span>
+</span></span><span style="display:flex;"><span>            nums1[:j <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> nums2[:j <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+</span></span><span style="display:flex;"><span>    nums1 <span style="color:#f92672">=</span> [<span style="color:#f92672">-</span><span style="color:#ae81ff">12</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>]
+</span></span><span style="display:flex;"><span>    m <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    nums2 <span style="color:#f92672">=</span> [<span style="color:#f92672">-</span><span style="color:#ae81ff">49</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">42</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">41</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">40</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">39</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">39</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">39</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">38</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">36</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">34</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">34</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">33</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">33</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">32</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">31</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">29</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">28</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">26</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">26</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">24</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">21</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">20</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">20</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">18</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">16</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">16</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">14</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">11</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">7</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">6</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">5</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">4</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">3</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">3</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">2</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">2</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">2</span>,<span style="color:#ae81ff">2</span>,<span style="color:#ae81ff">6</span>,<span style="color:#ae81ff">7</span>,<span style="color:#ae81ff">7</span>,<span style="color:#ae81ff">8</span>,<span style="color:#ae81ff">10</span>,<span style="color:#ae81ff">10</span>,<span style="color:#ae81ff">13</span>,<span style="color:#ae81ff">13</span>,<span style="color:#ae81ff">15</span>,<span style="color:#ae81ff">15</span>,<span style="color:#ae81ff">16</span>,<span style="color:#ae81ff">17</span>,<span style="color:#ae81ff">17</span>,<span style="color:#ae81ff">19</span>,<span style="color:#ae81ff">19</span>,<span style="color:#ae81ff">20</span>,<span style="color:#ae81ff">20</span>,<span style="color:#ae81ff">20</span>,<span style="color:#ae81ff">21</span>,<span style="color:#ae81ff">21</span>,<span style="color:#ae81ff">22</span>,<span style="color:#ae81ff">22</span>,<span style="color:#ae81ff">24</span>,<span style="color:#ae81ff">24</span>,<span style="color:#ae81ff">25</span>,<span style="color:#ae81ff">26</span>,<span style="color:#ae81ff">27</span>,<span style="color:#ae81ff">29</span>,<span style="color:#ae81ff">30</span>,<span style="color:#ae81ff">30</span>,<span style="color:#ae81ff">30</span>,<span style="color:#ae81ff">35</span>,<span style="color:#ae81ff">36</span>,<span style="color:#ae81ff">36</span>,<span style="color:#ae81ff">36</span>,<span style="color:#ae81ff">37</span>,<span style="color:#ae81ff">39</span>,<span style="color:#ae81ff">40</span>,<span style="color:#ae81ff">41</span>,<span style="color:#ae81ff">42</span>,<span style="color:#ae81ff">45</span>,<span style="color:#ae81ff">46</span>,<span style="color:#ae81ff">46</span>,<span style="color:#ae81ff">46</span>,<span style="color:#ae81ff">47</span>,<span style="color:#ae81ff">48</span>]
+</span></span><span style="display:flex;"><span>    n <span style="color:#f92672">=</span> <span style="color:#ae81ff">90</span>
+</span></span><span style="display:flex;"><span>    solution <span style="color:#f92672">=</span> Solution0()
+</span></span><span style="display:flex;"><span>    solution<span style="color:#f92672">.</span>merge(nums1, m, nums2, n)
+</span></span><span style="display:flex;"><span>    print(nums1)
+</span></span></code></pre></div>
+<h3 id="复杂度">复杂度</h3>
+<ul>
+<li>时间复杂度：$O()$</li>
+<li>空间复杂度：$O()$</li>
+</ul>
+<h2 id="易错点">易错点</h2>
+<ul>
+<li></li>
+</ul>
+<h2 id="迁移题">迁移题</h2>
+<ul>
+<li></li>
+</ul>
+<h2 id="复习记录">复习记录</h2>
+<table>
+  <thead>
+      <tr>
+          <th>日期</th>
+          <th>独立完成</th>
+          <th style="text-align: right">耗时</th>
+          <th>遗忘点</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td></td>
+          <td></td>
+          <td style="text-align: right"></td>
+          <td></td>
+      </tr>
+  </tbody>
+</table>]]></content><category scheme="https://1024daniel.github.io/tags/leetcode" term="leetcode" label="LeetCode"/><category scheme="https://1024daniel.github.io/tags/%E6%95%B0%E7%BB%84" term="%E6%95%B0%E7%BB%84" label="数组"/><category scheme="https://1024daniel.github.io/tags/%E5%8F%8C%E6%8C%87%E9%92%88" term="%E5%8F%8C%E6%8C%87%E9%92%88" label="双指针"/><category scheme="https://1024daniel.github.io/tags/%E6%8E%92%E5%BA%8F" term="%E6%8E%92%E5%BA%8F" label="排序"/></entry><entry><title type="html">LeetCode 0743. 网络延迟时间</title><link href="https://1024daniel.github.io/posts/leetcode/leetcode-0743-network-delay-time/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/leetcode/leetcode-0743-network-delay-time/</id><author><name>Daniel Diana</name></author><published>2026-06-15T01:15:03+08:00</published><updated>2026-06-15T01:15:03+08:00</updated><content type="html"><![CDATA[<p><strong>原题链接：</strong><a href="https://leetcode.cn/problems/network-delay-time/" target="_blank" rel="noopener noreferrer">LeetCode 0743. 网络延迟时间</a></p>
 <blockquote>
 </blockquote>
 <h2 id="题目信号">题目信号</h2>
@@ -215,4 +330,124 @@
           <td>首次建档</td>
       </tr>
   </tbody>
-</table>]]></content><category scheme="https://1024daniel.github.io/tags/leetcode" term="leetcode" label="LeetCode"/><category scheme="https://1024daniel.github.io/tags/%E6%95%B0%E7%BB%84" term="%E6%95%B0%E7%BB%84" label="数组"/><category scheme="https://1024daniel.github.io/tags/%E5%93%88%E5%B8%8C%E8%A1%A8" term="%E5%93%88%E5%B8%8C%E8%A1%A8" label="哈希表"/></entry></feed>
+</table>]]></content><category scheme="https://1024daniel.github.io/tags/leetcode" term="leetcode" label="LeetCode"/><category scheme="https://1024daniel.github.io/tags/%E6%95%B0%E7%BB%84" term="%E6%95%B0%E7%BB%84" label="数组"/><category scheme="https://1024daniel.github.io/tags/%E5%93%88%E5%B8%8C%E8%A1%A8" term="%E5%93%88%E5%B8%8C%E8%A1%A8" label="哈希表"/></entry><entry><title type="html">LeetCode 刷题分类与经验总结</title><link href="https://1024daniel.github.io/posts/%E7%BC%96%E7%A8%8B%E5%88%B7%E9%A2%98%E6%80%BB%E7%BB%93/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/%E7%BC%96%E7%A8%8B%E5%88%B7%E9%A2%98%E6%80%BB%E7%BB%93/</id><author><name>Daniel Diana</name></author><published>2026-05-20T00:11:32+08:00</published><updated>2026-05-20T00:11:32+08:00</updated><content type="html"><![CDATA[<p>这篇文章是我的 LeetCode 刷题总入口。它不按题号堆积答案，而是按“如何识别模型”组织：看到什么信号，选择什么数据结构，如何验证复杂度。</p>
+<h2 id="如何分类">如何分类</h2>
+<p>一道题可以有多个标签，但只选一个“主模型”归档。主模型由解题时最关键的决策决定，而不是由题目表面出现的数据结构决定。</p>
+<table>
+  <thead>
+      <tr>
+          <th>主分类</th>
+          <th>常见信号</th>
+          <th>核心问题</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>数组与哈希</td>
+          <td>查找、去重、配对</td>
+          <td>能否用空间换时间？</td>
+      </tr>
+      <tr>
+          <td>双指针</td>
+          <td>有序、原地修改、两端移动</td>
+          <td>哪个指针在什么条件下移动？</td>
+      </tr>
+      <tr>
+          <td>滑动窗口</td>
+          <td>连续子数组或子串、最长或最短</td>
+          <td>窗口何时扩张和收缩？</td>
+      </tr>
+      <tr>
+          <td>二分查找</td>
+          <td>有序、单调、最小可行值</td>
+          <td>答案空间是否具有单调性？</td>
+      </tr>
+      <tr>
+          <td>栈与单调栈</td>
+          <td>匹配、下一个更大或更小</td>
+          <td>栈中保持什么不变量？</td>
+      </tr>
+      <tr>
+          <td>链表</td>
+          <td>翻转、环、倒数位置</td>
+          <td>指针更新后是否丢失节点？</td>
+      </tr>
+      <tr>
+          <td>树与图</td>
+          <td>层级、路径、连通、依赖</td>
+          <td>状态应放在哪里？</td>
+      </tr>
+      <tr>
+          <td>回溯</td>
+          <td>所有组合、排列、切分方案</td>
+          <td>选择、结束和撤销条件是什么？</td>
+      </tr>
+      <tr>
+          <td>贪心</td>
+          <td>局部选择、区间调度</td>
+          <td>如何证明局部最优导出全局最优？</td>
+      </tr>
+      <tr>
+          <td>动态规划</td>
+          <td>最优值、方案数、可行性</td>
+          <td>状态、转移、初始化和遍历顺序是什么？</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="每道题只记六件事">每道题只记六件事</h2>
+<ol>
+<li><strong>题目信号</strong>：哪些关键词促使我选择这个模型。</li>
+<li><strong>首次思路</strong>：当时怎么想，哪里卡住或走了弯路。</li>
+<li><strong>核心不变量</strong>：算法运行过程中始终为真的条件。</li>
+<li><strong>复杂度</strong>：时间、空间以及能否继续优化。</li>
+<li><strong>错误点</strong>：边界、索引、初始化、语言 API 或思路错误。</li>
+<li><strong>迁移题</strong>：两道使用同一模型的题，用来检验是否真正掌握。</li>
+</ol>
+<h2 id="分类索引">分类索引</h2>
+<p>以下内容根据每篇题解的 tags 自动生成。一道题指定多个分类标签时，会同时出现在多个分类下。</p>
+<h3>数组与哈希</h3>
+  <p>已收录：2 题</p>
+  <ul>
+    <li>
+      <a href="/posts/leetcode/leetcode-0001-two-sum/">0001. 两数之和</a> · Easy · 待复习</li>
+    <li>
+      <a href="/posts/leetcode/leetcode-0088-merge-sorted-array/">0088. 合并两个有序数组</a> · Easy · 待复习</li>
+  </ul><h3>哈希表</h3>
+  <p>已收录：1 题</p>
+  <ul>
+    <li>
+      <a href="/posts/leetcode/leetcode-0001-two-sum/">0001. 两数之和</a> · Easy · 待复习</li>
+  </ul><h3>双指针</h3>
+  <p>已收录：1 题</p>
+  <ul>
+    <li>
+      <a href="/posts/leetcode/leetcode-0088-merge-sorted-array/">0088. 合并两个有序数组</a> · Easy · 待复习</li>
+  </ul><h3>滑动窗口</h3>
+  <p>暂无题解。</p><h3>二分查找</h3>
+  <p>暂无题解。</p><h3>栈与单调栈</h3>
+  <p>暂无题解。</p><h3>链表</h3>
+  <p>暂无题解。</p><h3>树与图</h3>
+  <p>已收录：1 题</p>
+  <ul>
+    <li>
+      <a href="/posts/leetcode/leetcode-0743-network-delay-time/">0743. 网络延迟时间</a> · Medium · 待复习</li>
+  </ul><h3>回溯</h3>
+  <p>暂无题解。</p><h3>贪心</h3>
+  <p>暂无题解。</p><h3>动态规划</h3>
+  <p>暂无题解。</p>
+<h2 id="复习规则">复习规则</h2>
+<ul>
+<li>首次 AC 后在 <strong>1 / 3 / 7 / 14 / 30 天</strong>各复习一次。</li>
+<li>不先看代码，先用一句话说出模型和不变量。</li>
+<li>15 分钟内无法独立完成，就重新标记为待复习。</li>
+<li>同一模型连续做 3 道后穿插 1 道旧题，避免依赖上下文猜模板。</li>
+</ul>
+<h2 id="仓库约定">仓库约定</h2>
+<ul>
+<li>题解文章：content/posts/leetcode-题号-slug.md</li>
+<li>可运行源码：leetcode/solutions/题号区间/题号-slug/solution.后缀</li>
+<li>题解模板：archetypes/leetcode.md</li>
+<li>文章使用 codefile shortcode 直接读取源码，避免维护两份代码。</li>
+<li>原题地址写在 front matter 的 problem_url 中，由 leetcode-link shortcode 渲染。</li>
+<li>分类列表维护在 data/leetcode.toml，题解通过 tags 自动进入对应分类。</li>
+</ul>]]></content><category scheme="https://1024daniel.github.io/tags/leetcode" term="leetcode" label="LeetCode"/><category scheme="https://1024daniel.github.io/tags/%E7%AE%97%E6%B3%95" term="%E7%AE%97%E6%B3%95" label="算法"/></entry></feed>
