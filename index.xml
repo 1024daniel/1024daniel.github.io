@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><link href="https://1024daniel.github.io/index.json" rel="alternate" type="application/json" title="json"/><updated>2026-07-27T20:26:55+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/</id><entry><title type="html">LeetCode 0088. 合并两个有序数组</title><link href="https://1024daniel.github.io/posts/leetcode/leetcode-0088-merge-sorted-array/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/leetcode/leetcode-0088-merge-sorted-array/</id><author><name>Daniel Diana</name></author><published>2026-07-23T14:02:01+08:00</published><updated>2026-07-23T14:02:01+08:00</updated><content type="html"><![CDATA[<p><strong>原题链接：</strong><a href="https://leetcode.cn/problems/merge-sorted-array/" target="_blank" rel="noopener noreferrer">LeetCode 0088. 合并两个有序数组</a></p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><link href="https://1024daniel.github.io/index.json" rel="alternate" type="application/json" title="json"/><updated>2026-07-28T20:21:52+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/</id><entry><title type="html">LeetCode 0088. 合并两个有序数组</title><link href="https://1024daniel.github.io/posts/leetcode/leetcode-0088-merge-sorted-array/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/leetcode/leetcode-0088-merge-sorted-array/</id><author><name>Daniel Diana</name></author><published>2026-07-23T14:02:01+08:00</published><updated>2026-07-23T14:02:01+08:00</updated><content type="html"><![CDATA[<p><strong>原题链接：</strong><a href="https://leetcode.cn/problems/merge-sorted-array/" target="_blank" rel="noopener noreferrer">LeetCode 0088. 合并两个有序数组</a></p>
 <blockquote>
 </blockquote>
 <h2 id="题目信号">题目信号</h2>
@@ -984,7 +984,10 @@ CSS 多栏布局会按可用高度和内容尺寸重新切分文本。由于二�
 <p><a class="link-preview-card" href="https://imnerd.org/doumark.html" target="_blank" rel="noopener nofollow noreferrer">
   <span class="link-preview-card__content">
     <span class="link-preview-card__title">豆瓣书影音同步 GitHub Action | 怡红院落</span>
-      <span class="link-preview-card__description">2023-07-12 更新：《关于豆瓣图片无法直接使用的说明》 简介 doumark-action 是我前段时间造的一个轮子。它是一款 GitHub Action，支持在 GitHub 中同步你的豆瓣书影音数据到本地的文</span>
+      <span class="link-preview-card__description">
+2023-07-12 更新：《关于豆瓣图片无法直接使用的说明》
+简介
+doumark-action 是我前段时间造的一个轮子。它是一款 GitHub Action，支持在 GitHub 中同步你的豆瓣书影音数据到本地的文件或者 Notion 中。我利用它，定时同步我的豆瓣观影数据到我的博客仓库中，并利用 Hugo 读取文件数据渲染成页面，观影 是最终的效果。</span>
     <span class="link-preview-card__meta">怡红院落</span>
   </span>
 </a>
@@ -1837,8 +1840,7 @@ aiv_mte2_&lt;/p>
 
 <a class="link-preview-card" href="https://docs.vllm.ai/projects/ascend/en/latest/" target="_blank" rel="noopener nofollow noreferrer">
   <span class="link-preview-card__content">
-    <span class="link-preview-card__title">vLLM Ascend</span>
-      <span class="link-preview-card__description">vLLM Ascend plugin - a community-maintained hardware plugin for running vLLM on the Ascend NPU.</span>
+    <span class="link-preview-card__title">https://docs.vllm.ai/projects/ascend/en/latest/</span>
     <span class="link-preview-card__meta">docs.vllm.ai</span>
   </span>
 </a>
