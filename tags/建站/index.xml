@@ -1,6 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><updated>2026-08-07T19:54:55+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99/</id><entry><title type="html">本站进化记录-持续更新中</title><link href="https://1024daniel.github.io/posts/%E6%9C%AC%E7%AB%99%E8%BF%9B%E5%8C%96%E8%AE%B0%E5%BD%95/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/%E6%9C%AC%E7%AB%99%E8%BF%9B%E5%8C%96%E8%AE%B0%E5%BD%95/</id><author><name>Daniel Diana</name></author><published>2026-06-05T17:12:53+08:00</published><updated>2026-06-05T17:12:53+08:00</updated><content type="html"><![CDATA[<p>本站一些持续迭代优化记录</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><updated>2026-08-08T01:28:24+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99/</id><entry><title type="html">本站进化记录-持续更新中</title><link href="https://1024daniel.github.io/posts/%E6%9C%AC%E7%AB%99%E8%BF%9B%E5%8C%96%E8%AE%B0%E5%BD%95/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/%E6%9C%AC%E7%AB%99%E8%BF%9B%E5%8C%96%E8%AE%B0%E5%BD%95/</id><author><name>Daniel Diana</name></author><published>2026-06-05T17:12:53+08:00</published><updated>2026-06-05T17:12:53+08:00</updated><content type="html"><![CDATA[<p>本站一些持续迭代优化记录</p>
 <blockquote>
 </blockquote>
+<h3 id="感谢木木大佬">感谢木木大佬</h3>
+<p><a class="link-preview-card" href="https://immmmm.com/" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">首页</span>
+    <span class="link-preview-card__meta">immmmm.com</span>
+  </span>
+</a>
+</p>
 <h3 id="多图排版">多图排版</h3>
 <p><a href="http://snapic.cn/" target="_blank" rel="noopener nofollow noreferrer" >http://snapic.cn/</a></p>
 <p><a class="link-preview-card" href="https://immmmm.com/about-images-gird/" target="_blank" rel="noopener nofollow noreferrer">
@@ -596,6 +604,98 @@ Folder: / (root)</p>
 </a>
 
 post-pages获取发布文章，post-card渲染文章为卡片</p>
+<h3 id="新增music界面">新增music界面</h3>
+<p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io.src/commit/c5f01c82bf1fb6245c65a7dbc9e89fce7a617038" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">https://github.com/1024daniel/1024daniel.github.io.src/commit/c5f01c82bf1fb6245c65a7dbc9e89fce7a617038</span>
+    <span class="link-preview-card__meta">github.com</span>
+  </span>
+</a>
+</p>
+<p>新增music界面 模拟谜底黑胶效果</p>
+<p>云端存储音频 音频需要保证文件内编码cover，lyrics，title等等信息 代码自动从单文件获取这些metadata来进行渲染呈现界面
+对于来源音频不自带这些内容 可以先在网络上获取比如cover，lyrics等信息通过以下命令进行整合成富媒体音频文件</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>pack_music<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  local input<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$1<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>  local base<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>input%.*<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>  local filename<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>base:t<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>  local directory<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>input:h<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>  local extension<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>input##*.<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>  extension<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>extension:l<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  local title<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>filename%%-*<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>  local artist<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>filename#*-<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  local cover<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>  local lyrics<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">for</span> file in <span style="color:#e6db74">&#34;</span>$base<span style="color:#e6db74">.jpg&#34;</span> <span style="color:#e6db74">&#34;</span>$base<span style="color:#e6db74">.jpeg&#34;</span> <span style="color:#e6db74">&#34;</span>$base<span style="color:#e6db74">.png&#34;</span>; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">[[</span> -f <span style="color:#e6db74">&#34;</span>$file<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]]</span> <span style="color:#f92672">&amp;&amp;</span> cover<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$file<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">&amp;&amp;</span> break
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">for</span> file in <span style="color:#e6db74">&#34;</span>$base<span style="color:#e6db74">.lrc&#34;</span> <span style="color:#e6db74">&#34;</span>$base<span style="color:#e6db74">.txt&#34;</span>; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">[[</span> -f <span style="color:#e6db74">&#34;</span>$file<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]]</span> <span style="color:#f92672">&amp;&amp;</span> lyrics<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$file<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">&amp;&amp;</span> break
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> <span style="color:#e6db74">&#34;</span>$artist<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;</span>$title<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;错误：文件名必须使用“歌名 - 歌手”格式&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  local output
+</span></span><span style="display:flex;"><span>  local audio_codec<span style="color:#f92672">=()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> <span style="color:#e6db74">&#34;</span>$extension<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;mp3&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    output<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$directory<span style="color:#e6db74">/</span>$filename<span style="color:#e6db74">.tagged.mp3&#34;</span>
+</span></span><span style="display:flex;"><span>    audio_codec<span style="color:#f92672">=(</span>-c:a copy -id3v2_version 3<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>    output<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$directory<span style="color:#e6db74">/</span>$filename<span style="color:#e6db74">.tagged.flac&#34;</span>
+</span></span><span style="display:flex;"><span>    audio_codec<span style="color:#f92672">=(</span>-c:a flac -compression_level 8<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  local inputs<span style="color:#f92672">=(</span>-i <span style="color:#e6db74">&#34;</span>$input<span style="color:#e6db74">&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  local maps<span style="color:#f92672">=(</span>-map 0:a:0<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  local cover_options<span style="color:#f92672">=()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> -n <span style="color:#e6db74">&#34;</span>$cover<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    inputs<span style="color:#f92672">+=(</span>-i <span style="color:#e6db74">&#34;</span>$cover<span style="color:#e6db74">&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    maps<span style="color:#f92672">+=(</span>-map 1:v:0<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    cover_options<span style="color:#f92672">=(</span>
+</span></span><span style="display:flex;"><span>      -c:v copy
+</span></span><span style="display:flex;"><span>      -disposition:v:0 attached_pic
+</span></span><span style="display:flex;"><span>      -metadata:s:v:0 title<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Album cover&#34;</span>
+</span></span><span style="display:flex;"><span>      -metadata:s:v:0 comment<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Cover (front)&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  local lyric_options<span style="color:#f92672">=()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> -n <span style="color:#e6db74">&#34;</span>$lyrics<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    lyric_options<span style="color:#f92672">=(</span>-metadata lyrics<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>cat <span style="color:#e6db74">&#34;</span>$lyrics<span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  ffmpeg <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    -hide_banner <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>inputs[@]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>maps[@]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>audio_codec[@]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>cover_options[@]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    -metadata title<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$title<span style="color:#e6db74">&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    -metadata artist<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$artist<span style="color:#e6db74">&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>lyric_options[@]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;</span>$output<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">[[</span> $? -eq <span style="color:#ae81ff">0</span> <span style="color:#f92672">]]</span> <span style="color:#f92672">&amp;&amp;</span> echo <span style="color:#e6db74">&#34;生成完成：</span>$output<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 文件名必须是 歌曲名 - 歌手名.扩展名，</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 封面与音频同名，扩展名可以是 .jpg、.jpeg 或 .png</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 歌词与音频同名，扩展名可以是 .lrc 或 .txt</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># MP3 输入输出 .tagged.mp3，音频不重新编码</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># FLAC、WAV、MP4 输入输出 .tagged.flac，使用无损 FLAC</span>
+</span></span><span style="display:flex;"><span>pack_music <span style="color:#e6db74">&#34;歌曲名 - 歌手名.wav&#34;</span>
+</span></span></code></pre></div><p>音频源可以从https://www.fangpi.net/获取</p>
+<p>本地预览使用node scripts/prepare-music-metadata.mjs生成预览数据
+assets/generated/music</p>
 <h3 id="faq">FAQ</h3>
 <p>hugo server -D 构建成功之后但是网页无法打开指定网站
 ping localhost发现无法ping通，查看本地的路由表，发现127.0.0.1被错误的指定到feth3804这个网卡</p>

@@ -1,4 +1,95 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><link href="https://1024daniel.github.io/index.json" rel="alternate" type="application/json" title="json"/><updated>2026-08-07T19:54:55+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/</id><entry><title type="html">LeetCode 0088. 合并两个有序数组</title><link href="https://1024daniel.github.io/posts/leetcode/leetcode-0088-merge-sorted-array/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/leetcode/leetcode-0088-merge-sorted-array/</id><author><name>Daniel Diana</name></author><published>2026-07-23T14:02:01+08:00</published><updated>2026-07-23T14:02:01+08:00</updated><content type="html"><![CDATA[<p><strong>原题链接：</strong><a href="https://leetcode.cn/problems/merge-sorted-array/" target="_blank" rel="noopener noreferrer">LeetCode 0088. 合并两个有序数组</a></p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><link href="https://1024daniel.github.io/index.json" rel="alternate" type="application/json" title="json"/><updated>2026-08-08T01:28:24+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/</id><entry><title type="html">LeetCode 0102. 二叉树的层序遍历</title><link href="https://1024daniel.github.io/posts/leetcode/leetcode-0102-binary-tree-level-order-traversal/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/leetcode/leetcode-0102-binary-tree-level-order-traversal/</id><author><name>Daniel Diana</name></author><published>2026-07-31T11:34:18+08:00</published><updated>2026-07-31T11:34:18+08:00</updated><content type="html"><![CDATA[<p><strong>原题链接：</strong><a href="https://leetcode.cn/problems/binary-tree-level-order-traversal/" target="_blank" rel="noopener noreferrer">LeetCode 0102. 二叉树的层序遍历</a></p>
+<blockquote>
+</blockquote>
+<h2 id="题目信号">题目信号</h2>
+<ul>
+<li>已知：</li>
+<li>目标：</li>
+<li>数据范围：</li>
+<li>模型识别：</li>
+</ul>
+<h2 id="首次思路">首次思路</h2>
+<p>记录真实推导过程，包括失败方案和卡点。</p>
+<h2 id="解法">解法</h2>
+<h3 id="核心不变量">核心不变量</h3>
+<p>用一句话说明算法为什么正确。</p>
+<h3 id="步骤">步骤</h3>
+<ol>
+<li></li>
+<li></li>
+<li></li>
+</ol>
+<h3 id="代码">代码</h3>
+<p>创建 solution.py、solution.cpp 等文件后，启用下面的 shortcode：</p>
+<h4 id="python">Python</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># Definition for a binary tree node.</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> typing <span style="color:#f92672">import</span> List, Optional
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TreeNode</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self, val<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, left<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>, right<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>):
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>val <span style="color:#f92672">=</span> val
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>left <span style="color:#f92672">=</span> left
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>right <span style="color:#f92672">=</span> right
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">fetch</span>(ts: list):
+</span></span><span style="display:flex;"><span>    vals <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>    nodes <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> t <span style="color:#f92672">in</span> ts:
+</span></span><span style="display:flex;"><span>        vals<span style="color:#f92672">.</span>append(t<span style="color:#f92672">.</span>val)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> t<span style="color:#f92672">.</span>left <span style="color:#f92672">is</span> <span style="color:#f92672">not</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>            nodes<span style="color:#f92672">.</span>append(t<span style="color:#f92672">.</span>left)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> t<span style="color:#f92672">.</span>right <span style="color:#f92672">is</span> <span style="color:#f92672">not</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>            nodes<span style="color:#f92672">.</span>append(t<span style="color:#f92672">.</span>right)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> vals, nodes
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">levelOrder</span>(self, root: Optional[TreeNode]) <span style="color:#f92672">-&gt;</span> List[List[int]]:
+</span></span><span style="display:flex;"><span>        res <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> root <span style="color:#f92672">is</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> res
+</span></span><span style="display:flex;"><span>        nodes <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>            root,
+</span></span><span style="display:flex;"><span>        ]
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span> len(nodes) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>            tiers, nodes <span style="color:#f92672">=</span> fetch(nodes)
+</span></span><span style="display:flex;"><span>            res<span style="color:#f92672">.</span>append(tiers)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> res
+</span></span></code></pre></div>
+<h3 id="复杂度">复杂度</h3>
+<ul>
+<li>时间复杂度：$O()$</li>
+<li>空间复杂度：$O()$</li>
+</ul>
+<h2 id="易错点">易错点</h2>
+<ul>
+<li></li>
+</ul>
+<h2 id="迁移题">迁移题</h2>
+<ul>
+<li></li>
+</ul>
+<h2 id="复习记录">复习记录</h2>
+<table>
+  <thead>
+      <tr>
+          <th>日期</th>
+          <th>独立完成</th>
+          <th style="text-align: right">耗时</th>
+          <th>遗忘点</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td></td>
+          <td></td>
+          <td style="text-align: right"></td>
+          <td></td>
+      </tr>
+  </tbody>
+</table>]]></content><category scheme="https://1024daniel.github.io/tags/leetcode" term="leetcode" label="LeetCode"/><category scheme="https://1024daniel.github.io/tags/%E6%A0%91%E4%B8%8E%E5%9B%BE" term="%E6%A0%91%E4%B8%8E%E5%9B%BE" label="树与图"/><category scheme="https://1024daniel.github.io/tags/%E6%A0%91" term="%E6%A0%91" label="树"/><category scheme="https://1024daniel.github.io/tags/%E5%B9%BF%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2" term="%E5%B9%BF%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2" label="广度优先搜索"/><category scheme="https://1024daniel.github.io/tags/%E4%BA%8C%E5%8F%89%E6%A0%91" term="%E4%BA%8C%E5%8F%89%E6%A0%91" label="二叉树"/></entry><entry><title type="html">LeetCode 0088. 合并两个有序数组</title><link href="https://1024daniel.github.io/posts/leetcode/leetcode-0088-merge-sorted-array/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/leetcode/leetcode-0088-merge-sorted-array/</id><author><name>Daniel Diana</name></author><published>2026-07-23T14:02:01+08:00</published><updated>2026-07-23T14:02:01+08:00</updated><content type="html"><![CDATA[<p><strong>原题链接：</strong><a href="https://leetcode.cn/problems/merge-sorted-array/" target="_blank" rel="noopener noreferrer">LeetCode 0088. 合并两个有序数组</a></p>
 <blockquote>
 </blockquote>
 <h2 id="题目信号">题目信号</h2>
@@ -113,7 +204,7 @@
           <td></td>
       </tr>
   </tbody>
-</table>]]></content><category scheme="https://1024daniel.github.io/tags/leetcode" term="leetcode" label="LeetCode"/><category scheme="https://1024daniel.github.io/tags/%E6%95%B0%E7%BB%84" term="%E6%95%B0%E7%BB%84" label="数组"/><category scheme="https://1024daniel.github.io/tags/%E5%8F%8C%E6%8C%87%E9%92%88" term="%E5%8F%8C%E6%8C%87%E9%92%88" label="双指针"/><category scheme="https://1024daniel.github.io/tags/%E6%8E%92%E5%BA%8F" term="%E6%8E%92%E5%BA%8F" label="排序"/></entry><entry><title type="html">写作指导</title><link href="https://1024daniel.github.io/posts/%E5%86%99%E4%BD%9C%E6%8C%87%E5%AF%BC/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/%E5%86%99%E4%BD%9C%E6%8C%87%E5%AF%BC/</id><author><name>Daniel Diana</name></author><published>2026-07-23T12:07:25+08:00</published><updated>2026-07-23T12:07:25+08:00</updated><content type="html"><![CDATA[<p>不限于[本站持续优化特性]/posts/%E6%9C%AC%E7%AB%99%E8%BF%9B%E5%8C%96%E8%AE%B0%E5%BD%95/在md写作的归纳指导</p>
+</table>]]></content><category scheme="https://1024daniel.github.io/tags/leetcode" term="leetcode" label="LeetCode"/><category scheme="https://1024daniel.github.io/tags/%E6%95%B0%E7%BB%84" term="%E6%95%B0%E7%BB%84" label="数组"/><category scheme="https://1024daniel.github.io/tags/%E5%8F%8C%E6%8C%87%E9%92%88" term="%E5%8F%8C%E6%8C%87%E9%92%88" label="双指针"/><category scheme="https://1024daniel.github.io/tags/%E6%8E%92%E5%BA%8F" term="%E6%8E%92%E5%BA%8F" label="排序"/></entry><entry><title type="html">写作指导</title><link href="https://1024daniel.github.io/posts/%E5%86%99%E4%BD%9C%E6%8C%87%E5%AF%BC/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/%E5%86%99%E4%BD%9C%E6%8C%87%E5%AF%BC/</id><author><name>Daniel Diana</name></author><published>2026-07-23T12:07:25+08:00</published><updated>2026-07-23T12:07:25+08:00</updated><content type="html"><![CDATA[<p>不限于<a href="/posts/%E6%9C%AC%E7%AB%99%E8%BF%9B%E5%8C%96%E8%AE%B0%E5%BD%95/">本站持续优化特性</a>在md写作的归纳指导</p>
 <blockquote>
 </blockquote>
 <h3 id="引用本地的文章">引用本地的文章</h3>
@@ -825,9 +916,10 @@ embedding + position -&gt; layer 0 hidden states<br>
 </span></span><span style="display:flex;"><span>Q, K, V <span style="color:#f92672">=</span> split(QKV)
 </span></span></code></pre></div>]]></content><category scheme="https://1024daniel.github.io/tags/attention" term="attention" label="attention"/></entry><entry><title type="html">研发必备 详设文档那些事</title><link href="https://1024daniel.github.io/posts/%E7%A0%94%E5%8F%91%E5%BF%85%E5%A4%87-%E8%AF%A6%E8%AE%BE%E6%96%87%E6%A1%A3%E9%82%A3%E4%BA%9B%E4%BA%8B/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/%E7%A0%94%E5%8F%91%E5%BF%85%E5%A4%87-%E8%AF%A6%E8%AE%BE%E6%96%87%E6%A1%A3%E9%82%A3%E4%BA%9B%E4%BA%8B/</id><author><name>Daniel Diana</name></author><published>2026-06-09T00:54:05+08:00</published><updated>2026-06-09T00:54:05+08:00</updated><content type="html">&lt;h3 id="设计原理图">设计原理图&lt;/h3>
 &lt;p>draw.io app编辑或者直接上传到google drive网页版编辑留存&lt;/p>
-</content></entry><entry><title type="html">待阅读文章</title><link href="https://1024daniel.github.io/posts/%E5%BE%85%E9%98%85%E8%AF%BB%E6%96%87%E7%AB%A0/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/%E5%BE%85%E9%98%85%E8%AF%BB%E6%96%87%E7%AB%A0/</id><author><name>Daniel Diana</name></author><published>2026-06-07T13:09:16+08:00</published><updated>2026-06-07T13:09:16+08:00</updated><content type="html"><![CDATA[<p>some important articles to read</p>
+</content></entry><entry><title type="html">to do list</title><link href="https://1024daniel.github.io/posts/todo/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/todo/</id><author><name>Daniel Diana</name></author><published>2026-06-07T13:09:16+08:00</published><updated>2026-06-07T13:09:16+08:00</updated><content type="html"><![CDATA[<p>some important articles to read and some work be be done</p>
 <blockquote>
 </blockquote>
+<h1 id="articles">articles</h1>
 <p><a class="link-preview-card" href="https://sgurwinderr.com/triton-custom-kernels-pytorch/" target="_blank" rel="noopener nofollow noreferrer">
   <span class="link-preview-card__content">
     <span class="link-preview-card__title">How PyTorch Sees Your Triton Kernel: Using ReLU Kernel in Model with Dynamo and AOT Autograd Backend</span>
@@ -900,7 +992,16 @@ embedding + position -&gt; layer 0 hidden states<br>
       <img loading="lazy" decoding="async" src="https://www.aleksagordic.com/blog/vllm/engine_constructor.png" alt="">
     </span>
 </a>
-</p>]]></content></entry><entry><title type="html">GIT高效命令汇总</title><link href="https://1024daniel.github.io/posts/git%E9%AB%98%E6%95%88%E5%91%BD%E4%BB%A4%E6%B1%87%E6%80%BB/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/git%E9%AB%98%E6%95%88%E5%91%BD%E4%BB%A4%E6%B1%87%E6%80%BB/</id><author><name>Daniel Diana</name></author><published>2026-06-06T16:10:01+08:00</published><updated>2026-06-06T16:10:01+08:00</updated><content type="html"><![CDATA[<p>GIT不好记但是高效命令汇总</p>
+</p>
+<h1 id="to-do-works">to do works</h1>
+<ol>
+<li>oss-album支持指定limit 包含前缀 文件名包含等约束条件 支持传参指定个数图片 不需要单独&quot;阅读全部&quot;来额外要求全量单独网页</li>
+<li>存储介质详情</li>
+<li>指令集</li>
+<li>asic gpu cuda core vector core等等</li>
+<li>gpu架构</li>
+<li>music room(音源上云)</li>
+</ol>]]></content></entry><entry><title type="html">GIT高效命令汇总</title><link href="https://1024daniel.github.io/posts/git%E9%AB%98%E6%95%88%E5%91%BD%E4%BB%A4%E6%B1%87%E6%80%BB/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/git%E9%AB%98%E6%95%88%E5%91%BD%E4%BB%A4%E6%B1%87%E6%80%BB/</id><author><name>Daniel Diana</name></author><published>2026-06-06T16:10:01+08:00</published><updated>2026-06-06T16:10:01+08:00</updated><content type="html"><![CDATA[<p>GIT不好记但是高效命令汇总</p>
 <blockquote>
 </blockquote>
 <p>更改commit message</p>
@@ -911,6 +1012,14 @@ embedding + position -&gt; layer 0 hidden states<br>
 </span></span></code></pre></div>]]></content><category scheme="https://1024daniel.github.io/tags/git" term="git" label="git"/></entry><entry><title type="html">本站进化记录-持续更新中</title><link href="https://1024daniel.github.io/posts/%E6%9C%AC%E7%AB%99%E8%BF%9B%E5%8C%96%E8%AE%B0%E5%BD%95/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/%E6%9C%AC%E7%AB%99%E8%BF%9B%E5%8C%96%E8%AE%B0%E5%BD%95/</id><author><name>Daniel Diana</name></author><published>2026-06-05T17:12:53+08:00</published><updated>2026-06-05T17:12:53+08:00</updated><content type="html"><![CDATA[<p>本站一些持续迭代优化记录</p>
 <blockquote>
 </blockquote>
+<h3 id="感谢木木大佬">感谢木木大佬</h3>
+<p><a class="link-preview-card" href="https://immmmm.com/" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">首页</span>
+    <span class="link-preview-card__meta">immmmm.com</span>
+  </span>
+</a>
+</p>
 <h3 id="多图排版">多图排版</h3>
 <p><a href="http://snapic.cn/" target="_blank" rel="noopener nofollow noreferrer" >http://snapic.cn/</a></p>
 <p><a class="link-preview-card" href="https://immmmm.com/about-images-gird/" target="_blank" rel="noopener nofollow noreferrer">
@@ -1506,6 +1615,98 @@ Folder: / (root)</p>
 </a>
 
 post-pages获取发布文章，post-card渲染文章为卡片</p>
+<h3 id="新增music界面">新增music界面</h3>
+<p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io.src/commit/c5f01c82bf1fb6245c65a7dbc9e89fce7a617038" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">https://github.com/1024daniel/1024daniel.github.io.src/commit/c5f01c82bf1fb6245c65a7dbc9e89fce7a617038</span>
+    <span class="link-preview-card__meta">github.com</span>
+  </span>
+</a>
+</p>
+<p>新增music界面 模拟谜底黑胶效果</p>
+<p>云端存储音频 音频需要保证文件内编码cover，lyrics，title等等信息 代码自动从单文件获取这些metadata来进行渲染呈现界面
+对于来源音频不自带这些内容 可以先在网络上获取比如cover，lyrics等信息通过以下命令进行整合成富媒体音频文件</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>pack_music<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  local input<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$1<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>  local base<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>input%.*<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>  local filename<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>base:t<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>  local directory<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>input:h<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>  local extension<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>input##*.<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>  extension<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>extension:l<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  local title<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>filename%%-*<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>  local artist<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>filename#*-<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  local cover<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>  local lyrics<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">for</span> file in <span style="color:#e6db74">&#34;</span>$base<span style="color:#e6db74">.jpg&#34;</span> <span style="color:#e6db74">&#34;</span>$base<span style="color:#e6db74">.jpeg&#34;</span> <span style="color:#e6db74">&#34;</span>$base<span style="color:#e6db74">.png&#34;</span>; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">[[</span> -f <span style="color:#e6db74">&#34;</span>$file<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]]</span> <span style="color:#f92672">&amp;&amp;</span> cover<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$file<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">&amp;&amp;</span> break
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">for</span> file in <span style="color:#e6db74">&#34;</span>$base<span style="color:#e6db74">.lrc&#34;</span> <span style="color:#e6db74">&#34;</span>$base<span style="color:#e6db74">.txt&#34;</span>; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">[[</span> -f <span style="color:#e6db74">&#34;</span>$file<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]]</span> <span style="color:#f92672">&amp;&amp;</span> lyrics<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$file<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">&amp;&amp;</span> break
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> <span style="color:#e6db74">&#34;</span>$artist<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;</span>$title<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;错误：文件名必须使用“歌名 - 歌手”格式&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  local output
+</span></span><span style="display:flex;"><span>  local audio_codec<span style="color:#f92672">=()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> <span style="color:#e6db74">&#34;</span>$extension<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;mp3&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    output<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$directory<span style="color:#e6db74">/</span>$filename<span style="color:#e6db74">.tagged.mp3&#34;</span>
+</span></span><span style="display:flex;"><span>    audio_codec<span style="color:#f92672">=(</span>-c:a copy -id3v2_version 3<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>    output<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$directory<span style="color:#e6db74">/</span>$filename<span style="color:#e6db74">.tagged.flac&#34;</span>
+</span></span><span style="display:flex;"><span>    audio_codec<span style="color:#f92672">=(</span>-c:a flac -compression_level 8<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  local inputs<span style="color:#f92672">=(</span>-i <span style="color:#e6db74">&#34;</span>$input<span style="color:#e6db74">&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  local maps<span style="color:#f92672">=(</span>-map 0:a:0<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  local cover_options<span style="color:#f92672">=()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> -n <span style="color:#e6db74">&#34;</span>$cover<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    inputs<span style="color:#f92672">+=(</span>-i <span style="color:#e6db74">&#34;</span>$cover<span style="color:#e6db74">&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    maps<span style="color:#f92672">+=(</span>-map 1:v:0<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    cover_options<span style="color:#f92672">=(</span>
+</span></span><span style="display:flex;"><span>      -c:v copy
+</span></span><span style="display:flex;"><span>      -disposition:v:0 attached_pic
+</span></span><span style="display:flex;"><span>      -metadata:s:v:0 title<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Album cover&#34;</span>
+</span></span><span style="display:flex;"><span>      -metadata:s:v:0 comment<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Cover (front)&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  local lyric_options<span style="color:#f92672">=()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> -n <span style="color:#e6db74">&#34;</span>$lyrics<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    lyric_options<span style="color:#f92672">=(</span>-metadata lyrics<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>cat <span style="color:#e6db74">&#34;</span>$lyrics<span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  ffmpeg <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    -hide_banner <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>inputs[@]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>maps[@]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>audio_codec[@]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>cover_options[@]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    -metadata title<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$title<span style="color:#e6db74">&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    -metadata artist<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$artist<span style="color:#e6db74">&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>lyric_options[@]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;</span>$output<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">[[</span> $? -eq <span style="color:#ae81ff">0</span> <span style="color:#f92672">]]</span> <span style="color:#f92672">&amp;&amp;</span> echo <span style="color:#e6db74">&#34;生成完成：</span>$output<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 文件名必须是 歌曲名 - 歌手名.扩展名，</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 封面与音频同名，扩展名可以是 .jpg、.jpeg 或 .png</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 歌词与音频同名，扩展名可以是 .lrc 或 .txt</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># MP3 输入输出 .tagged.mp3，音频不重新编码</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># FLAC、WAV、MP4 输入输出 .tagged.flac，使用无损 FLAC</span>
+</span></span><span style="display:flex;"><span>pack_music <span style="color:#e6db74">&#34;歌曲名 - 歌手名.wav&#34;</span>
+</span></span></code></pre></div><p>音频源可以从https://www.fangpi.net/获取</p>
+<p>本地预览使用node scripts/prepare-music-metadata.mjs生成预览数据
+assets/generated/music</p>
 <h3 id="faq">FAQ</h3>
 <p>hugo server -D 构建成功之后但是网页无法打开指定网站
 ping localhost发现无法ping通，查看本地的路由表，发现127.0.0.1被错误的指定到feth3804这个网卡</p>
@@ -1801,8 +2002,10 @@ aiv_mte2_&lt;/p>
   <p>暂无题解。</p><h3>栈与单调栈</h3>
   <p>暂无题解。</p><h3>链表</h3>
   <p>暂无题解。</p><h3>树与图</h3>
-  <p>已收录：1 题</p>
+  <p>已收录：2 题</p>
   <ul>
+    <li>
+      <a href="/posts/leetcode/leetcode-0102-binary-tree-level-order-traversal/">0102. 二叉树的层序遍历</a> · Medium · 待复习</li>
     <li>
       <a href="/posts/leetcode/leetcode-0743-network-delay-time/">0743. 网络延迟时间</a> · Medium · 待复习</li>
   </ul><h3>回溯</h3>
@@ -1823,7 +2026,7 @@ aiv_mte2_&lt;/p>
 <li>题解模板：archetypes/leetcode.md</li>
 <li>文章使用 codefile shortcode 直接读取源码，避免维护两份代码。</li>
 <li>原题地址写在 front matter 的 problem_url 中，由 leetcode-link shortcode 渲染。</li>
-<li>分类列表维护在 data/leetcode.toml，题解通过 tags 自动进入对应分类。</li>
+<li>分类列表维护在 assets/config/leetcode.toml，题解通过 tags 自动进入对应分类。</li>
 </ul>]]></content><category scheme="https://1024daniel.github.io/tags/leetcode" term="leetcode" label="LeetCode"/><category scheme="https://1024daniel.github.io/tags/%E7%AE%97%E6%B3%95" term="%E7%AE%97%E6%B3%95" label="算法"/></entry><entry><title type="html">vLLM Ascend调优方法论</title><link href="https://1024daniel.github.io/posts/ai/vllm-ascend%E8%B0%83%E4%BC%98%E6%96%B9%E6%B3%95%E8%AE%BA/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/ai/vllm-ascend%E8%B0%83%E4%BC%98%E6%96%B9%E6%B3%95%E8%AE%BA/</id><author><name>Daniel Diana</name></author><published>2026-05-19T14:31:59+08:00</published><updated>2026-05-19T14:31:59+08:00</updated><content type="html"><![CDATA[<p>vLLM Ascend常见参数说明以及调优建议</p>
 <h1 id="1调优方法论">1.调优方法论</h1>
 <p>参考文档:
