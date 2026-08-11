@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><updated>2026-08-11T16:02:11+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99/</id><entry><title type="html">本站进化记录-持续更新中</title><link href="https://1024daniel.github.io/posts/%E6%9C%AC%E7%AB%99%E8%BF%9B%E5%8C%96%E8%AE%B0%E5%BD%95/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/%E6%9C%AC%E7%AB%99%E8%BF%9B%E5%8C%96%E8%AE%B0%E5%BD%95/</id><author><name>Daniel Diana</name></author><published>2026-06-05T17:12:53+08:00</published><updated>2026-06-05T17:12:53+08:00</updated><content type="html"><![CDATA[<p>本站一些持续迭代优化记录</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><updated>2026-08-11T16:19:19+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99/</id><entry><title type="html">本站进化记录-持续更新中</title><link href="https://1024daniel.github.io/posts/%E6%9C%AC%E7%AB%99%E8%BF%9B%E5%8C%96%E8%AE%B0%E5%BD%95/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/%E6%9C%AC%E7%AB%99%E8%BF%9B%E5%8C%96%E8%AE%B0%E5%BD%95/</id><author><name>Daniel Diana</name></author><published>2026-06-05T17:12:53+08:00</published><updated>2026-06-05T17:12:53+08:00</updated><content type="html"><![CDATA[<p>本站一些持续迭代优化记录</p>
 <blockquote>
 </blockquote>
 <h3 id="感谢木木大佬">感谢木木大佬</h3>
@@ -694,8 +694,15 @@ post-pages获取发布文章，post-card渲染文章为卡片</p>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># FLAC、WAV、MP4 输入输出 .tagged.flac，使用无损 FLAC</span>
 </span></span><span style="display:flex;"><span>pack_music <span style="color:#e6db74">&#34;歌曲名 - 歌手名.wav&#34;</span>
 </span></span></code></pre></div><p>音频源可以从https://www.fangpi.net/获取</p>
-<p>本地预览使用node scripts/prepare-music-metadata.mjs生成预览数据
-assets/generated/music</p>
+<p>本地预览使用<code>node scripts/prepare-music-metadata.mjs</code>生成预览数据
+<code>assets/generated/music</code></p>
+<h3 id="新增rds-serverless-数据库支持">新增rds serverless 数据库支持</h3>
+<p>oss上传的文件顺序和实际拍摄顺序会不可避免存在一定的出入，但是对于我们页面展示来说还是要要拍摄时间来严格进行排序<br>
+相册很多 我们当前打开album不会全量加载 而是根据用户滑动来批量加载 针对这批量加载的图片调取先按最容易拿到的上传时间，<br>
+之后通过接口获取到拍摄时间排序呈现 但是存在一个问题就是往下滑动会因为拍摄时间前一批次和后一批没有有序导致重拍重建dom<br>
+网页图片重排 效果不好
+通过数据库后端可以实现插入图片自动获取capture time，gps等等相关信息存入数据库，通过数据库的排序排序将排序好的结果写回到oss manifest json中，之后读取数据不再走oss的list obecjt，而是直接读取这个json文件，可以实现不同批次严格排序ready
+实现参考:<a href="/posts/%E5%BB%BA%E7%AB%99/%E9%98%BF%E9%87%8C%E4%BA%91%E6%95%B0%E6%8D%AEalbum%E5%88%9B%E5%BB%BA/">阿里云数据album创建</a></p>
 <h3 id="faq">FAQ</h3>
 <p>hugo server -D 构建成功之后但是网页无法打开指定网站
 ping localhost发现无法ping通，查看本地的路由表，发现127.0.0.1被错误的指定到feth3804这个网卡</p>
