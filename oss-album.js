@@ -1,6 +1,7 @@
 (function () {
   const bucket = "1024daniel";
   const endpoint = "oss-cn-hangzhou.aliyuncs.com";
+  const manifestPrefix = "manifests/";
   const defaultCacheMaxAge = 1000 * 60 * 30;
   const imagePattern = /\.(jpg|jpeg|png|gif|webp|avif)$/i;
   const thumbnailPattern = /\.(jpe?g|png|webp)$/i;
@@ -8,6 +9,13 @@
   function normalizePrefix(prefix) {
     const value = prefix || "album/";
     return value.endsWith("*") ? value.slice(0, -1) : value;
+  }
+
+  function datasetUrlForPrefix(prefix) {
+    const root = normalizePrefix(prefix).split("/").filter(Boolean)[0];
+    return root
+      ? `https://${bucket}.${endpoint}/${manifestPrefix}${encodeURIComponent(root)}.json`
+      : "";
   }
 
   function escapeHtml(text) {
@@ -111,6 +119,27 @@
     return items.sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified));
   }
 
+  async function fetchAlbumDataset(url, prefix) {
+    const res = await fetch(url, { cache: "no-cache" });
+    if (!res.ok) throw new Error("album dataset failed");
+
+    const payload = await res.json();
+    if (!payload || !Array.isArray(payload.items)) {
+      throw new Error("album dataset invalid");
+    }
+
+    // JSON 已由 MySQL ORDER BY sort_time DESC, id DESC 全局排序。
+    // 只做过滤，不在浏览器内重新排序。
+    return payload.items
+      .filter(item => item && typeof item.key === "string")
+      .filter(item => item.key.startsWith(prefix))
+      .filter(item => imagePattern.test(item.key))
+      .map(item => ({
+        ...item,
+        lastModified: item.uploadTime || ""
+      }));
+  }
+
   function storageArea(name) {
     return name === "local" ? localStorage : sessionStorage;
   }
@@ -148,8 +177,22 @@
     writeJson(area, options.listCacheKey, {
       time: Date.now(),
       latestUpdated: items[0]?.lastModified || "",
+      signature: listSignature(items),
       items
     });
+  }
+
+  function listSignature(items) {
+    // 同时检测数量、重命名和非首张对象的更新。
+    let hash = 2166136261;
+    for (const item of items) {
+      const value = `${item.key}\0${item.lastModified}\n`;
+      for (let index = 0; index < value.length; index += 1) {
+        hash ^= value.charCodeAt(index);
+        hash = Math.imul(hash, 16777619);
+      }
+    }
+    return `${items.length}:${(hash >>> 0).toString(16)}`;
   }
 
   function readTakenTimeCache(key) {
@@ -161,6 +204,9 @@
   }
 
   function displayTime(item, takenTimeCache) {
+    if (item.captureTime || item.sortTime || item.uploadTime) {
+      return formatTime(item.captureTime || item.sortTime || item.uploadTime);
+    }
     const cached = takenTimeCache[item.key];
     const fallbackTime = formatTime(item.lastModified);
 
@@ -172,6 +218,10 @@
   }
 
   function itemTimestamp(item, takenTimeCache) {
+    if (item.sortTime) {
+      const datasetTimestamp = new Date(item.sortTime).getTime();
+      if (Number.isFinite(datasetTimestamp)) return datasetTimestamp;
+    }
     const cached = takenTimeCache[item.key];
     if (cached && cached.lastModified === item.lastModified) {
       if (Number.isFinite(cached.takenTimestamp)) return cached.takenTimestamp;
@@ -284,6 +334,8 @@
   }
 
   function hydrateTakenTimes(items, state, renderId) {
+    if (state.datasetOrdered) return;
+
     const queue = items.filter(item => {
       const cached = state.takenTimeCache[item.key];
       if (cached && cached.lastModified === item.lastModified) {
@@ -424,7 +476,9 @@
 
   function renderAlbum(items, state) {
     ++state.renderId;
-    const sortedItems = sortItemsByTime(items, state.takenTimeCache);
+    const sortedItems = state.datasetOrdered
+      ? items.slice()
+      : sortItemsByTime(items, state.takenTimeCache);
     const visibleItems = Number.isFinite(state.limit)
       ? sortedItems.slice(0, state.limit)
       : sortedItems;
@@ -482,6 +536,8 @@
       takenTimeCache: readTakenTimeCache(
         rawOptions.takenTimeCacheKey || `album:oss:taken-time:${prefix}:v1`
       ),
+      dataUrl: rawOptions.dataUrl || datasetUrlForPrefix(prefix),
+      datasetOrdered: false,
       masonry: wrapperClass.split(/\s+/).includes("album-masonry"),
       renderId: 0,
       latelyTimer: null,
@@ -495,31 +551,47 @@
       window.addEventListener("resize", () => scheduleAlbumLayout(state));
     }
 
-    const cached = readListCache(state);
-    if (cached) renderAlbum(cached.items, state);
+    function renderFromOss() {
+      state.datasetOrdered = false;
+      const cached = readListCache(state);
+      if (cached) renderAlbum(cached.items, state);
 
-    fetchAlbumPages(prefix)
+      fetchAlbumPages(prefix)
+        .then(items => {
+          if (!items.length) {
+            writeListCache(state, []);
+            renderAlbum([], state);
+            return;
+          }
+
+          const freshSignature = listSignature(items);
+          if (!cached || cached.signature !== freshSignature) {
+            writeListCache(state, items);
+            renderAlbum(items, state);
+          }
+        })
+        .catch(() => {
+          if (!cached) {
+            state.albumDom.innerHTML = state.errorText
+              ? `<p class="album-error">${escapeHtml(state.errorText)}</p>`
+              : "";
+          }
+        });
+    }
+
+    if (!state.dataUrl) {
+      renderFromOss();
+      return;
+    }
+
+    // 显式 dataUrl 优先；否则按 prefix 根目录推导 OSS manifests/<root>.json。
+    // JSON 不存在或格式错误时，自动回退 OSS ListObject。
+    fetchAlbumDataset(state.dataUrl, prefix)
       .then(items => {
-        const latestUpdated = items[0]?.lastModified || "";
-
-        if (!items.length) {
-          writeListCache(state, []);
-          renderAlbum([], state);
-          return;
-        }
-
-        if (!cached || cached.latestUpdated !== latestUpdated) {
-          writeListCache(state, items);
-          renderAlbum(items, state);
-        }
+        state.datasetOrdered = true;
+        renderAlbum(items, state);
       })
-      .catch(() => {
-        if (!cached) {
-          state.albumDom.innerHTML = state.errorText
-            ? `<p class="album-error">${escapeHtml(state.errorText)}</p>`
-            : "";
-        }
-      });
+      .catch(renderFromOss);
   }
 
   window.OssAlbum = {

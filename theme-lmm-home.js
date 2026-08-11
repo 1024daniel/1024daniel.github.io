@@ -33,6 +33,7 @@ setInterval(function() {
 window.OssAlbum && window.OssAlbum.render({
   selector: "#album",
   prefix: "album/",
+  // 未显式指定 dataUrl 时，按 prefix 读取 OSS manifests/album.json。
   limit: 6,
   wrapperClass: "memos-photo-wrapper",
   itemClass: "memos-photo",
@@ -50,7 +51,7 @@ window.OssAlbum && window.OssAlbum.render({
   wrapperClass: "memos-photo-wrapper",
   itemClass: "memos-photo",
   eagerCount: 6,
-  listCacheKey: "dishesAlbumDataV4",
+  listCacheKey: "dishesAlbumDataV5",
   listCacheStorage: "local",
   listCacheMaxAge: null,
   takenTimeCacheKey: "dishesAlbumTakenTimeV1",
