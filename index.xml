@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><link href="https://1024daniel.github.io/index.json" rel="alternate" type="application/json" title="json"/><updated>2026-08-12T20:03:04+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/</id><entry><title type="html">阿里云数据album创建</title><link href="https://1024daniel.github.io/posts/%E5%BB%BA%E7%AB%99/%E9%98%BF%E9%87%8C%E4%BA%91%E6%95%B0%E6%8D%AEalbum%E5%88%9B%E5%BB%BA/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/%E5%BB%BA%E7%AB%99/%E9%98%BF%E9%87%8C%E4%BA%91%E6%95%B0%E6%8D%AEalbum%E5%88%9B%E5%BB%BA/</id><author><name>Daniel Diana</name></author><published>2026-08-09T11:05:34+08:00</published><updated>2026-08-09T11:05:34+08:00</updated><content type="html"><![CDATA[<p>接入阿里云serverless rds</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><link href="https://1024daniel.github.io/index.json" rel="alternate" type="application/json" title="json"/><updated>2026-08-13T16:51:43+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/</id><entry><title type="html">阿里云数据album创建</title><link href="https://1024daniel.github.io/posts/%E5%BB%BA%E7%AB%99/%E9%98%BF%E9%87%8C%E4%BA%91%E6%95%B0%E6%8D%AEalbum%E5%88%9B%E5%BB%BA/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/%E5%BB%BA%E7%AB%99/%E9%98%BF%E9%87%8C%E4%BA%91%E6%95%B0%E6%8D%AEalbum%E5%88%9B%E5%BB%BA/</id><author><name>Daniel Diana</name></author><published>2026-08-09T11:05:34+08:00</published><updated>2026-08-09T11:05:34+08:00</updated><content type="html"><![CDATA[<p>接入阿里云serverless rds</p>
 <blockquote>
 </blockquote>
 <h2 id="1-创建数据库实例">1. 创建数据库实例</h2>
@@ -144,7 +144,7 @@ OssPhotoSyncPassRolePolicy</p>
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>  ]
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div>]]></content></entry><entry><title type="html">LeetCode 0102. 二叉树的层序遍历</title><link href="https://1024daniel.github.io/posts/leetcode/leetcode-0102-binary-tree-level-order-traversal/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/leetcode/leetcode-0102-binary-tree-level-order-traversal/</id><author><name>Daniel Diana</name></author><published>2026-07-31T11:34:18+08:00</published><updated>2026-07-31T11:34:18+08:00</updated><content type="html"><![CDATA[<p><strong>原题链接：</strong><a href="https://leetcode.cn/problems/binary-tree-level-order-traversal/" target="_blank" rel="noopener noreferrer">LeetCode 0102. 二叉树的层序遍历</a></p>
+</span></span></code></pre></div>]]></content><category scheme="https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99" term="%E5%BB%BA%E7%AB%99" label="建站"/></entry><entry><title type="html">LeetCode 0102. 二叉树的层序遍历</title><link href="https://1024daniel.github.io/posts/leetcode/leetcode-0102-binary-tree-level-order-traversal/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/leetcode/leetcode-0102-binary-tree-level-order-traversal/</id><author><name>Daniel Diana</name></author><published>2026-07-31T11:34:18+08:00</published><updated>2026-07-31T11:34:18+08:00</updated><content type="html"><![CDATA[<p><strong>原题链接：</strong><a href="https://leetcode.cn/problems/binary-tree-level-order-traversal/" target="_blank" rel="noopener noreferrer">LeetCode 0102. 二叉树的层序遍历</a></p>
 <blockquote>
 </blockquote>
 <h2 id="题目信号">题目信号</h2>
@@ -356,13 +356,7 @@ OssPhotoSyncPassRolePolicy</p>
 <h3 id="引用本地的文章">引用本地的文章</h3>
 <p>这里根目录注意是content</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-go-html-template" data-lang="go-html-template"><span style="display:flex;"><span>[title](<span style="color:#75715e">{{</span><span style="color:#960050;background-color:#1e0010">&lt;</span> <span style="color:#a6e22e">relref</span> <span style="color:#e6db74">&#34;relative_path&#34;</span> <span style="color:#960050;background-color:#1e0010">&gt;</span><span style="color:#75715e">}}</span>)
-</span></span></code></pre></div><h3></h3>]]></content></entry><entry><title type="html">交易信号</title><link href="https://1024daniel.github.io/posts/finance/%E4%BA%A4%E6%98%93%E4%BF%A1%E5%8F%B7/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/finance/%E4%BA%A4%E6%98%93%E4%BF%A1%E5%8F%B7/</id><author><name>Daniel Diana</name></author><published>2026-07-21T10:22:31+08:00</published><updated>2026-07-21T10:22:31+08:00</updated><content type="html"><![CDATA[<p>理解证券交易系统里面的交易信号可以初步指导卖入卖出时机</p>
-<blockquote>
-</blockquote>
-<h3 id="交易变量">交易变量</h3>
-<ul>
-<li>1.MA10 10-period moving average, 即十日交易收盘均线, 通常用于评估短期的趋势</li>
-</ul>]]></content><category scheme="https://1024daniel.github.io/tags/finance" term="finance" label="finance"/><category scheme="https://1024daniel.github.io/tags/trading" term="trading" label="trading"/></entry><entry><title type="html">业界kvcache优化分析</title><link href="https://1024daniel.github.io/posts/ai/%E4%B8%9A%E7%95%8Ckvcache%E4%BC%98%E5%8C%96%E5%88%86%E6%9E%90/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/ai/%E4%B8%9A%E7%95%8Ckvcache%E4%BC%98%E5%8C%96%E5%88%86%E6%9E%90/</id><author><name>Daniel Diana</name></author><published>2026-07-10T01:08:50+08:00</published><updated>2026-07-10T01:08:50+08:00</updated><content type="html"><![CDATA[<p>对于推理来说，上下文长度越长，kvcache需要占用更多的存储，访存是一个重要瓶颈，因此优化kvcache一直都是业界研究的方向</p>
+</span></span></code></pre></div><h3></h3>]]></content></entry><entry><title type="html">业界kvcache优化分析</title><link href="https://1024daniel.github.io/posts/ai/%E4%B8%9A%E7%95%8Ckvcache%E4%BC%98%E5%8C%96%E5%88%86%E6%9E%90/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/ai/%E4%B8%9A%E7%95%8Ckvcache%E4%BC%98%E5%8C%96%E5%88%86%E6%9E%90/</id><author><name>Daniel Diana</name></author><published>2026-07-10T01:08:50+08:00</published><updated>2026-07-10T01:08:50+08:00</updated><content type="html"><![CDATA[<p>对于推理来说，上下文长度越长，kvcache需要占用更多的存储，访存是一个重要瓶颈，因此优化kvcache一直都是业界研究的方向</p>
 <blockquote>
 </blockquote>
 <p><a class="link-preview-card" href="https://chatgpt.com/share/6a4fdda8-6710-83ec-8bf7-8a7a5eb2861a" target="_blank" rel="noopener nofollow noreferrer">
@@ -1855,7 +1849,14 @@ post-pages获取发布文章，post-card渲染文章为卡片</p>
 <p>本地预览使用<code>node scripts/prepare-music-metadata.mjs</code>生成预览数据
 <code>assets/generated/music</code></p>
 <h3 id="新增rds-serverless-数据库支持">新增rds serverless 数据库支持</h3>
-<p>oss上传的文件顺序和实际拍摄顺序会不可避免存在一定的出入，但是对于我们页面展示来说还是要要拍摄时间来严格进行排序<br>
+<p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io.src/commit/08039a466bd621ba9558d89aea0376c978262c00" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">https://github.com/1024daniel/1024daniel.github.io.src/commit/08039a466bd621ba9558d89aea0376c978262c00</span>
+    <span class="link-preview-card__meta">github.com</span>
+  </span>
+</a>
+
+oss上传的文件顺序和实际拍摄顺序会不可避免存在一定的出入，但是对于我们页面展示来说还是要要拍摄时间来严格进行排序<br>
 相册很多 我们当前打开album不会全量加载 而是根据用户滑动来批量加载 针对这批量加载的图片调取先按最容易拿到的上传时间，<br>
 之后通过接口获取到拍摄时间排序呈现 但是存在一个问题就是往下滑动会因为拍摄时间前一批次和后一批没有有序导致重拍重建dom<br>
 网页图片重排 效果不好
@@ -2719,4 +2720,22 @@ partial用法参考<br>
 当 Hugo 把 .md 文章渲染成 HTML 时，遇到某些 Markdown 元素，会优先用这里的模板来自定义输出<br>
 这些文件不会直接对应某个页面，而是在 Hugo 渲染 Markdown 内容时被“插入调用”。<br>
 所以它们很适合做全站统一规则：链接、图片、标题、代码块、表格等都可以通过 _markup 目录扩展</p>
-<p>render-link.html就是渲染md中的链接文件</p>]]></content><category scheme="https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99" term="%E5%BB%BA%E7%AB%99" label="建站"/></entry></feed>
+<p>render-link.html就是渲染md中的链接文件</p>]]></content><category scheme="https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99" term="%E5%BB%BA%E7%AB%99" label="建站"/></entry><entry><title type="html"></title><link href="https://1024daniel.github.io/posts/finance/%E4%BA%A4%E6%98%93%E4%BF%A1%E5%8F%B7/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/finance/%E4%BA%A4%E6%98%93%E4%BF%A1%E5%8F%B7/</id><author><name>Daniel Diana</name></author><published>0001-01-01T00:00:00+00:00</published><updated>0001-01-01T00:00:00+00:00</updated><content type="html"><![CDATA[<p>+++
+date = &lsquo;2026-07-21T10:22:31+08:00&rsquo;
+title = &lsquo;交易信号&rsquo;
+tags = [&ldquo;finance&rdquo;, &ldquo;trading&rdquo;]
+feature = &ldquo;<a class="link-preview-card" href="https://www.anabatic.com/storage/2025/06/pengertian-trading-saham.webp%22" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">https://www.anabatic.com/storage/2025/06/pengertian-trading-saham.webp"</span>
+    <span class="link-preview-card__meta">anabatic.com</span>
+  </span>
+</a>
+
++++
+理解证券交易系统里面的交易信号可以初步指导卖入卖出时机</p>
+<blockquote>
+</blockquote>
+<h3 id="交易变量">交易变量</h3>
+<ul>
+<li>1.MA10 10-period moving average, 即十日交易收盘均线, 通常用于评估短期的趋势</li>
+</ul>]]></content></entry></feed>

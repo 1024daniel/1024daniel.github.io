@@ -1,4 +1,150 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><updated>2026-08-12T20:03:04+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99/</id><entry><title type="html">本站进化记录-持续更新中</title><link href="https://1024daniel.github.io/posts/%E6%9C%AC%E7%AB%99%E8%BF%9B%E5%8C%96%E8%AE%B0%E5%BD%95/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/%E6%9C%AC%E7%AB%99%E8%BF%9B%E5%8C%96%E8%AE%B0%E5%BD%95/</id><author><name>Daniel Diana</name></author><published>2026-06-05T17:12:53+08:00</published><updated>2026-06-05T17:12:53+08:00</updated><content type="html"><![CDATA[<p>本站一些持续迭代优化记录</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><updated>2026-08-13T16:51:43+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99/</id><entry><title type="html">阿里云数据album创建</title><link href="https://1024daniel.github.io/posts/%E5%BB%BA%E7%AB%99/%E9%98%BF%E9%87%8C%E4%BA%91%E6%95%B0%E6%8D%AEalbum%E5%88%9B%E5%BB%BA/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/%E5%BB%BA%E7%AB%99/%E9%98%BF%E9%87%8C%E4%BA%91%E6%95%B0%E6%8D%AEalbum%E5%88%9B%E5%BB%BA/</id><author><name>Daniel Diana</name></author><published>2026-08-09T11:05:34+08:00</published><updated>2026-08-09T11:05:34+08:00</updated><content type="html"><![CDATA[<p>接入阿里云serverless rds</p>
+<blockquote>
+</blockquote>
+<h2 id="1-创建数据库实例">1. 创建数据库实例</h2>
+<h3 id="11-购买数据库实例并配置">1.1 购买数据库实例并配置</h3>
+<p>首先需要去阿里云工作台购买rds数据库，这里购买的是计费方式为serverless的(不访问的时候自动停止不收费，针对博客类比较合适)，<br>
+底层数据库使用MySQL8.0(开源，更通用，资料也多)</p>
+<p><img loading='lazy' decoding="async" src="/imgs/%e6%95%b0%e6%8d%ae%e5%ba%93%e5%88%9b%e5%bb%ba.png" alt="alt text"  /></p>
+<p><img loading='lazy' decoding="async" src="/imgs/%e9%98%bf%e9%87%8c%e4%ba%91%e5%ae%9e%e4%be%8b%e9%85%8d%e7%bd%ae%e5%ae%89%e5%85%a8%e7%94%a8%e6%88%b7.png" alt="alt text"  /></p>
+<p><img loading='lazy' decoding="async" src="/imgs/%e9%98%bf%e9%87%8c%e4%ba%91%e6%95%b0%e6%8d%ae%e5%ba%93%e5%bc%80%e5%90%af%e5%a4%96%e7%bd%91%e9%93%be%e6%8e%a5.png" alt="alt text"  /></p>
+<h3 id="12-在数据库实例创建业务所需要的表">1.2 在数据库实例创建业务所需要的表</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">DATABASE</span> album
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">DEFAULT</span> CHARACTER <span style="color:#66d9ef">SET</span> utf8mb4
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">COLLATE</span> utf8mb4_unicode_ci;
+</span></span></code></pre></div><p>建表</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span>use album;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span>
+</span></span><span style="display:flex;"><span>  photos (
+</span></span><span style="display:flex;"><span>    id BIGINT UNSIGNED AUTO_INCREMENT <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span> <span style="color:#66d9ef">COMMENT</span> <span style="color:#e6db74">&#39;图片唯一ID&#39;</span>,
+</span></span><span style="display:flex;"><span>    user_id BIGINT UNSIGNED <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">COMMENT</span> <span style="color:#e6db74">&#39;用户ID&#39;</span>,
+</span></span><span style="display:flex;"><span>    oss_key VARCHAR(<span style="color:#ae81ff">512</span>) <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">COMMENT</span> <span style="color:#e6db74">&#39;OSS对象路径&#39;</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">-- 文件信息
+</span></span></span><span style="display:flex;"><span>    file_name VARCHAR(<span style="color:#ae81ff">512</span>) <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">COMMENT</span> <span style="color:#e6db74">&#39;文件名&#39;</span>,
+</span></span><span style="display:flex;"><span>    file_type VARCHAR(<span style="color:#ae81ff">32</span>) <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">COMMENT</span> <span style="color:#e6db74">&#39;jpg/heic/png/mp4&#39;</span>,
+</span></span><span style="display:flex;"><span>    file_size BIGINT UNSIGNED <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">COMMENT</span> <span style="color:#e6db74">&#39;文件大小(byte)&#39;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">-- 时间信息
+</span></span></span><span style="display:flex;"><span>    upload_time DATETIME <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">COMMENT</span> <span style="color:#e6db74">&#39;上传OSS时间&#39;</span>,
+</span></span><span style="display:flex;"><span>    capture_time DATETIME <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">COMMENT</span> <span style="color:#e6db74">&#39;EXIF拍摄时间&#39;</span>,
+</span></span><span style="display:flex;"><span>    sort_time DATETIME <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">COMMENT</span> <span style="color:#e6db74">&#39;最终排序时间&#39;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">-- 图片信息
+</span></span></span><span style="display:flex;"><span>    width INT <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">COMMENT</span> <span style="color:#e6db74">&#39;宽&#39;</span>,
+</span></span><span style="display:flex;"><span>    height INT <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">COMMENT</span> <span style="color:#e6db74">&#39;高&#39;</span>,
+</span></span><span style="display:flex;"><span>    orientation INT <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">COMMENT</span> <span style="color:#e6db74">&#39;旋转方向&#39;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">-- EXIF信息
+</span></span></span><span style="display:flex;"><span>    camera_make VARCHAR(<span style="color:#ae81ff">128</span>) <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">COMMENT</span> <span style="color:#e6db74">&#39;相机厂商&#39;</span>,
+</span></span><span style="display:flex;"><span>    camera_model VARCHAR(<span style="color:#ae81ff">128</span>) <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">COMMENT</span> <span style="color:#e6db74">&#39;相机型号&#39;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">-- GPS
+</span></span></span><span style="display:flex;"><span>    latitude DECIMAL(<span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">7</span>) <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">COMMENT</span> <span style="color:#e6db74">&#39;纬度&#39;</span>,
+</span></span><span style="display:flex;"><span>    longitude DECIMAL(<span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">7</span>) <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">COMMENT</span> <span style="color:#e6db74">&#39;经度&#39;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">-- 扩展字段
+</span></span></span><span style="display:flex;"><span>    metadata JSON <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">COMMENT</span> <span style="color:#e6db74">&#39;扩展metadata&#39;</span>,
+</span></span><span style="display:flex;"><span>    created_at <span style="color:#66d9ef">TIMESTAMP</span> <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">CURRENT_TIMESTAMP</span>,
+</span></span><span style="display:flex;"><span>    updated_at <span style="color:#66d9ef">TIMESTAMP</span> <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">CURRENT_TIMESTAMP</span> <span style="color:#66d9ef">ON</span> <span style="color:#66d9ef">UPDATE</span> <span style="color:#66d9ef">CURRENT_TIMESTAMP</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">UNIQUE</span> <span style="color:#66d9ef">KEY</span> uk_oss_key (oss_key),
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">INDEX</span> idx_sort_time (sort_time <span style="color:#66d9ef">DESC</span>),
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">INDEX</span> idx_capture_time (capture_time),
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">INDEX</span> idx_upload_time (upload_time)
+</span></span><span style="display:flex;"><span>  ) ENGINE <span style="color:#f92672">=</span> InnoDB <span style="color:#66d9ef">DEFAULT</span> CHARACTER <span style="color:#66d9ef">SET</span> <span style="color:#f92672">=</span> utf8mb4 <span style="color:#66d9ef">COLLATE</span> <span style="color:#f92672">=</span> utf8mb4_unicode_ci ROW_FORMAT <span style="color:#f92672">=</span> <span style="color:#66d9ef">DYNAMIC</span> <span style="color:#66d9ef">COMMENT</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;相册图片索引表&#39;</span>;
+</span></span></code></pre></div><h2 id="2-函数fc和角色创建">2. 函数fc和角色创建</h2>
+<h3 id="21-部署函数fc">2.1 部署函数fc</h3>
+<p>在env.example配置好阿里云相关的账户密钥等信息之后执行命令行执行以下命令创建阿里云函数fc<br>
+创建完成之后可以直接到阿里云工作台查看</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cd functions/oss-photo-sync
+</span></span><span style="display:flex;"><span>npm install -g @serverless-devs/s
+</span></span><span style="display:flex;"><span>source env.example
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 首次配置阿里云凭证，别名选择 default</span>
+</span></span><span style="display:flex;"><span>s config add
+</span></span><span style="display:flex;"><span>s build --use-docker
+</span></span><span style="display:flex;"><span>s deploy
+</span></span></code></pre></div><p><img loading='lazy' decoding="async" src="/imgs/%e9%98%bf%e9%87%8c%e4%ba%91%e5%87%bd%e6%95%b0fc_oss-photo-sync.png" alt="alt text"  /></p>
+<h3 id="22-创建并配置指定的角色和权限策略">2.2 创建并配置指定的角色和权限策略</h3>
+<p>这里函数fc涉及到的oss触发和rds数据库操作需要不同的角色和权限 需要去阿里云工作台进行创建，参考如下
+<img loading='lazy' decoding="async" src="/imgs/AliyunOSSEventNotificationRole.png" alt="alt text"  />
+notification信任策略</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;Statement&#34;</span>: [
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;Action&#34;</span>: <span style="color:#e6db74">&#34;sts:AssumeRole&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;Effect&#34;</span>: <span style="color:#e6db74">&#34;Allow&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;Principal&#34;</span>: {
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;Service&#34;</span>: [
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">&#34;oss.aliyuncs.com&#34;</span>
+</span></span><span style="display:flex;"><span>        ]
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  ],
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;Version&#34;</span>: <span style="color:#e6db74">&#34;1&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><img loading='lazy' decoding="async" src="/imgs/oss-photo-sync-execution-role.png" alt="alt text"  />
+sync execution role的信任策略</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;Statement&#34;</span>: [
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;Action&#34;</span>: <span style="color:#e6db74">&#34;sts:AssumeRole&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;Effect&#34;</span>: <span style="color:#e6db74">&#34;Allow&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;Principal&#34;</span>: {
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;Service&#34;</span>: [
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">&#34;fc.aliyuncs.com&#34;</span>
+</span></span><span style="display:flex;"><span>        ]
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  ],
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;Version&#34;</span>: <span style="color:#e6db74">&#34;1&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>两个自定义权限策略内容
+OssPhotoSyncPassRolePolicy</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;Version&#34;</span>: <span style="color:#e6db74">&#34;1&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;Statement&#34;</span>: [
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;Effect&#34;</span>: <span style="color:#e6db74">&#34;Allow&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;Action&#34;</span>: <span style="color:#e6db74">&#34;ram:PassRole&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;Resource&#34;</span>: [
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;acs:ram::1487190xxxxx:role/oss-photo-sync-execution-role&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;acs:ram::1487190xxxxx:role/aliyunosseventnotificationrole&#34;</span>
+</span></span><span style="display:flex;"><span>      ]
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;Effect&#34;</span>: <span style="color:#e6db74">&#34;Allow&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;Action&#34;</span>: [
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;vpc:DescribeVSwitchAttributes&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;vpc:DescribeVpcAttribute&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;vpc:DescribeVSwitches&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;vpc:DescribeVpcs&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;ecs:DescribeSecurityGroups&#34;</span>
+</span></span><span style="display:flex;"><span>      ],
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;Resource&#34;</span>: <span style="color:#e6db74">&#34;*&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  ]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>OssPhotoSyncRuntimePolicy</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;Version&#34;</span>: <span style="color:#e6db74">&#34;1&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;Statement&#34;</span>: [
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;Effect&#34;</span>: <span style="color:#e6db74">&#34;Allow&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;Action&#34;</span>: <span style="color:#e6db74">&#34;oss:ListObjects&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;Resource&#34;</span>: <span style="color:#e6db74">&#34;acs:oss:*:*:1024daniel&#34;</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;Effect&#34;</span>: <span style="color:#e6db74">&#34;Allow&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;Action&#34;</span>: <span style="color:#e6db74">&#34;oss:GetObject&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;Resource&#34;</span>: [
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;acs:oss:*:*:1024daniel/album/*&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;acs:oss:*:*:1024daniel/dishes/*&#34;</span>
+</span></span><span style="display:flex;"><span>      ]
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;Effect&#34;</span>: <span style="color:#e6db74">&#34;Allow&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;Action&#34;</span>: <span style="color:#e6db74">&#34;oss:PutObject&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;Resource&#34;</span>: <span style="color:#e6db74">&#34;acs:oss:*:*:1024daniel/manifests/*&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  ]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div>]]></content><category scheme="https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99" term="%E5%BB%BA%E7%AB%99" label="建站"/></entry><entry><title type="html">本站进化记录-持续更新中</title><link href="https://1024daniel.github.io/posts/%E6%9C%AC%E7%AB%99%E8%BF%9B%E5%8C%96%E8%AE%B0%E5%BD%95/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/%E6%9C%AC%E7%AB%99%E8%BF%9B%E5%8C%96%E8%AE%B0%E5%BD%95/</id><author><name>Daniel Diana</name></author><published>2026-06-05T17:12:53+08:00</published><updated>2026-06-05T17:12:53+08:00</updated><content type="html"><![CDATA[<p>本站一些持续迭代优化记录</p>
 <blockquote>
 </blockquote>
 <h3 id="感谢木木大佬">感谢木木大佬</h3>
@@ -697,7 +843,14 @@ post-pages获取发布文章，post-card渲染文章为卡片</p>
 <p>本地预览使用<code>node scripts/prepare-music-metadata.mjs</code>生成预览数据
 <code>assets/generated/music</code></p>
 <h3 id="新增rds-serverless-数据库支持">新增rds serverless 数据库支持</h3>
-<p>oss上传的文件顺序和实际拍摄顺序会不可避免存在一定的出入，但是对于我们页面展示来说还是要要拍摄时间来严格进行排序<br>
+<p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io.src/commit/08039a466bd621ba9558d89aea0376c978262c00" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">https://github.com/1024daniel/1024daniel.github.io.src/commit/08039a466bd621ba9558d89aea0376c978262c00</span>
+    <span class="link-preview-card__meta">github.com</span>
+  </span>
+</a>
+
+oss上传的文件顺序和实际拍摄顺序会不可避免存在一定的出入，但是对于我们页面展示来说还是要要拍摄时间来严格进行排序<br>
 相册很多 我们当前打开album不会全量加载 而是根据用户滑动来批量加载 针对这批量加载的图片调取先按最容易拿到的上传时间，<br>
 之后通过接口获取到拍摄时间排序呈现 但是存在一个问题就是往下滑动会因为拍摄时间前一批次和后一批没有有序导致重拍重建dom<br>
 网页图片重排 效果不好
