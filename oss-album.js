@@ -32,6 +32,25 @@
     return filename.replace(/\.[^.]+$/, "");
   }
 
+  function normalizeKeyword(value) {
+    return String(value || "").normalize("NFKC").trim().toLocaleLowerCase();
+  }
+
+  function filterAlbumItems(items, options) {
+    const prefix = normalizePrefix(options.prefix);
+    const keyword = normalizeKeyword(options.keyword);
+
+    return items
+      .filter(item => item && typeof item.key === "string")
+      .filter(item => item.key.startsWith(prefix))
+      .filter(item => imagePattern.test(item.key))
+      .filter(item => {
+        if (!keyword) return true;
+        const searchable = normalizeKeyword(item.fileName || filenameWithoutExtension(item.key));
+        return searchable.includes(keyword);
+      });
+  }
+
   function imageUrl(key, thumbnail) {
     const baseUrl = encodeURI(`https://${bucket}.${endpoint}/${key}`);
     if (!thumbnail) return baseUrl;
@@ -119,7 +138,7 @@
     return items.sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified));
   }
 
-  async function fetchAlbumDataset(url, prefix) {
+  async function fetchAlbumDataset(url, options) {
     const res = await fetch(url, { cache: "no-cache" });
     if (!res.ok) throw new Error("album dataset failed");
 
@@ -130,10 +149,7 @@
 
     // JSON 已由 MySQL ORDER BY sort_time DESC, id DESC 全局排序。
     // 只做过滤，不在浏览器内重新排序。
-    return payload.items
-      .filter(item => item && typeof item.key === "string")
-      .filter(item => item.key.startsWith(prefix))
-      .filter(item => imagePattern.test(item.key))
+    return filterAlbumItems(payload.items, options)
       .map(item => ({
         ...item,
         lastModified: item.uploadTime || ""
@@ -509,6 +525,7 @@
 
   function render(rawOptions) {
     const prefix = normalizePrefix(rawOptions.prefix);
+    const keyword = String(rawOptions.keyword || "").trim();
     const albumDom = document.querySelector(rawOptions.selector);
     if (!albumDom) return;
     const wrapperClass = rawOptions.wrapperClass || "gallery-photos page";
@@ -516,6 +533,7 @@
     const state = {
       albumDom,
       prefix,
+      keyword,
       emptyText: rawOptions.emptyText || "",
       errorText: rawOptions.errorText || "",
       limit: rawOptions.limit || Infinity,
@@ -554,7 +572,9 @@
     function renderFromOss() {
       state.datasetOrdered = false;
       const cached = readListCache(state);
-      if (cached) renderAlbum(cached.items, state);
+      if (cached) {
+        renderAlbum(filterAlbumItems(cached.items, { prefix, keyword }), state);
+      }
 
       fetchAlbumPages(prefix)
         .then(items => {
@@ -567,7 +587,7 @@
           const freshSignature = listSignature(items);
           if (!cached || cached.signature !== freshSignature) {
             writeListCache(state, items);
-            renderAlbum(items, state);
+            renderAlbum(filterAlbumItems(items, { prefix, keyword }), state);
           }
         })
         .catch(() => {
@@ -586,7 +606,7 @@
 
     // 显式 dataUrl 优先；否则按 prefix 根目录推导 OSS manifests/<root>.json。
     // JSON 不存在或格式错误时，自动回退 OSS ListObject。
-    fetchAlbumDataset(state.dataUrl, prefix)
+    fetchAlbumDataset(state.dataUrl, { prefix, keyword })
       .then(items => {
         state.datasetOrdered = true;
         renderAlbum(items, state);
