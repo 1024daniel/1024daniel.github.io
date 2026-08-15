@@ -1,4 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><link href="https://1024daniel.github.io/index.json" rel="alternate" type="application/json" title="json"/><updated>2026-08-14T19:51:26+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/</id><entry><title type="html">阿里云数据album创建</title><link href="https://1024daniel.github.io/posts/%E5%BB%BA%E7%AB%99/%E9%98%BF%E9%87%8C%E4%BA%91%E6%95%B0%E6%8D%AEalbum%E5%88%9B%E5%BB%BA/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/%E5%BB%BA%E7%AB%99/%E9%98%BF%E9%87%8C%E4%BA%91%E6%95%B0%E6%8D%AEalbum%E5%88%9B%E5%BB%BA/</id><author><name>Daniel Diana</name></author><published>2026-08-09T11:05:34+08:00</published><updated>2026-08-09T11:05:34+08:00</updated><content type="html"><![CDATA[<p>接入阿里云serverless rds</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><link href="https://1024daniel.github.io/index.json" rel="alternate" type="application/json" title="json"/><updated>2026-08-15T14:45:16+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/</id><entry><title type="html">Wsl配置</title><link href="https://1024daniel.github.io/posts/dev_env/wsl%E9%85%8D%E7%BD%AE/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/dev_env/wsl%E9%85%8D%E7%BD%AE/</id><author><name>Daniel Diana</name></author><published>2026-08-14T11:34:26+08:00</published><updated>2026-08-14T11:34:26+08:00</updated><content type="html"><![CDATA[<p>配置终端ll显示正常</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>export LANG<span style="color:#f92672">=</span>C.UTF-8
+</span></span><span style="display:flex;"><span>export LC_ALL<span style="color:#f92672">=</span>C.UTF-8
+</span></span><span style="display:flex;"><span>alias ls<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;ls --color=auto --quoting-style=literal --show-control-chars&#39;</span>
+</span></span><span style="display:flex;"><span>alias ll<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;ls -alF&#39;</span>
+</span></span></code></pre></div>]]></content><category scheme="https://1024daniel.github.io/tags/wsl" term="wsl" label="wsl"/></entry><entry><title type="html">阿里云数据album创建</title><link href="https://1024daniel.github.io/posts/%E5%BB%BA%E7%AB%99/%E9%98%BF%E9%87%8C%E4%BA%91%E6%95%B0%E6%8D%AEalbum%E5%88%9B%E5%BB%BA/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/%E5%BB%BA%E7%AB%99/%E9%98%BF%E9%87%8C%E4%BA%91%E6%95%B0%E6%8D%AEalbum%E5%88%9B%E5%BB%BA/</id><author><name>Daniel Diana</name></author><published>2026-08-09T11:05:34+08:00</published><updated>2026-08-09T11:05:34+08:00</updated><content type="html"><![CDATA[<p>接入阿里云serverless rds</p>
 <blockquote>
 </blockquote>
 <h2 id="1-创建数据库实例">1. 创建数据库实例</h2>
@@ -144,7 +149,82 @@ OssPhotoSyncPassRolePolicy</p>
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>  ]
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div>]]></content><category scheme="https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99" term="%E5%BB%BA%E7%AB%99" label="建站"/></entry><entry><title type="html">LeetCode 0102. 二叉树的层序遍历</title><link href="https://1024daniel.github.io/posts/leetcode/leetcode-0102-binary-tree-level-order-traversal/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/leetcode/leetcode-0102-binary-tree-level-order-traversal/</id><author><name>Daniel Diana</name></author><published>2026-07-31T11:34:18+08:00</published><updated>2026-07-31T11:34:18+08:00</updated><content type="html"><![CDATA[<p><strong>原题链接：</strong><a href="https://leetcode.cn/problems/binary-tree-level-order-traversal/" target="_blank" rel="noopener noreferrer">LeetCode 0102. 二叉树的层序遍历</a></p>
+</span></span></code></pre></div>]]></content><category scheme="https://1024daniel.github.io/tags/%E5%BB%BA%E7%AB%99" term="%E5%BB%BA%E7%AB%99" label="建站"/></entry><entry><title type="html">Vscode_remote_agent</title><link href="https://1024daniel.github.io/posts/ai/vscode_agent_config/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/ai/vscode_agent_config/</id><author><name>Daniel Diana</name></author><published>2026-08-04T17:32:09+08:00</published><updated>2026-08-04T17:32:09+08:00</updated><content type="html"><![CDATA[<p>介绍远程服务器接入codex, claude code等ai助手步骤和方法</p>
+<blockquote>
+</blockquote>
+<h2 id="remote-ssh-linux">remote ssh linux</h2>
+<ol>
+<li>本地笔记本或者环境代理允许lan访问</li>
+<li>需要验证远程服务器能访问本地机器
+首先能直接ping通本地机器ip，认ip通过几层网络中转之后这个ip可能不是本地ip，需要通过http测验
+首先本地机器创建一个python http server服务暴露出特定端口</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python -m http.server <span style="color:#ae81ff">8000</span>
+</span></span></code></pre></div><p>然后服务器上直接<code>curl http://&lt;localip&gt;:8000</code> 观察本地http server是否有响应
+3. 本地ssh config配置remoteforward</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ae81ff">Host 10.0.119.141</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">HostName 10.0.119.141</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">User xfusion</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">RemoteForward 7892 localhost:7892</span>
+</span></span></code></pre></div><p>配置之后vscode remote打开terminal可以直接设置代理为localhost:7892使用
+4. vscode配置代理
+快捷键command shift p打开命令面板输入user setting想着json文件打开新增以下内容</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;http.proxy&#34;</span>:<span style="color:#e6db74">&#34;http://127.0.0.1:7892&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;http.proxySupport&#34;</span>: <span style="color:#e6db74">&#34;override&#34;</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ol start="5">
+<li>远程认证直接拷贝本地机器的auth.json(如果上述finish之后还是存在auth问题执行)
+注意这个操作存在风险是如果别人也是使用同一个linux用户登录可能会继承chatgpt的认证
+<a class="link-preview-card" href="https://zhuanlan.zhihu.com/p/1979600333681497920" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">https://zhuanlan.zhihu.com/p/1979600333681497920</span>
+    <span class="link-preview-card__meta">zhuanlan.zhihu.com</span>
+  </span>
+</a>
+</li>
+</ol>
+<h2 id="local-windows-wsl">local windows wsl</h2>
+<p><a class="link-preview-card" href="https://learn.microsoft.com/en-us/windows/dev-environment/wsl-interop" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">WSL interop — Windows and Linux integration</span>
+      <span class="link-preview-card__description">Use Windows Subsystem for Linux interop to run Linux commands from Windows, access files across operating systems, and integrate networking.</span>
+    <span class="link-preview-card__meta">learn.microsoft.com</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://learn.microsoft.com/en-us/media/open-graph-image.png" alt="">
+    </span>
+</a>
+
+默认wsl的网络模式是nat，在wsl可以查看</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">## ip route</span>
+</span></span><span style="display:flex;"><span>default via 172.28.64.1 dev eth0 proto kernel 
+</span></span><span style="display:flex;"><span>172.28.64.0/20 dev eth0 proto kernel scope link src 172.28.72.34
+</span></span></code></pre></div><p>这里172.28.64.1就是windows hyper-v对应网卡ip</p>
+<pre tabindex="0"><code>以太网适配器 vEthernet (WSL (Hyper-V firewall)):
+
+   连接特定的 DNS 后缀 . . . . . . . :
+   描述. . . . . . . . . . . . . . . : Hyper-V Virtual Ethernet Adapter
+   物理地址. . . . . . . . . . . . . : 00-15-5D-0A-CD-3B
+   DHCP 已启用 . . . . . . . . . . . : 否
+   自动配置已启用. . . . . . . . . . : 是
+   本地链接 IPv6 地址. . . . . . . . : fe80::a038:9a88:27c7:5371%42(首选)
+   IPv4 地址 . . . . . . . . . . . . : 172.28.64.1(首选)
+   子网掩码  . . . . . . . . . . . . : 255.255.240.0
+   默认网关. . . . . . . . . . . . . :
+   DHCPv6 IAID . . . . . . . . . . . : 704648541
+   DHCPv6 客户端 DUID  . . . . . . . : 00-01-00-01-32-01-BF-53-7C-CF-0F-4F-8F-BC
+   TCPIP 上的 NetBIOS  . . . . . . . : 已启用
+</code></pre><p>nat模式下wsl不能继承windows中代理软件的代理localhost:proxyport, 除非指定winhost:proxyport，但是wsl重启对应的ip可能会改变
+使用wsl最近支持的mirrored mode可以解决这个问题 让wsl和windows的网络栈统一
+在windows 新增配置文件%USERPROFILE%.wslconfig，内容如下</p>
+<pre tabindex="0"><code># %USERPROFILE%\.wslconfig
+[wsl2]
+networkingMode=mirrored
+</code></pre><p>之后重启wsl即可</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>wsl --shutdown
+</span></span><span style="display:flex;"><span>wsl
+</span></span></code></pre></div>]]></content><category scheme="https://1024daniel.github.io/tags/vscode" term="vscode" label="vscode"/></entry><entry><title type="html">LeetCode 0102. 二叉树的层序遍历</title><link href="https://1024daniel.github.io/posts/leetcode/leetcode-0102-binary-tree-level-order-traversal/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/leetcode/leetcode-0102-binary-tree-level-order-traversal/</id><author><name>Daniel Diana</name></author><published>2026-07-31T11:34:18+08:00</published><updated>2026-07-31T11:34:18+08:00</updated><content type="html"><![CDATA[<p><strong>原题链接：</strong><a href="https://leetcode.cn/problems/binary-tree-level-order-traversal/" target="_blank" rel="noopener noreferrer">LeetCode 0102. 二叉树的层序遍历</a></p>
 <blockquote>
 </blockquote>
 <h2 id="题目信号">题目信号</h2>
@@ -716,6 +796,8 @@ OssPhotoSyncPassRolePolicy</p>
     class="oss-album-embed__photos"
     data-prefix="album/"
     data-keyword="合肥"
+    data-from=""
+    data-to=""
   ></div>
     <p class="oss-album-embed__more">
       <a href="/album/%e5%90%88%e8%82%a5">查看全部 →</a>
@@ -729,11 +811,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const prefix = albumDom.dataset.prefix || "album/";
   const keyword = albumDom.dataset.keyword || "";
+  const from = albumDom.dataset.from || "";
+  const to = albumDom.dataset.to || "";
 
   window.OssAlbum && window.OssAlbum.render({
     selector: "#oss-album-0",
     prefix,
     keyword,
+    from,
+    to,
     limit:  16 ,
     emptyText: "这里还没有照片。",
     errorText: "相册加载失败，请稍后再试。",
@@ -754,6 +840,8 @@ document.addEventListener("DOMContentLoaded", () => {
     class="oss-album-embed__photos"
     data-prefix="album/"
     data-keyword="上海"
+    data-from=""
+    data-to=""
   ></div>
     <p class="oss-album-embed__more">
       <a href="/album/%e4%b8%8a%e6%b5%b7">查看全部 →</a>
@@ -767,11 +855,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const prefix = albumDom.dataset.prefix || "album/";
   const keyword = albumDom.dataset.keyword || "";
+  const from = albumDom.dataset.from || "";
+  const to = albumDom.dataset.to || "";
 
   window.OssAlbum && window.OssAlbum.render({
     selector: "#oss-album-0",
     prefix,
     keyword,
+    from,
+    to,
     limit:  16 ,
     emptyText: "这里还没有照片。",
     errorText: "相册加载失败，请稍后再试。",
@@ -796,6 +888,8 @@ document.addEventListener("DOMContentLoaded", () => {
     class="oss-album-embed__photos"
     data-prefix="album/"
     data-keyword="天津"
+    data-from=""
+    data-to=""
   ></div>
     <p class="oss-album-embed__more">
       <a href="/album/%e5%a4%a9%e6%b4%a5">查看全部 →</a>
@@ -809,11 +903,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const prefix = albumDom.dataset.prefix || "album/";
   const keyword = albumDom.dataset.keyword || "";
+  const from = albumDom.dataset.from || "";
+  const to = albumDom.dataset.to || "";
 
   window.OssAlbum && window.OssAlbum.render({
     selector: "#oss-album-0",
     prefix,
     keyword,
+    from,
+    to,
     limit:  16 ,
     emptyText: "这里还没有照片。",
     errorText: "相册加载失败，请稍后再试。",
@@ -836,6 +934,8 @@ document.addEventListener("DOMContentLoaded", () => {
     class="oss-album-embed__photos"
     data-prefix="album/"
     data-keyword="深圳"
+    data-from=""
+    data-to=""
   ></div>
     <p class="oss-album-embed__more">
       <a href="/album/%e6%b7%b1%e5%9c%b3">查看全部 →</a>
@@ -849,11 +949,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const prefix = albumDom.dataset.prefix || "album/";
   const keyword = albumDom.dataset.keyword || "";
+  const from = albumDom.dataset.from || "";
+  const to = albumDom.dataset.to || "";
 
   window.OssAlbum && window.OssAlbum.render({
     selector: "#oss-album-0",
     prefix,
     keyword,
+    from,
+    to,
     limit:  16 ,
     emptyText: "这里还没有照片。",
     errorText: "相册加载失败，请稍后再试。",
@@ -876,6 +980,8 @@ document.addEventListener("DOMContentLoaded", () => {
     class="oss-album-embed__photos"
     data-prefix="album/"
     data-keyword="杭州"
+    data-from=""
+    data-to=""
   ></div>
     <p class="oss-album-embed__more">
       <a href="/album/%e6%9d%ad%e5%b7%9e">查看全部 →</a>
@@ -889,11 +995,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const prefix = albumDom.dataset.prefix || "album/";
   const keyword = albumDom.dataset.keyword || "";
+  const from = albumDom.dataset.from || "";
+  const to = albumDom.dataset.to || "";
 
   window.OssAlbum && window.OssAlbum.render({
     selector: "#oss-album-0",
     prefix,
     keyword,
+    from,
+    to,
     limit:  16 ,
     emptyText: "这里还没有照片。",
     errorText: "相册加载失败，请稍后再试。",
@@ -1878,9 +1988,9 @@ oss上传的文件顺序和实际拍摄顺序会不可避免存在一定的出�
 通过数据库后端可以实现插入图片自动获取capture time，gps等等相关信息存入数据库，通过数据库的排序排序将排序好的结果写回到oss manifest json中，之后读取数据不再走oss的list obecjt，而是直接读取这个json文件，可以实现不同批次严格排序ready
 实现参考:<a href="/posts/%E5%BB%BA%E7%AB%99/%E9%98%BF%E9%87%8C%E4%BA%91%E6%95%B0%E6%8D%AEalbum%E5%88%9B%E5%BB%BA/">阿里云数据album创建</a></p>
 <h3 id="oss-ablum-支持keyword">oss-ablum 支持keyword</h3>
-<p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io.src/commit/af29a64662346d203ae8daf62b0cafc64801cfb5" target="_blank" rel="noopener nofollow noreferrer">
+<p><a class="link-preview-card" href="https://github.com/1024daniel/1024daniel.github.io.src/commit/908c86e88271a1b2531a9a93638c4972eebe2f1f" target="_blank" rel="noopener nofollow noreferrer">
   <span class="link-preview-card__content">
-    <span class="link-preview-card__title">https://github.com/1024daniel/1024daniel.github.io.src/commit/af29a64662346d203ae8daf62b0cafc64801cfb5</span>
+    <span class="link-preview-card__title">https://github.com/1024daniel/1024daniel.github.io.src/commit/908c86e88271a1b2531a9a93638c4972eebe2f1f</span>
     <span class="link-preview-card__meta">github.com</span>
   </span>
 </a>
@@ -1893,7 +2003,10 @@ oss-album不需要调用oss listobject接口来获取针对prefix符合的items<
 </span></span></code></pre></div><p>这里会通过prefix查看从那个oss folder获取manifest json数据源 之后通过keyword来进行匹配关键字
 如果是以下写法的话会额外加一个限制就是文件名前缀也必须是杭州的</p>
 <pre tabindex="0"><code>{{&lt; oss-album title=&#34;杭州&#34; prefix=&#34;album/&#34; keyword=&#34;杭州&#34; limit=&#34;16&#34; more=&#34;/album/杭州&#34; &gt;}}
-</code></pre><h3 id="faq">FAQ</h3>
+</code></pre><h3 id="oss-ablum支持time-range-fetch">oss-ablum支持time range fetch</h3>
+<p>支持指定时间跨度获取图片粒度为天</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-go-html-template" data-lang="go-html-template"><span style="display:flex;"><span><span style="color:#75715e">{{</span><span style="color:#960050;background-color:#1e0010">&lt;</span> <span style="color:#a6e22e">oss</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#a6e22e">album</span> <span style="color:#a6e22e">title</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;杭州&#34;</span> <span style="color:#a6e22e">prefix</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;album/&#34;</span> <span style="color:#a6e22e">keyword</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;杭州&#34;</span> <span style="color:#a6e22e">limit</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;16&#34;</span> <span style="color:#a6e22e">more</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/album/杭州&#34;</span> <span style="color:#a6e22e">from</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;2025-08-15&#34;</span> <span style="color:#a6e22e">to</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;2026-08-15&#34;</span>  <span style="color:#960050;background-color:#1e0010">&gt;</span><span style="color:#75715e">}}</span>
+</span></span></code></pre></div><h3 id="faq">FAQ</h3>
 <p>hugo server -D 构建成功之后但是网页无法打开指定网站
 ping localhost发现无法ping通，查看本地的路由表，发现127.0.0.1被错误的指定到feth3804这个网卡</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#f92672">(</span>base<span style="color:#f92672">)</span> daniel@DanielMillers-MacBook-Pro triton-ascend % netstat -rn | grep <span style="color:#ae81ff">127</span>

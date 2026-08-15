@@ -36,9 +36,29 @@
     return String(value || "").normalize("NFKC").trim().toLocaleLowerCase();
   }
 
+  function parseTimeBoundary(value, endOfDay) {
+    const normalized = String(value || "").trim();
+    if (!normalized) return null;
+
+    const dateOnly = /^\d{4}-\d{2}-\d{2}$/.test(normalized);
+    const date = new Date(dateOnly
+      ? `${normalized}T${endOfDay ? "23:59:59.999" : "00:00:00.000"}`
+      : normalized);
+    const timestamp = date.getTime();
+    return Number.isFinite(timestamp) ? timestamp : null;
+  }
+
+  function normalizeFilterOptions(options) {
+    return {
+      prefix: normalizePrefix(options.prefix),
+      keyword: normalizeKeyword(options.keyword),
+      fromTimestamp: parseTimeBoundary(options.from, false),
+      toTimestamp: parseTimeBoundary(options.to, true)
+    };
+  }
+
   function filterAlbumItems(items, options) {
-    const prefix = normalizePrefix(options.prefix);
-    const keyword = normalizeKeyword(options.keyword);
+    const { prefix, keyword, fromTimestamp, toTimestamp } = normalizeFilterOptions(options);
 
     return items
       .filter(item => item && typeof item.key === "string")
@@ -48,6 +68,16 @@
         if (!keyword) return true;
         const searchable = normalizeKeyword(item.fileName || filenameWithoutExtension(item.key));
         return searchable.includes(keyword);
+      })
+      .filter(item => {
+        if (fromTimestamp === null && toTimestamp === null) return true;
+
+        if (!item.captureTime) return false;
+        const captureTimestamp = new Date(item.captureTime).getTime();
+        if (!Number.isFinite(captureTimestamp)) return false;
+        if (fromTimestamp !== null && captureTimestamp < fromTimestamp) return false;
+        if (toTimestamp !== null && captureTimestamp > toTimestamp) return false;
+        return true;
       });
   }
 
@@ -526,6 +556,8 @@
   function render(rawOptions) {
     const prefix = normalizePrefix(rawOptions.prefix);
     const keyword = String(rawOptions.keyword || "").trim();
+    const from = String(rawOptions.from || "").trim();
+    const to = String(rawOptions.to || "").trim();
     const albumDom = document.querySelector(rawOptions.selector);
     if (!albumDom) return;
     const wrapperClass = rawOptions.wrapperClass || "gallery-photos page";
@@ -534,6 +566,8 @@
       albumDom,
       prefix,
       keyword,
+      from,
+      to,
       emptyText: rawOptions.emptyText || "",
       errorText: rawOptions.errorText || "",
       limit: rawOptions.limit || Infinity,
@@ -573,7 +607,7 @@
       state.datasetOrdered = false;
       const cached = readListCache(state);
       if (cached) {
-        renderAlbum(filterAlbumItems(cached.items, { prefix, keyword }), state);
+        renderAlbum(filterAlbumItems(cached.items, { prefix, keyword, from, to }), state);
       }
 
       fetchAlbumPages(prefix)
@@ -587,7 +621,7 @@
           const freshSignature = listSignature(items);
           if (!cached || cached.signature !== freshSignature) {
             writeListCache(state, items);
-            renderAlbum(filterAlbumItems(items, { prefix, keyword }), state);
+            renderAlbum(filterAlbumItems(items, { prefix, keyword, from, to }), state);
           }
         })
         .catch(() => {
@@ -606,7 +640,7 @@
 
     // 显式 dataUrl 优先；否则按 prefix 根目录推导 OSS manifests/<root>.json。
     // JSON 不存在或格式错误时，自动回退 OSS ListObject。
-    fetchAlbumDataset(state.dataUrl, { prefix, keyword })
+    fetchAlbumDataset(state.dataUrl, { prefix, keyword, from, to })
       .then(items => {
         state.datasetOrdered = true;
         renderAlbum(items, state);

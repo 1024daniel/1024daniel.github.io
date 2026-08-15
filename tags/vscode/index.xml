@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/tags/vscode/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/tags/vscode/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><updated>2026-08-15T14:45:16+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/tags/vscode/</id><entry><title type="html">Vscode_remote_agent</title><link href="https://1024daniel.github.io/posts/ai/vscode_agent_config/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/ai/vscode_agent_config/</id><author><name>Daniel Diana</name></author><published>2026-08-04T17:32:09+08:00</published><updated>2026-08-04T17:32:09+08:00</updated><content type="html"><![CDATA[<p>介绍远程服务器接入codex, claude code等ai助手步骤和方法</p>
+<blockquote>
+</blockquote>
+<h2 id="remote-ssh-linux">remote ssh linux</h2>
+<ol>
+<li>本地笔记本或者环境代理允许lan访问</li>
+<li>需要验证远程服务器能访问本地机器
+首先能直接ping通本地机器ip，认ip通过几层网络中转之后这个ip可能不是本地ip，需要通过http测验
+首先本地机器创建一个python http server服务暴露出特定端口</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python -m http.server <span style="color:#ae81ff">8000</span>
+</span></span></code></pre></div><p>然后服务器上直接<code>curl http://&lt;localip&gt;:8000</code> 观察本地http server是否有响应
+3. 本地ssh config配置remoteforward</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ae81ff">Host 10.0.119.141</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">HostName 10.0.119.141</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">User xfusion</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">RemoteForward 7892 localhost:7892</span>
+</span></span></code></pre></div><p>配置之后vscode remote打开terminal可以直接设置代理为localhost:7892使用
+4. vscode配置代理
+快捷键command shift p打开命令面板输入user setting想着json文件打开新增以下内容</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;http.proxy&#34;</span>:<span style="color:#e6db74">&#34;http://127.0.0.1:7892&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;http.proxySupport&#34;</span>: <span style="color:#e6db74">&#34;override&#34;</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ol start="5">
+<li>远程认证直接拷贝本地机器的auth.json(如果上述finish之后还是存在auth问题执行)
+注意这个操作存在风险是如果别人也是使用同一个linux用户登录可能会继承chatgpt的认证
+<a class="link-preview-card" href="https://zhuanlan.zhihu.com/p/1979600333681497920" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">https://zhuanlan.zhihu.com/p/1979600333681497920</span>
+    <span class="link-preview-card__meta">zhuanlan.zhihu.com</span>
+  </span>
+</a>
+</li>
+</ol>
+<h2 id="local-windows-wsl">local windows wsl</h2>
+<p><a class="link-preview-card" href="https://learn.microsoft.com/en-us/windows/dev-environment/wsl-interop" target="_blank" rel="noopener nofollow noreferrer">
+  <span class="link-preview-card__content">
+    <span class="link-preview-card__title">WSL interop — Windows and Linux integration</span>
+      <span class="link-preview-card__description">Use Windows Subsystem for Linux interop to run Linux commands from Windows, access files across operating systems, and integrate networking.</span>
+    <span class="link-preview-card__meta">learn.microsoft.com</span>
+  </span>
+    <span class="link-preview-card__media">
+      <img loading="lazy" decoding="async" src="https://learn.microsoft.com/en-us/media/open-graph-image.png" alt="">
+    </span>
+</a>
+
+默认wsl的网络模式是nat，在wsl可以查看</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">## ip route</span>
+</span></span><span style="display:flex;"><span>default via 172.28.64.1 dev eth0 proto kernel 
+</span></span><span style="display:flex;"><span>172.28.64.0/20 dev eth0 proto kernel scope link src 172.28.72.34
+</span></span></code></pre></div><p>这里172.28.64.1就是windows hyper-v对应网卡ip</p>
+<pre tabindex="0"><code>以太网适配器 vEthernet (WSL (Hyper-V firewall)):
+
+   连接特定的 DNS 后缀 . . . . . . . :
+   描述. . . . . . . . . . . . . . . : Hyper-V Virtual Ethernet Adapter
+   物理地址. . . . . . . . . . . . . : 00-15-5D-0A-CD-3B
+   DHCP 已启用 . . . . . . . . . . . : 否
+   自动配置已启用. . . . . . . . . . : 是
+   本地链接 IPv6 地址. . . . . . . . : fe80::a038:9a88:27c7:5371%42(首选)
+   IPv4 地址 . . . . . . . . . . . . : 172.28.64.1(首选)
+   子网掩码  . . . . . . . . . . . . : 255.255.240.0
+   默认网关. . . . . . . . . . . . . :
+   DHCPv6 IAID . . . . . . . . . . . : 704648541
+   DHCPv6 客户端 DUID  . . . . . . . : 00-01-00-01-32-01-BF-53-7C-CF-0F-4F-8F-BC
+   TCPIP 上的 NetBIOS  . . . . . . . : 已启用
+</code></pre><p>nat模式下wsl不能继承windows中代理软件的代理localhost:proxyport, 除非指定winhost:proxyport，但是wsl重启对应的ip可能会改变
+使用wsl最近支持的mirrored mode可以解决这个问题 让wsl和windows的网络栈统一
+在windows 新增配置文件%USERPROFILE%.wslconfig，内容如下</p>
+<pre tabindex="0"><code># %USERPROFILE%\.wslconfig
+[wsl2]
+networkingMode=mirrored
+</code></pre><p>之后重启wsl即可</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>wsl --shutdown
+</span></span><span style="display:flex;"><span>wsl
+</span></span></code></pre></div>]]></content><category scheme="https://1024daniel.github.io/tags/vscode" term="vscode" label="vscode"/></entry></feed>
