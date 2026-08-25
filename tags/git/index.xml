@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-us"><generator uri="https://gohugo.io/" version="0.161.1">Hugo</generator><title type="html">徐徐微风</title><link href="https://1024daniel.github.io/tags/git/" rel="alternate" type="text/html" title="html"/><link href="https://1024daniel.github.io/tags/git/index.xml" rel="alternate" type="application/rss+xml" title="rss"/><updated>2026-08-24T19:35:43+00:00</updated><author><name>Daniel Diana</name></author><id>https://1024daniel.github.io/tags/git/</id><entry><title type="html">GIT高效命令汇总</title><link href="https://1024daniel.github.io/posts/git%E9%AB%98%E6%95%88%E5%91%BD%E4%BB%A4%E6%B1%87%E6%80%BB/" rel="alternate" type="text/html"/><id>https://1024daniel.github.io/posts/git%E9%AB%98%E6%95%88%E5%91%BD%E4%BB%A4%E6%B1%87%E6%80%BB/</id><author><name>Daniel Diana</name></author><published>2026-06-06T16:10:01+08:00</published><updated>2026-06-06T16:10:01+08:00</updated><content type="html"><![CDATA[<p>GIT不好记但是高效命令汇总</p>
-<blockquote>
-</blockquote>
-<p>更改commit message</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 修改最新commit的message</span>
-</span></span><span style="display:flex;"><span>git commit --amend -m <span style="color:#e6db74">&#34;new message&#34;</span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># A&lt;-B-C-D 修改C的commit message， git rebase 界面直接先将pick改为r之后保存进入reword编辑界面修改message退出即可</span>
-</span></span><span style="display:flex;"><span>git rebase -i C^  <span style="color:#75715e"># git rebase -i D</span>
-</span></span></code></pre></div>]]></content><category scheme="https://1024daniel.github.io/tags/git" term="git" label="git"/></entry></feed>
