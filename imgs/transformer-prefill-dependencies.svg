@@ -1,0 +1,233 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1580" viewBox="0 0 1600 1580" role="img" aria-labelledby="title desc">
+<title id="title">Prefill 的二维依赖：层内读取 K/V，层间传递 hidden states</title>
+<desc id="desc">四列代表四个 token，两行代表 Layer 0 和 Layer 1。每个 token 从词嵌入得到 h0；每层由输入 hidden state 投影出本层 Q、K、V。位置 i 的 attention 读取本层位置 1 到 i 的 K/V，经过输出投影、残差和 FFN 得到下一层 hidden state。本层 K/V 保存为本层 cache，不作为下一层输入。横向箭头表示因果数据依赖，不表示逐 token 串行执行。</desc>
+<defs>
+<marker id="blue" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#2474b8"/></marker>
+<marker id="green" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#137b60"/></marker>
+<marker id="gray" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#64748b"/></marker>
+</defs>
+<style>
+text{font-family:"Noto Sans CJK SC","Microsoft YaHei","PingFang SC",sans-serif;fill:#172c40;font-size:23px}
+.title{font-size:40px;font-weight:700}.sub{font-size:24px;fill:#536579}
+.label{font-size:25px;font-weight:700}.small{font-size:20px}.tiny{font-size:18px}
+.green{fill:#137b60}.blue{fill:#2474b8}.purple{fill:#7752a6}
+</style>
+<rect width="1600" height="1580" fill="#fff"/>
+
+<text x="48" y="64" class="title" text-anchor="start">Prefill：token × layer 的二维依赖</text>
+<text x="48" y="105" class="sub" text-anchor="start">横向：同层 Q 读取因果前缀 K/V     ·     纵向：hidden state 驱动下一层 Q/K/V</text>
+<text x="180" y="153" class="small" text-anchor="start">token 位置 →     四个位置属于同一次 Prompt；不是四个 Decode 步骤</text>
+<text x="355" y="190" class="label" text-anchor="middle">token 1</text>
+<rect x="215" y="207" width="280" height="53" rx="10" fill="#edf8f2" stroke="#8dc6ad" stroke-width="1.5"/>
+<text x="355" y="241" class="small" text-anchor="middle">Embedding[token 1] → h⁰₁</text>
+<text x="675" y="190" class="label" text-anchor="middle">token 2</text>
+<rect x="535" y="207" width="280" height="53" rx="10" fill="#edf8f2" stroke="#8dc6ad" stroke-width="1.5"/>
+<text x="675" y="241" class="small" text-anchor="middle">Embedding[token 2] → h⁰₂</text>
+<text x="995" y="190" class="label" text-anchor="middle">token 3</text>
+<rect x="855" y="207" width="280" height="53" rx="10" fill="#edf8f2" stroke="#8dc6ad" stroke-width="1.5"/>
+<text x="995" y="241" class="small" text-anchor="middle">Embedding[token 3] → h⁰₃</text>
+<text x="1315" y="190" class="label" text-anchor="middle">token 4</text>
+<rect x="1175" y="207" width="280" height="53" rx="10" fill="#edf8f2" stroke="#8dc6ad" stroke-width="1.5"/>
+<text x="1315" y="241" class="small" text-anchor="middle">Embedding[token 4] → h⁰₄</text>
+<text x="36" y="224" class="label" text-anchor="start">词表嵌入</text>
+<text x="36" y="254" class="tiny" text-anchor="start">不是注意力层</text>
+<rect x="180" y="285" width="1280" height="395" rx="14" fill="#f8fbff" stroke="#c7d9ea" stroke-width="1.5"/>
+<text x="35" y="328" class="label" text-anchor="start">Layer 0</text>
+<text x="35" y="365" class="small" text-anchor="start">本层权重</text>
+<text x="35" y="394" class="small" text-anchor="start">W⁰Q / K / V</text>
+<text x="35" y="437" class="tiny" text-anchor="start">同层各位置</text>
+<text x="35" y="465" class="tiny" text-anchor="start">共享权重</text>
+<text x="35" y="567" class="tiny" text-anchor="start">因果 Attention</text>
+<text x="35" y="595" class="small blue" text-anchor="start">只读 j ≤ i</text>
+<path d="M275 448 V540" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#gray)"/>
+<path d="M415 448 V540" fill="none" stroke="#2474b8" stroke-width="2" marker-end="url(#blue)"/>
+<path d="M595 448 V540" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#gray)"/>
+<path d="M735 448 V540" fill="none" stroke="#2474b8" stroke-width="2" marker-end="url(#blue)"/>
+<path d="M415 448 V484 H685 V540" fill="none" stroke="#2474b8" stroke-width="1.8" marker-end="url(#blue)"/>
+<path d="M915 448 V540" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#gray)"/>
+<path d="M1055 448 V540" fill="none" stroke="#2474b8" stroke-width="2" marker-end="url(#blue)"/>
+<path d="M415 448 V504 H1005 V540" fill="none" stroke="#2474b8" stroke-width="1.8" marker-end="url(#blue)"/>
+<path d="M735 448 V504 H1019 V540" fill="none" stroke="#2474b8" stroke-width="1.8" marker-end="url(#blue)"/>
+<path d="M1235 448 V540" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#gray)"/>
+<path d="M1375 448 V540" fill="none" stroke="#2474b8" stroke-width="2" marker-end="url(#blue)"/>
+<path d="M415 448 V524 H1325 V540" fill="none" stroke="#2474b8" stroke-width="1.8" marker-end="url(#blue)"/>
+<path d="M735 448 V524 H1339 V540" fill="none" stroke="#2474b8" stroke-width="1.8" marker-end="url(#blue)"/>
+<path d="M1055 448 V524 H1353 V540" fill="none" stroke="#2474b8" stroke-width="1.8" marker-end="url(#blue)"/>
+<rect x="215" y="305" width="280" height="72" rx="10" fill="#fff" stroke="#cad6e3" stroke-width="1.5"/>
+<text x="355" y="333" class="small" text-anchor="middle">Norm(h⁰₁) × W⁰Q / K / V</text>
+<text x="355" y="362" class="tiny" text-anchor="middle">逐 token 线性投影</text>
+<path d="M275 377 V397" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#gray)"/>
+<path d="M415 377 V397" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#gray)"/>
+<rect x="233" y="398" width="84" height="50" rx="10" fill="#f0f4f8" stroke="#afbdca" stroke-width="1.5"/>
+<text x="275" y="431" class="label" text-anchor="middle">Q⁰₁</text>
+<rect x="346" y="398" width="139" height="50" rx="10" fill="#f2edfb" stroke="#b5a0d2" stroke-width="1.5"/>
+<text x="415" y="430" class="label purple" text-anchor="middle">K⁰₁  V⁰₁</text>
+<rect x="215" y="542" width="280" height="58" rx="10" fill="#eaf4fd" stroke="#8cbade" stroke-width="1.5"/>
+<text x="355" y="567" class="small" text-anchor="middle">Attention(Q⁰₁, KV⁰[1:1])</text>
+<text x="355" y="591" class="tiny blue" text-anchor="middle">前序位置 + 当前位置</text>
+<path d="M355 600 V619" fill="none" stroke="#137b60" stroke-width="2" marker-end="url(#green)"/>
+<rect x="215" y="620" width="280" height="43" rx="10" fill="#edf8f2" stroke="#8dc6ad" stroke-width="1.5"/>
+<text x="355" y="648" class="small" text-anchor="middle">O 投影 + 残差 + FFN¹</text>
+<rect x="535" y="305" width="280" height="72" rx="10" fill="#fff" stroke="#cad6e3" stroke-width="1.5"/>
+<text x="675" y="333" class="small" text-anchor="middle">Norm(h⁰₂) × W⁰Q / K / V</text>
+<text x="675" y="362" class="tiny" text-anchor="middle">逐 token 线性投影</text>
+<path d="M595 377 V397" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#gray)"/>
+<path d="M735 377 V397" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#gray)"/>
+<rect x="553" y="398" width="84" height="50" rx="10" fill="#f0f4f8" stroke="#afbdca" stroke-width="1.5"/>
+<text x="595" y="431" class="label" text-anchor="middle">Q⁰₂</text>
+<rect x="666" y="398" width="139" height="50" rx="10" fill="#f2edfb" stroke="#b5a0d2" stroke-width="1.5"/>
+<text x="735" y="430" class="label purple" text-anchor="middle">K⁰₂  V⁰₂</text>
+<rect x="535" y="542" width="280" height="58" rx="10" fill="#eaf4fd" stroke="#8cbade" stroke-width="1.5"/>
+<text x="675" y="567" class="small" text-anchor="middle">Attention(Q⁰₂, KV⁰[1:2])</text>
+<text x="675" y="591" class="tiny blue" text-anchor="middle">前序位置 + 当前位置</text>
+<path d="M675 600 V619" fill="none" stroke="#137b60" stroke-width="2" marker-end="url(#green)"/>
+<rect x="535" y="620" width="280" height="43" rx="10" fill="#edf8f2" stroke="#8dc6ad" stroke-width="1.5"/>
+<text x="675" y="648" class="small" text-anchor="middle">O 投影 + 残差 + FFN¹</text>
+<rect x="855" y="305" width="280" height="72" rx="10" fill="#fff" stroke="#cad6e3" stroke-width="1.5"/>
+<text x="995" y="333" class="small" text-anchor="middle">Norm(h⁰₃) × W⁰Q / K / V</text>
+<text x="995" y="362" class="tiny" text-anchor="middle">逐 token 线性投影</text>
+<path d="M915 377 V397" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#gray)"/>
+<path d="M1055 377 V397" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#gray)"/>
+<rect x="873" y="398" width="84" height="50" rx="10" fill="#f0f4f8" stroke="#afbdca" stroke-width="1.5"/>
+<text x="915" y="431" class="label" text-anchor="middle">Q⁰₃</text>
+<rect x="986" y="398" width="139" height="50" rx="10" fill="#f2edfb" stroke="#b5a0d2" stroke-width="1.5"/>
+<text x="1055" y="430" class="label purple" text-anchor="middle">K⁰₃  V⁰₃</text>
+<rect x="855" y="542" width="280" height="58" rx="10" fill="#eaf4fd" stroke="#8cbade" stroke-width="1.5"/>
+<text x="995" y="567" class="small" text-anchor="middle">Attention(Q⁰₃, KV⁰[1:3])</text>
+<text x="995" y="591" class="tiny blue" text-anchor="middle">前序位置 + 当前位置</text>
+<path d="M995 600 V619" fill="none" stroke="#137b60" stroke-width="2" marker-end="url(#green)"/>
+<rect x="855" y="620" width="280" height="43" rx="10" fill="#edf8f2" stroke="#8dc6ad" stroke-width="1.5"/>
+<text x="995" y="648" class="small" text-anchor="middle">O 投影 + 残差 + FFN¹</text>
+<rect x="1175" y="305" width="280" height="72" rx="10" fill="#fff" stroke="#cad6e3" stroke-width="1.5"/>
+<text x="1315" y="333" class="small" text-anchor="middle">Norm(h⁰₄) × W⁰Q / K / V</text>
+<text x="1315" y="362" class="tiny" text-anchor="middle">逐 token 线性投影</text>
+<path d="M1235 377 V397" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#gray)"/>
+<path d="M1375 377 V397" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#gray)"/>
+<rect x="1193" y="398" width="84" height="50" rx="10" fill="#f0f4f8" stroke="#afbdca" stroke-width="1.5"/>
+<text x="1235" y="431" class="label" text-anchor="middle">Q⁰₄</text>
+<rect x="1306" y="398" width="139" height="50" rx="10" fill="#f2edfb" stroke="#b5a0d2" stroke-width="1.5"/>
+<text x="1375" y="430" class="label purple" text-anchor="middle">K⁰₄  V⁰₄</text>
+<rect x="1175" y="542" width="280" height="58" rx="10" fill="#eaf4fd" stroke="#8cbade" stroke-width="1.5"/>
+<text x="1315" y="567" class="small" text-anchor="middle">Attention(Q⁰₄, KV⁰[1:4])</text>
+<text x="1315" y="591" class="tiny blue" text-anchor="middle">前序位置 + 当前位置</text>
+<path d="M1315 600 V619" fill="none" stroke="#137b60" stroke-width="2" marker-end="url(#green)"/>
+<rect x="1175" y="620" width="280" height="43" rx="10" fill="#edf8f2" stroke="#8dc6ad" stroke-width="1.5"/>
+<text x="1315" y="648" class="small" text-anchor="middle">O 投影 + 残差 + FFN¹</text>
+<text x="35" y="493" class="tiny purple" text-anchor="start">K/V 按层缓存</text>
+<text x="35" y="522" class="tiny purple" text-anchor="start">不跨层传递</text>
+<rect x="180" y="770" width="1280" height="395" rx="14" fill="#f8fbff" stroke="#c7d9ea" stroke-width="1.5"/>
+<text x="35" y="813" class="label" text-anchor="start">Layer 1</text>
+<text x="35" y="850" class="small" text-anchor="start">本层权重</text>
+<text x="35" y="879" class="small" text-anchor="start">W¹Q / K / V</text>
+<text x="35" y="922" class="tiny" text-anchor="start">同层各位置</text>
+<text x="35" y="950" class="tiny" text-anchor="start">共享权重</text>
+<text x="35" y="1052" class="tiny" text-anchor="start">因果 Attention</text>
+<text x="35" y="1080" class="small blue" text-anchor="start">只读 j ≤ i</text>
+<path d="M275 933 V1025" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#gray)"/>
+<path d="M415 933 V1025" fill="none" stroke="#2474b8" stroke-width="2" marker-end="url(#blue)"/>
+<path d="M595 933 V1025" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#gray)"/>
+<path d="M735 933 V1025" fill="none" stroke="#2474b8" stroke-width="2" marker-end="url(#blue)"/>
+<path d="M415 933 V969 H685 V1025" fill="none" stroke="#2474b8" stroke-width="1.8" marker-end="url(#blue)"/>
+<path d="M915 933 V1025" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#gray)"/>
+<path d="M1055 933 V1025" fill="none" stroke="#2474b8" stroke-width="2" marker-end="url(#blue)"/>
+<path d="M415 933 V989 H1005 V1025" fill="none" stroke="#2474b8" stroke-width="1.8" marker-end="url(#blue)"/>
+<path d="M735 933 V989 H1019 V1025" fill="none" stroke="#2474b8" stroke-width="1.8" marker-end="url(#blue)"/>
+<path d="M1235 933 V1025" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#gray)"/>
+<path d="M1375 933 V1025" fill="none" stroke="#2474b8" stroke-width="2" marker-end="url(#blue)"/>
+<path d="M415 933 V1009 H1325 V1025" fill="none" stroke="#2474b8" stroke-width="1.8" marker-end="url(#blue)"/>
+<path d="M735 933 V1009 H1339 V1025" fill="none" stroke="#2474b8" stroke-width="1.8" marker-end="url(#blue)"/>
+<path d="M1055 933 V1009 H1353 V1025" fill="none" stroke="#2474b8" stroke-width="1.8" marker-end="url(#blue)"/>
+<rect x="215" y="790" width="280" height="72" rx="10" fill="#fff" stroke="#cad6e3" stroke-width="1.5"/>
+<text x="355" y="818" class="small" text-anchor="middle">Norm(h¹₁) × W¹Q / K / V</text>
+<text x="355" y="847" class="tiny" text-anchor="middle">逐 token 线性投影</text>
+<path d="M275 862 V882" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#gray)"/>
+<path d="M415 862 V882" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#gray)"/>
+<rect x="233" y="883" width="84" height="50" rx="10" fill="#f0f4f8" stroke="#afbdca" stroke-width="1.5"/>
+<text x="275" y="916" class="label" text-anchor="middle">Q¹₁</text>
+<rect x="346" y="883" width="139" height="50" rx="10" fill="#f2edfb" stroke="#b5a0d2" stroke-width="1.5"/>
+<text x="415" y="915" class="label purple" text-anchor="middle">K¹₁  V¹₁</text>
+<rect x="215" y="1027" width="280" height="58" rx="10" fill="#eaf4fd" stroke="#8cbade" stroke-width="1.5"/>
+<text x="355" y="1052" class="small" text-anchor="middle">Attention(Q¹₁, KV¹[1:1])</text>
+<text x="355" y="1076" class="tiny blue" text-anchor="middle">前序位置 + 当前位置</text>
+<path d="M355 1085 V1104" fill="none" stroke="#137b60" stroke-width="2" marker-end="url(#green)"/>
+<rect x="215" y="1105" width="280" height="43" rx="10" fill="#edf8f2" stroke="#8dc6ad" stroke-width="1.5"/>
+<text x="355" y="1133" class="small" text-anchor="middle">O 投影 + 残差 + FFN¹</text>
+<rect x="535" y="790" width="280" height="72" rx="10" fill="#fff" stroke="#cad6e3" stroke-width="1.5"/>
+<text x="675" y="818" class="small" text-anchor="middle">Norm(h¹₂) × W¹Q / K / V</text>
+<text x="675" y="847" class="tiny" text-anchor="middle">逐 token 线性投影</text>
+<path d="M595 862 V882" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#gray)"/>
+<path d="M735 862 V882" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#gray)"/>
+<rect x="553" y="883" width="84" height="50" rx="10" fill="#f0f4f8" stroke="#afbdca" stroke-width="1.5"/>
+<text x="595" y="916" class="label" text-anchor="middle">Q¹₂</text>
+<rect x="666" y="883" width="139" height="50" rx="10" fill="#f2edfb" stroke="#b5a0d2" stroke-width="1.5"/>
+<text x="735" y="915" class="label purple" text-anchor="middle">K¹₂  V¹₂</text>
+<rect x="535" y="1027" width="280" height="58" rx="10" fill="#eaf4fd" stroke="#8cbade" stroke-width="1.5"/>
+<text x="675" y="1052" class="small" text-anchor="middle">Attention(Q¹₂, KV¹[1:2])</text>
+<text x="675" y="1076" class="tiny blue" text-anchor="middle">前序位置 + 当前位置</text>
+<path d="M675 1085 V1104" fill="none" stroke="#137b60" stroke-width="2" marker-end="url(#green)"/>
+<rect x="535" y="1105" width="280" height="43" rx="10" fill="#edf8f2" stroke="#8dc6ad" stroke-width="1.5"/>
+<text x="675" y="1133" class="small" text-anchor="middle">O 投影 + 残差 + FFN¹</text>
+<rect x="855" y="790" width="280" height="72" rx="10" fill="#fff" stroke="#cad6e3" stroke-width="1.5"/>
+<text x="995" y="818" class="small" text-anchor="middle">Norm(h¹₃) × W¹Q / K / V</text>
+<text x="995" y="847" class="tiny" text-anchor="middle">逐 token 线性投影</text>
+<path d="M915 862 V882" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#gray)"/>
+<path d="M1055 862 V882" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#gray)"/>
+<rect x="873" y="883" width="84" height="50" rx="10" fill="#f0f4f8" stroke="#afbdca" stroke-width="1.5"/>
+<text x="915" y="916" class="label" text-anchor="middle">Q¹₃</text>
+<rect x="986" y="883" width="139" height="50" rx="10" fill="#f2edfb" stroke="#b5a0d2" stroke-width="1.5"/>
+<text x="1055" y="915" class="label purple" text-anchor="middle">K¹₃  V¹₃</text>
+<rect x="855" y="1027" width="280" height="58" rx="10" fill="#eaf4fd" stroke="#8cbade" stroke-width="1.5"/>
+<text x="995" y="1052" class="small" text-anchor="middle">Attention(Q¹₃, KV¹[1:3])</text>
+<text x="995" y="1076" class="tiny blue" text-anchor="middle">前序位置 + 当前位置</text>
+<path d="M995 1085 V1104" fill="none" stroke="#137b60" stroke-width="2" marker-end="url(#green)"/>
+<rect x="855" y="1105" width="280" height="43" rx="10" fill="#edf8f2" stroke="#8dc6ad" stroke-width="1.5"/>
+<text x="995" y="1133" class="small" text-anchor="middle">O 投影 + 残差 + FFN¹</text>
+<rect x="1175" y="790" width="280" height="72" rx="10" fill="#fff" stroke="#cad6e3" stroke-width="1.5"/>
+<text x="1315" y="818" class="small" text-anchor="middle">Norm(h¹₄) × W¹Q / K / V</text>
+<text x="1315" y="847" class="tiny" text-anchor="middle">逐 token 线性投影</text>
+<path d="M1235 862 V882" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#gray)"/>
+<path d="M1375 862 V882" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#gray)"/>
+<rect x="1193" y="883" width="84" height="50" rx="10" fill="#f0f4f8" stroke="#afbdca" stroke-width="1.5"/>
+<text x="1235" y="916" class="label" text-anchor="middle">Q¹₄</text>
+<rect x="1306" y="883" width="139" height="50" rx="10" fill="#f2edfb" stroke="#b5a0d2" stroke-width="1.5"/>
+<text x="1375" y="915" class="label purple" text-anchor="middle">K¹₄  V¹₄</text>
+<rect x="1175" y="1027" width="280" height="58" rx="10" fill="#eaf4fd" stroke="#8cbade" stroke-width="1.5"/>
+<text x="1315" y="1052" class="small" text-anchor="middle">Attention(Q¹₄, KV¹[1:4])</text>
+<text x="1315" y="1076" class="tiny blue" text-anchor="middle">前序位置 + 当前位置</text>
+<path d="M1315 1085 V1104" fill="none" stroke="#137b60" stroke-width="2" marker-end="url(#green)"/>
+<rect x="1175" y="1105" width="280" height="43" rx="10" fill="#edf8f2" stroke="#8dc6ad" stroke-width="1.5"/>
+<text x="1315" y="1133" class="small" text-anchor="middle">O 投影 + 残差 + FFN¹</text>
+<text x="35" y="978" class="tiny purple" text-anchor="start">K/V 按层缓存</text>
+<text x="35" y="1007" class="tiny purple" text-anchor="start">不跨层传递</text>
+<path d="M355 260 V305" fill="none" stroke="#137b60" stroke-width="3" marker-end="url(#green)"/>
+<path d="M675 260 V305" fill="none" stroke="#137b60" stroke-width="3" marker-end="url(#green)"/>
+<path d="M995 260 V305" fill="none" stroke="#137b60" stroke-width="3" marker-end="url(#green)"/>
+<path d="M1315 260 V305" fill="none" stroke="#137b60" stroke-width="3" marker-end="url(#green)"/>
+<path d="M355 663 V790" fill="none" stroke="#137b60" stroke-width="3" marker-end="url(#green)"/>
+<rect x="266" y="729" width="178" height="38" rx="3" fill="#fff" stroke="#fff" stroke-width="1.5"/>
+<text x="355" y="756" class="small green" text-anchor="middle">h¹₁ → 下一层</text>
+<path d="M675 663 V790" fill="none" stroke="#137b60" stroke-width="3" marker-end="url(#green)"/>
+<rect x="586" y="729" width="178" height="38" rx="3" fill="#fff" stroke="#fff" stroke-width="1.5"/>
+<text x="675" y="756" class="small green" text-anchor="middle">h¹₂ → 下一层</text>
+<path d="M995 663 V790" fill="none" stroke="#137b60" stroke-width="3" marker-end="url(#green)"/>
+<rect x="906" y="729" width="178" height="38" rx="3" fill="#fff" stroke="#fff" stroke-width="1.5"/>
+<text x="995" y="756" class="small green" text-anchor="middle">h¹₃ → 下一层</text>
+<path d="M1315 663 V790" fill="none" stroke="#137b60" stroke-width="3" marker-end="url(#green)"/>
+<rect x="1226" y="729" width="178" height="38" rx="3" fill="#fff" stroke="#fff" stroke-width="1.5"/>
+<text x="1315" y="756" class="small green" text-anchor="middle">h¹₄ → 下一层</text>
+<path d="M355 1148 V1228" fill="none" stroke="#137b60" stroke-width="3" marker-end="url(#green)"/>
+<text x="355" y="1260" class="small green" text-anchor="middle">h²₁ → … → hᴸ₁</text>
+<path d="M675 1148 V1228" fill="none" stroke="#137b60" stroke-width="3" marker-end="url(#green)"/>
+<text x="675" y="1260" class="small green" text-anchor="middle">h²₂ → … → hᴸ₂</text>
+<path d="M995 1148 V1228" fill="none" stroke="#137b60" stroke-width="3" marker-end="url(#green)"/>
+<text x="995" y="1260" class="small green" text-anchor="middle">h²₃ → … → hᴸ₃</text>
+<path d="M1315 1148 V1228" fill="none" stroke="#137b60" stroke-width="3" marker-end="url(#green)"/>
+<text x="1315" y="1260" class="small green" text-anchor="middle">h²₄ → … → hᴸ₄</text>
+<rect x="48" y="1300" width="1504" height="118" rx="10" fill="#eff6fc" stroke="#c5d9e9" stroke-width="1.5"/>
+<text x="72" y="1338" class="label" text-anchor="start">为什么前序 token 也必须更新 hidden states？</text>
+<text x="72" y="1372" class="small" text-anchor="start">例如：h⁰₁ → Layer 0 的 Attention + FFN → h¹₁ → K¹₁ / V¹₁ → token 4 的 Layer 1 Attention。</text>
+<text x="72" y="1400" class="small" text-anchor="start">缺少前序位置的 h¹，就缺少下一层的前序 K/V；只有第一层的 K/V，无法完成深层 Attention。</text>
+<text x="48" y="1458" class="small" text-anchor="start">¹ FFN 块简写包含其 Norm 与残差；图省略多头拆分及位置处理（如 Q/K 的 RoPE）。</text>
+<text x="48" y="1493" class="small blue" text-anchor="start">蓝线是数据依赖，不是执行时间线：同层所有 Q/K/V 可批量投影，所有 Attention 行可用因果 mask 并行计算。</text>
+<text x="48" y="1528" class="small" text-anchor="start">各层 K/V 留给后续 Decode；仅预测下一个 token 时，最后位置 hᴸ₄ 经 Final Norm → LM head → 采样。</text>
+</svg>
