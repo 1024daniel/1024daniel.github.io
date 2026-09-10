@@ -11,6 +11,9 @@
 	--dark-color: #f5f5f5;
 	--dark-color-secondary: #73747b;
 	--dark-border-color: #4a4b50;
+	--font-family-body: "Geist Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+	--font-family-title: "Geist Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+	--font-family-code: "JetBrains Mono Variable", "Noto Sans Mono CJK SC", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 	--phoneWidth: (max-width:684px);
 	--tabletWidth: (max-width:900px)
 }
@@ -432,10 +435,10 @@ html {
 body {
 	margin: 0;
 	padding: 0;
-	font-family: "LXGW Neo ZhiSong",-apple-system,BlinkMacSystemFont,Roboto,Segoe UI,Helvetica,Arial,sans-serif;
-	font-size: 1.1rem;
+	font-family: var(--font-family-body);
+	font-size: 1rem;
 	font-weight: 400;
-	line-height: 2.2;
+	line-height: 1.75;
 	background-color: #fff;
 	background-color: var(--light-background);
 	color: #222;
@@ -458,6 +461,8 @@ body.dark {
 }
 
 h1,h2,h3,h4,h5,h6 {
+	font-family: var(--font-family-title);
+	font-weight: 600;
 	line-height: 1.3
 }
 
@@ -521,7 +526,7 @@ figure img{max-width:100%;border-radius:0;}
 	figure figcaption {width: 75%;}
 }
 code {
-	font-family: Consolas,Monaco,Andale Mono,Ubuntu Mono,monospace;
+	font-family: var(--font-family-code);
 	background: #eaeaea;
 	background: var(--light-background-secondary);
 	padding: 1px 6px;
@@ -557,8 +562,8 @@ pre code {
 	color: #ccc;
 	margin: 0;
 	padding: 0;
-	font-size: .7rem;
-	line-height:1
+	font-size: .85rem;
+	line-height:1.65
 }
 
 .dark pre code {
@@ -679,6 +684,10 @@ hr {
 	margin:0 auto 40px;
 }
 
+.post:has(> .post-body:not(.has-toc)) {
+	max-width: 800px;
+}
+
 @media (max-width:899px) {
 	.post {
 		max-width: 860px
@@ -784,7 +793,7 @@ hr {
 	overflow: auto;
 	padding-left: 18px;
 	border-left: 1px solid var(--light-background-secondary);
-	font-family: -apple-system,BlinkMacSystemFont,Roboto,Segoe UI,Helvetica,Arial,sans-serif;
+	font-family: var(--font-family-body);
 }
 .dark .post-toc {
 	border-left-color: var(--dark-background-secondary);
@@ -852,11 +861,15 @@ hr {
 	}
 }
 .post-content {
-	font-family: "LXGW Neo ZhiSong", -apple-system,BlinkMacSystemFont,Roboto,Segoe UI,Helvetica,Arial,serif;
-	font-weight: 500;
+	font-family: var(--font-family-body);
+	font-weight: 400;
 	margin-top: 0px;
-	word-break:break-all;
+	word-break: normal;
+	overflow-wrap: anywhere;
 	min-height: 70px;
+}
+.post-body .post-content p {
+	margin: 0 0 1.5rem;
 }
 .post-content mark {
 	padding: 0 0.2em;
@@ -905,7 +918,7 @@ hr {
 	border-radius: 6px;
 	background: rgba(0,0,0,.55);
 	color: #fff;
-	font-family: -apple-system,BlinkMacSystemFont,Roboto,Segoe UI,Helvetica,Arial,sans-serif;
+	font-family: var(--font-family-body);
 	font-size: .82rem;
 	line-height: 1.4;
 	text-decoration: none;
@@ -930,7 +943,7 @@ hr {
 	border-radius: 8px;
 	background: #fff;
 	color: inherit;
-	font-family: -apple-system,BlinkMacSystemFont,Roboto,Segoe UI,Helvetica,Arial,sans-serif;
+	font-family: var(--font-family-body);
 	text-decoration: none;
 	box-shadow: 0 10px 28px rgba(0,0,0,.07);
 	word-break: normal;
@@ -1023,7 +1036,7 @@ hr {
 	border-radius: 8px;
 	background: var(--light-header);
 	box-shadow: 0 10px 30px rgba(0,0,0,.04);
-	font-family: -apple-system,BlinkMacSystemFont,Roboto,Segoe UI,Helvetica,Arial,sans-serif;
+	font-family: var(--font-family-body);
 	word-break: normal;
 }
 .dark .reference-box {
@@ -1195,7 +1208,7 @@ hr {
 	border: 1px solid var(--light-background-secondary);
 	border-radius: 8px;
 	background: var(--light-header);
-	font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,monospace;
+	font-family: var(--font-family-code);
 	font-size: .92rem;
 	line-height: 1.8;
 }
@@ -1257,7 +1270,7 @@ hr {
 }
 .dir-tree__desc {
 	color: var(--light-color-secondary);
-	font-family: "LXGW Neo ZhiSong", -apple-system,BlinkMacSystemFont,Roboto,Segoe UI,Helvetica,Arial,serif;
+	font-family: var(--font-family-body);
 	font-size: .9rem;
 	white-space: normal;
 	word-break: normal;
@@ -1577,7 +1590,7 @@ hr {
 }
 .footer .copyright-font{
 	margin-bottom: 2rem;
-	font-family:  "LXGW Neo ZhiSong", -apple-system,BlinkMacSystemFont,Roboto,Segoe UI,Helvetica,Arial,serif;
+	font-family: var(--font-family-body);
 }
 .footer .copyright--user {
 	margin: auto;
@@ -1706,7 +1719,7 @@ hr {
 
 code[class*=language-],pre[class*=language-] {
 	background: none;
-	font-family: Consolas,Monaco,Andale Mono,Ubuntu Mono,monospace;
+	font-family: var(--font-family-code);
 	text-align: left;
 	word-spacing: normal;
 	word-break: break-word;
@@ -2214,3 +2227,261 @@ div.code-toolbar>.toolbar a:focus,div.code-toolbar>.toolbar a:hover,div.code-too
 	color: var(--text-highlight-color);
 	transition: all .25s ease-in-out;
   }
+
+/* Mermaid diagrams are rendered as responsive SVG rather than scrollable code. */
+.post-content pre.mermaid {
+	max-height: none;
+	overflow: visible;
+	padding: 16px;
+	background: transparent;
+	text-align: center;
+}
+.post-content pre.mermaid svg {
+	display: block;
+	max-width: 100%;
+	height: auto;
+	margin: 0 auto;
+}
+
+/* Fully expand ASCII architecture diagrams while preserving their alignment. */
+@font-face {
+	font-family: "Architecture Mono";
+	src: url("/fonts/DejaVuSansMono.ttf") format("truetype");
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+}
+.post-content .architecture-flow pre,
+.post-content pre.architecture-flow {
+	max-height: none;
+	overflow-x: auto;
+	white-space: pre;
+}
+.post-content .architecture-flow pre code,
+.post-content pre.architecture-flow code {
+	display: block;
+	font-family: "Architecture Mono", monospace;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1;
+	letter-spacing: 0;
+	font-variant-ligatures: none;
+}
+@media (max-width:683px) {
+	.post-content .architecture-flow pre,
+	.post-content pre.architecture-flow {
+		white-space: pre;
+	}
+	.post-content .architecture-flow pre code,
+	.post-content pre.architecture-flow code {
+		font-size: 12px;
+	}
+}
+
+/* Compact diagram preview with a full-screen viewer. */
+.post-content .diagram-preview {
+	position: relative;
+	max-height: 300px;
+	overflow: hidden;
+	border: 1px solid var(--light-background-secondary);
+	border-radius: 8px;
+	cursor: zoom-in;
+}
+.dark .post-content .diagram-preview {
+	border-color: var(--dark-background-secondary);
+}
+.post-content .diagram-preview::after {
+	position: absolute;
+	z-index: 1;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	height: 42%;
+	background: linear-gradient(to bottom, transparent, var(--light-background));
+	pointer-events: none;
+	content: "";
+}
+.dark .post-content .diagram-preview::after {
+	background: linear-gradient(to bottom, transparent, var(--dark-background));
+}
+.post-content .diagram-preview pre.mermaid {
+	margin: 0;
+}
+.post-content .diagram-preview--error {
+	cursor: auto;
+	max-height: none;
+}
+.post-content .diagram-preview--error::after {
+	display: none;
+}
+.post-content .diagram-error + pre.mermaid {
+	max-height: 240px;
+	overflow: auto;
+	white-space: pre;
+	text-align: left;
+}
+.post-content .diagram-error {
+	padding: 12px;
+	color: inherit;
+}
+.post-content .diagram-preview__open {
+	position: absolute;
+	z-index: 2;
+	right: 50%;
+	bottom: 18px;
+	padding: 8px 14px;
+	transform: translateX(50%);
+	border: 1px solid var(--light-border-color);
+	border-radius: 999px;
+	background: var(--light-header);
+	color: var(--light-color);
+	font: inherit;
+	font-size: .85rem;
+	cursor: zoom-in;
+	box-shadow: 0 6px 20px rgba(0,0,0,.12);
+}
+.dark .post-content .diagram-preview__open {
+	border-color: var(--dark-border-color);
+	background: var(--dark-header);
+	color: var(--dark-color);
+}
+body.diagram-lightbox-open {
+	overflow: hidden;
+}
+.diagram-lightbox {
+	position: fixed;
+	inset: 0;
+	box-sizing: border-box;
+	width: 100%;
+	height: 100%;
+	max-width: none;
+	max-height: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	border: 0;
+	background: transparent;
+	color: #fff;
+}
+.diagram-lightbox[open] {
+	animation: diagram-viewer-in 180ms ease-out;
+}
+.diagram-lightbox::backdrop {
+	background: rgba(48,55,66,.3);
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+}
+.diagram-lightbox__toolbar {
+	position: absolute;
+	z-index: 1;
+	bottom: calc(5% + env(safe-area-inset-bottom, 0px));
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px;
+	border-radius: 5px;
+	background: rgba(0,0,0,.2);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+}
+.diagram-lightbox__toolbar button {
+	display: grid;
+	place-items: center;
+	flex: 0 0 32px;
+	width: 32px;
+	height: 32px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 3px;
+	background: rgba(255,255,255,.2);
+	color: inherit;
+	cursor: pointer;
+	transition: background 150ms;
+}
+.diagram-lightbox__toolbar svg {
+	width: 20px;
+	height: 20px;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.8;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+.diagram-lightbox__toolbar button:hover {
+	background: rgba(255,255,255,.4);
+}
+.diagram-lightbox__toolbar button:disabled {
+	opacity: .4;
+	cursor: default;
+}
+.diagram-lightbox__toolbar .diagram-lightbox__close {
+	margin-left: 8px;
+}
+.diagram-lightbox__scale {
+	width: 44px;
+	text-align: center;
+	font-size: 13px;
+	font-variant-numeric: tabular-nums;
+}
+.diagram-lightbox__canvas {
+	position: absolute;
+	inset: 16px;
+	bottom: calc(5% + 68px + env(safe-area-inset-bottom, 0px));
+	overflow: hidden;
+	outline: none;
+	overscroll-behavior: contain;
+	touch-action: none;
+	user-select: none;
+	-webkit-user-select: none;
+	cursor: zoom-out;
+}
+.diagram-lightbox__canvas.is-dragging {
+	cursor: grabbing;
+}
+.diagram-lightbox__stage {
+	position: absolute;
+	top: 0;
+	left: 0;
+	transform-origin: 0 0;
+	border-radius: 3px;
+	background: var(--light-background);
+	color: var(--light-color);
+	box-shadow: 0 8px 32px rgba(0,0,0,.12);
+	cursor: grab;
+}
+.dark .diagram-lightbox__stage {
+	background: var(--dark-background);
+	color: var(--dark-color);
+}
+.diagram-lightbox__canvas.is-dragging .diagram-lightbox__stage {
+	cursor: grabbing;
+}
+.diagram-lightbox__canvas svg {
+	display: block;
+	width: 100% !important;
+	max-width: none !important;
+	height: 100% !important;
+}
+.diagram-lightbox button:focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: 3px;
+}
+@keyframes diagram-viewer-in {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.diagram-lightbox[open] { animation: none; }
+}
+@media (max-width:683px) {
+	.post-content .diagram-preview:not(.diagram-preview--error) {
+		max-height: 240px;
+	}
+	.diagram-lightbox__canvas {
+		left: 8px;
+		right: 8px;
+	}
+}
