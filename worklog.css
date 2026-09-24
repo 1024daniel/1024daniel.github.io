@@ -1,0 +1,194 @@
+.worklog {
+  --wl-surface: var(--light-header);
+  --wl-subtle: var(--light-background);
+  --wl-border: var(--light-border-color);
+  --wl-muted: #72716e;
+  --wl-accent: #a64f2f;
+  --wl-accent-soft: #fff0e6;
+  --wl-todo: #726b63;
+  --wl-doing: #a55c25;
+  --wl-done: #35725a;
+  --wl-diary: #6c5c98;
+  width: min(1120px, 100%);
+  box-sizing: border-box;
+  margin: 40px auto 64px;
+  padding: 0 24px;
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.dark .worklog {
+  --wl-surface: var(--dark-header);
+  --wl-subtle: var(--dark-background);
+  --wl-border: var(--dark-border-color);
+  --wl-muted: #b0ada8;
+  --wl-accent: #f2ac83;
+  --wl-accent-soft: #46332b;
+  --wl-todo: #b5afa6;
+  --wl-doing: #e9b276;
+  --wl-done: #8fc8ac;
+  --wl-diary: #bcaae5;
+  color-scheme: dark;
+}
+.worklog *, .worklog *::before, .worklog *::after { box-sizing: border-box; }
+.worklog [hidden] { display: none !important; }
+.worklog h1, .worklog h2, .worklog p { margin: 0; }
+.worklog h1 { font-size: 32px; letter-spacing: -.04em; line-height: 1.4; }
+.worklog h2 { font-size: 18px; line-height: 1.5; }
+.worklog .wl-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 22px; }
+.worklog .wl-eyebrow { margin-bottom: 8px; color: var(--wl-accent); font-size: 11px; letter-spacing: .14em; font-weight: 600; }
+.worklog .wl-description { color: var(--wl-muted); margin-top: 8px; }
+.worklog .wl-header-actions { display: flex; flex-wrap: wrap; gap: 8px; flex-shrink: 0; }
+.worklog button, .worklog .wl-import-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0;
+  padding: 7px 12px;
+  min-height: 36px;
+  border: 1px solid var(--wl-border);
+  border-radius: 7px;
+  background: var(--wl-surface);
+  color: inherit;
+  font: inherit;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.worklog button:hover, .worklog .wl-import-label:hover { background: var(--wl-subtle); border-color: var(--wl-muted); }
+.worklog button:disabled { opacity: .45; cursor: default; }
+.worklog .wl-primary { background: var(--wl-accent); border-color: var(--wl-accent); color: var(--wl-surface); font-weight: 600; }
+.worklog .wl-primary:hover { background: var(--wl-accent); filter: brightness(.92); }
+.worklog :is(button, input, select, textarea, summary, [tabindex]):focus-visible, .worklog .wl-import-label:focus-within { outline: 2px solid var(--wl-accent); outline-offset: 3px; }
+.worklog input, .worklog select, .worklog textarea {
+  min-width: 0;
+  max-width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--wl-border);
+  border-radius: 7px;
+  background: var(--wl-surface);
+  color: inherit;
+  font: inherit;
+  line-height: 1.5;
+}
+.worklog input::placeholder, .worklog textarea::placeholder { color: var(--wl-muted); opacity: .9; }
+.worklog .wl-local-note { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; color: var(--wl-muted); font-size: 12px; margin-bottom: 20px; }
+.worklog .wl-local-dot { width: 6px; height: 6px; flex: 0 0 6px; border-radius: 50%; background: var(--wl-done); }
+.worklog .wl-notice:empty { display: none; }
+.worklog .wl-notice { padding: 12px 16px; margin-bottom: 16px; background: var(--wl-accent-soft); border-radius: 8px; overflow-wrap: anywhere; }
+.worklog .wl-panel { background: var(--wl-surface); border: 1px solid var(--wl-border); border-radius: 12px; overflow: hidden; }
+.worklog .wl-calendar-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; padding: 20px 20px 12px; }
+.worklog .wl-month-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.worklog #wl-month { width: 190px; font-weight: 600; }
+.worklog #wl-prev, .worklog #wl-next { font-size: 24px; line-height: 1; padding: 4px 12px; }
+.worklog .wl-legend { display: flex; gap: 14px; flex-wrap: wrap; }
+.worklog .wl-badge { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; font-size: 12px; }
+.worklog .wl-badge::before { content: ''; display: inline-block; flex: 0 0 5px; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.worklog .wl-status-todo { color: var(--wl-todo); }
+.worklog .wl-status-doing { color: var(--wl-doing); }
+.worklog .wl-status-done { color: var(--wl-done); }
+.worklog .wl-diary-mark, .worklog .wl-day-diary, .worklog .wl-day-diary-mark { color: var(--wl-diary); }
+.worklog .wl-day-diary-mark { font-size: 10px; }
+.worklog .wl-filters { display: flex; flex-wrap: wrap; gap: 10px; padding: 0 20px 18px; }
+.worklog .wl-search-label { flex: 1 1 240px; min-width: 0; }
+.worklog #wl-search { width: 100%; background: var(--wl-subtle); }
+.worklog .wl-calendar-scroll, .worklog .wl-table-scroll { overflow-x: auto; }
+.worklog .wl-weekdays, .worklog .wl-calendar { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); min-width: 560px; }
+.worklog .wl-weekdays { background: var(--wl-subtle); border-top: 1px solid var(--wl-border); border-bottom: 1px solid var(--wl-border); }
+.worklog .wl-weekdays span { padding: 9px 12px; color: var(--wl-muted); font-size: 12px; }
+.worklog .wl-day {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: 3px;
+  min-height: 106px;
+  min-width: 0;
+  padding: 9px 10px;
+  border: 0;
+  border-right: 1px solid var(--wl-border);
+  border-bottom: 1px solid var(--wl-border);
+  border-radius: 0;
+  text-align: left;
+}
+.worklog .wl-day:nth-child(7n) { border-right: 0; }
+.worklog .wl-day:hover { background: var(--wl-subtle); border-color: var(--wl-border); }
+.worklog .wl-day:focus-visible { outline-offset: -3px; }
+.worklog .wl-day.is-outside { background: var(--wl-subtle); color: var(--wl-muted); }
+.worklog .wl-day.is-outside .wl-day-entry { opacity: .65; }
+.worklog .wl-day.is-selected { background: var(--wl-accent-soft); box-shadow: inset 0 0 0 2px var(--wl-accent); }
+.worklog .wl-day-number { display: inline-flex; align-self: flex-start; align-items: center; justify-content: center; min-width: 24px; height: 24px; font-variant-numeric: tabular-nums; font-size: 12px; }
+.worklog .wl-day.is-today .wl-day-number { color: var(--wl-surface); background: var(--wl-accent); border-radius: 50%; }
+.worklog .wl-day-entry { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-left: 2px solid currentColor; padding-left: 5px; }
+.worklog .wl-day-more { color: var(--wl-muted); font-size: 10px; }
+.worklog .wl-calendar-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 20px; font-size: 12px; color: var(--wl-muted); }
+.worklog .wl-records { margin-top: 24px; }
+.worklog .wl-records-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 20px; }
+.worklog .wl-records-heading { display: flex; align-items: baseline; gap: 10px; }
+.worklog .wl-count { color: var(--wl-muted); font-size: 12px; }
+.worklog .wl-section-hint { color: var(--wl-muted); font-size: 12px; }
+.worklog .wl-diary-card { padding: 18px 20px; border-top: 1px solid var(--wl-border); }
+.worklog .wl-diary-card summary { cursor: pointer; overflow-wrap: anywhere; line-height: 1.8; }
+.worklog .wl-diary-card summary::marker { color: var(--wl-diary); }
+.worklog .wl-diary-card summary > span { margin-right: 10px; }
+.worklog .wl-diary-date { color: var(--wl-muted); font-size: 12px; }
+.worklog .wl-diary-title { font-weight: 500; }
+.worklog .wl-diary-mood { color: var(--wl-diary); font-size: 12px; }
+.worklog .wl-diary-body { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.9; margin: 16px 0 !important; font-size: 15px; }
+.worklog .wl-diary-card .wl-row-actions { justify-content: flex-end; }
+.worklog .wl-fallback-record { padding: 20px; margin: 20px 0; }
+.worklog .wl-table { width: 100%; min-width: 760px; margin: 0; padding: 0; border: 0; font-size: 13px; }
+.worklog .wl-table th, .worklog .wl-table td { border: 0; border-top: 1px solid var(--wl-border); padding: 13px 16px; text-align: left; vertical-align: top; }
+.worklog .wl-table th { background: var(--wl-subtle); color: var(--wl-muted); font-weight: 500; font-size: 12px; }
+.worklog .wl-table td:first-child { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.worklog .wl-table th:nth-child(2) { width: 28%; }
+.worklog .wl-table th:nth-child(5) { width: 26%; }
+.worklog .wl-table td:nth-child(4) { white-space: nowrap; }
+.worklog .wl-row-title { font-weight: 500; overflow-wrap: anywhere; }
+.worklog .wl-row-project { display: block; margin-top: 3px; font-size: 11px; color: var(--wl-muted); }
+.worklog .wl-row-category { display: inline-block; margin-top: 4px; padding: 1px 6px; border-radius: 4px; background: var(--wl-subtle); color: var(--wl-muted); font-size: 11px; }
+.worklog .wl-row-outcome { white-space: pre-wrap; overflow-wrap: anywhere; }
+.worklog .wl-row-actions { display: flex; gap: 6px; }
+.worklog .wl-row-actions button { padding: 3px 7px; min-height: 30px; font-size: 12px; white-space: nowrap; }
+.worklog .wl-danger { color: #b74b43; }
+.dark .worklog .wl-danger { color: #f0a099; }
+.worklog .wl-empty { text-align: center; padding: 42px 20px; color: var(--wl-muted); font-size: 13px; }
+.worklog .wl-backup { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px; padding-top: 22px; color: var(--wl-muted); font-size: 12px; }
+.worklog .wl-backup-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.worklog .wl-import-label { position: relative; overflow: hidden; }
+.worklog #wl-import { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.worklog .wl-dialog { width: min(600px, calc(100% - 32px)); max-height: calc(100dvh - 40px); padding: 28px; border: 1px solid var(--wl-border); border-radius: 14px; background: var(--wl-surface); color: inherit; text-align: left; }
+.worklog .wl-dialog::backdrop { background: rgb(0 0 0 / .45); }
+.worklog .wl-diary-dialog { width: min(720px, calc(100% - 32px)); }
+.worklog #wl-diary-body { line-height: 1.9; }
+.worklog .wl-form-hint { margin-top: 6px; margin-bottom: 22px; color: var(--wl-muted); font-size: 13px; }
+.worklog .wl-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.worklog .wl-form-grid label { display: flex; flex-wrap: wrap; gap: 6px; font-size: 13px; }
+.worklog .wl-form-grid label > :is(input, select, textarea) { display: block; width: 100%; }
+.worklog .wl-form-wide { grid-column: 1 / -1; }
+.worklog textarea { resize: vertical; }
+.worklog .wl-form-error { color: var(--wl-accent); margin-top: 12px; }
+.worklog .wl-form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
+.worklog .wl-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+@media (max-width: 683px) {
+  .worklog { margin-top: 26px; padding: 0 14px; }
+  .worklog h1 { font-size: 27px; }
+  .worklog .wl-header { align-items: flex-start; }
+  .worklog .wl-header { flex-wrap: wrap; gap: 14px; }
+  .worklog .wl-header-actions button { white-space: nowrap; font-size: 12px; padding: 8px 12px; }
+  .worklog .wl-calendar-toolbar { padding: 14px; }
+  .worklog #wl-month { width: 180px; }
+  .worklog #wl-prev, .worklog #wl-next { padding: 4px 10px; }
+  .worklog .wl-filters { padding: 0 14px 14px; }
+  .worklog .wl-search-label { flex-basis: 100%; }
+  .worklog .wl-filters select { flex: 1 1 125px; }
+  .worklog .wl-legend { gap: 16px; }
+  .worklog .wl-weekdays, .worklog .wl-calendar { min-width: 490px; }
+  .worklog .wl-day { padding: 7px 6px; min-height: 96px; }
+  .worklog .wl-calendar-footer { padding: 12px 14px; }
+  .worklog .wl-records-header { padding: 14px; }
+  .worklog .wl-records-heading { flex-wrap: wrap; }
+  .worklog .wl-diary-card { padding: 14px; }
+  .worklog .wl-dialog { padding: 20px; }
+  .worklog .wl-form-grid { grid-template-columns: 1fr; gap: 12px; }
+}

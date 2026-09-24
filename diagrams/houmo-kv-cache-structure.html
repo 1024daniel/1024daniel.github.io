@@ -1,0 +1,902 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Houmo KV cache：输入接口、缓存布局与执行阶段</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Inter, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+      color: #172b43;
+      background: #f4f7fb;
+      font-synthesis: none;
+      --line: #dce4ee;
+      --muted: #60728a;
+      --blue: #215ac8;
+      --blue-soft: #eaf1ff;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 14px; }
+    button, select, a { -webkit-tap-highlight-color: transparent; }
+    button, select { font: inherit; }
+    button, .svg-link {
+      min-height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: #fff;
+      color: #233c5b;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color .15s ease, border-color .15s ease;
+    }
+    button:hover, .svg-link:hover { background: #f1f5fc; border-color: #a7b9d5; }
+    button:disabled { opacity: .45; cursor: default; }
+    button:focus-visible, select:focus-visible, a:focus-visible, .viewport:focus-visible {
+      outline: 3px solid #7cacf5;
+      outline-offset: 3px;
+    }
+    .viewer {
+      max-width: 1800px;
+      margin: 0 auto;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: 0 8px 30px #27487508;
+    }
+    .heading { padding: 21px 24px 17px; border-bottom: 1px solid var(--line); }
+    .eyebrow {
+      margin: 0 0 8px;
+      font-size: 10px;
+      font-weight: 750;
+      letter-spacing: .15em;
+      color: var(--blue);
+    }
+    h1 { margin: 0; font-size: clamp(19px, 2.3vw, 27px); line-height: 1.4; letter-spacing: -.02em; }
+    .subtitle { margin: 8px 0 0; color: var(--muted); font-size: 13px; line-height: 1.7; }
+    .toolbar { padding: 15px 24px; display: flex; align-items: center; flex-wrap: wrap; gap: 12px 18px; }
+    .stages { display: flex; flex-wrap: wrap; gap: 6px; }
+    .stage { padding: 8px 11px; font-size: 12px; font-weight: 650; white-space: nowrap; }
+    .stage[aria-pressed="true"] { color: #164da9; background: var(--blue-soft); border-color: #9bb9f0; }
+    .slot-control { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+    select { height: 36px; border: 1px solid var(--line); border-radius: 9px; padding: 0 30px 0 10px; color: #233c5b; background: white; }
+    .view-actions { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+    .tool-button { padding: 7px 10px; font-size: 12px; white-space: nowrap; }
+    .zoom-button { width: 34px; padding: 4px; font-size: 19px; }
+    .zoom-value { width: 44px; text-align: center; color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+    .svg-link { display: inline-flex; align-items: center; padding: 7px 10px; font-size: 12px; white-space: nowrap; }
+    .status {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      margin: 0 24px 15px;
+      padding: 11px 13px;
+      border: 1px solid #e0e9f6;
+      border-radius: 10px;
+      color: #415b7a;
+      background: #f7faff;
+      font-size: 12px;
+      line-height: 1.65;
+    }
+    .status-dot { flex: 0 0 6px; width: 6px; height: 6px; margin-top: 7px; border-radius: 50%; background: #5b85c7; }
+    .status p { margin: 0; }
+    .viewport {
+      height: clamp(440px, calc(100dvh - 285px), 1050px);
+      min-height: 350px;
+      overflow: auto;
+      overscroll-behavior: contain;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background-color: #f8fafd;
+      background-image: radial-gradient(#cdd9e7 0.7px, transparent 0.7px);
+      background-size: 16px 16px;
+      scrollbar-color: #b6c7db #eef3f9;
+    }
+    .canvas { display: grid; place-items: center; width: max-content; min-width: 100%; min-height: 100%; padding: 18px; }
+    .canvas > svg { display: block; max-width: none; flex: none; background: #fff; border-radius: 12px; box-shadow: 0 3px 18px #25426509; }
+    .footer { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 7px 22px; padding: 12px 24px 14px; font-size: 11px; line-height: 1.65; color: var(--muted); }
+    .footer p { margin: 0; }
+    .legend { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .legend-item { display: inline-flex; align-items: center; gap: 5px; }
+    .swatch { display: inline-block; width: 9px; height: 9px; border-radius: 3px; border: 1px solid #00000012; }
+    .swatch.prompt { background: #d9f1eb; }
+    .swatch.decode1 { background: #ffebce; }
+    .swatch.decode2 { background: #e9e2fb; }
+    .swatch.empty { background: #f1f4f8; }
+    .viewer:fullscreen { max-width: none; width: 100%; height: 100dvh; margin: 0; border: 0; border-radius: 0; display: flex; flex-direction: column; }
+    .viewer:fullscreen .viewport { flex: 1; height: auto; min-height: 0; }
+    .viewer:fullscreen .heading { padding-top: 15px; padding-bottom: 12px; }
+    .viewer:fullscreen .footer { flex-shrink: 0; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+    @media (max-width: 760px) {
+      body { padding: 7px; }
+      .viewer { border-radius: 12px; }
+      .heading { padding: 17px 15px 13px; }
+      .toolbar { padding: 12px 15px; gap: 10px; }
+      .stages { width: 100%; }
+      .stage { padding: 8px 9px; font-size: 11px; }
+      .view-actions { margin-left: 0; flex-wrap: wrap; }
+      .status { margin: 0 15px 12px; }
+      .viewport { height: 650px; }
+      .footer { padding: 12px 15px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; } }
+  </style>
+</head>
+<body>
+  <main class="viewer" id="viewer" aria-labelledby="viewer-title">
+    <header class="heading">
+      <p class="eyebrow">HOUMO RUNTIME · KV CACHE</p>
+      <h1 id="viewer-title">从输入编号到 K/V 缓存，再到逐 token 生成</h1>
+      <p class="subtitle">固定示例：3 个 decode 槽位 · 4 层 Transformer · KV 前有 3 个输入 · prompt 为 x₁、x₂、x₃。点击阶段查看缓存变化。</p>
+    </header>
+    <div class="toolbar" aria-label="图示控制">
+      <div class="stages" role="group" aria-label="执行阶段">
+        <button class="stage" type="button" data-mode="all" aria-pressed="true">全景</button>
+        <button class="stage" type="button" data-mode="bind" aria-pressed="false">绑定</button>
+        <button class="stage" type="button" data-mode="prefill" aria-pressed="false">Prefill 完成</button>
+        <button class="stage" type="button" data-mode="decode1" aria-pressed="false">Decode 1 完成</button>
+        <button class="stage" type="button" data-mode="decode2" aria-pressed="false">Decode 2 完成</button>
+      </div>
+      <label class="slot-control" for="slot-select">示例槽位
+        <select id="slot-select"><option value="0">b = 0</option><option value="1" selected>b = 1</option><option value="2">b = 2</option></select>
+      </label>
+      <div class="view-actions" role="group" aria-label="视图操作">
+        <button class="tool-button zoom-button" type="button" id="zoom-out" aria-label="缩小">−</button>
+        <output class="zoom-value" id="zoom-value" aria-label="当前缩放比例">100%</output>
+        <button class="tool-button zoom-button" type="button" id="zoom-in" aria-label="放大">+</button>
+        <button class="tool-button" type="button" id="fit" title="适应图示宽度；可上下滚动">适应</button>
+        <button class="tool-button" type="button" id="fullscreen" aria-pressed="false">全屏</button>
+        <a class="svg-link" href="houmo-kv-cache-structure.html" target="_blank" rel="noopener">独立打开 ↗</a>
+        <a class="svg-link" href="houmo-kv-cache-structure.svg" target="_blank" rel="noopener" aria-label="在新标签页打开完整 SVG">打开 SVG ↗</a>
+      </div>
+    </div>
+    <div class="status" aria-live="polite" aria-atomic="true"><span class="status-dot" aria-hidden="true"></span><p id="stage-description">全景示意展示到 Decode 2 完成后的缓存；长度输入显示最后一次 decode 的 4 / 1。</p></div>
+    <div class="viewport" id="viewport" tabindex="0" role="region" aria-label="KV cache 结构图，可横向和纵向滚动" aria-describedby="view-help">
+      <div class="canvas" id="canvas">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1480" height="1610" viewBox="0 0 1480 1610" role="img" aria-labelledby="kv-title kv-description">
+<title id="kv-title">Houmo prefill 与 decode：按层 KV 缓存结构、输入绑定与 token 接续</title>
+<desc id="kv-description">四层、三槽位模型的逻辑示例。当前槽位八个 KV 输入对象，分别容纳各 token 的多头向量。上部展示 decode 输入编号到 prefill 输入的绑定，中部展示每层 K/V 的逻辑复用，下部展示 prefill 和两次 decode 后有效 token 列的增长。虚线表示设备对象绑定，实线表示逻辑计算读写；不证明零拷贝或物理内存布局。</desc>
+<defs>
+  <marker id="arrow-bind" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L10,5 L0,10 Z" fill="#7c3aed"/></marker>
+  <marker id="arrow-prefill" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L10,5 L0,10 Z" fill="#168579"/></marker>
+  <marker id="arrow-read" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L10,5 L0,10 Z" fill="#2563eb"/></marker>
+  <marker id="arrow-write" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L10,5 L0,10 Z" fill="#d97706"/></marker>
+  <marker id="arrow-feedback" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L10,5 L0,10 Z" fill="#b24f76"/></marker>
+  <style>
+    text{font-family: "Droid Sans Fallback", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif}
+    .mono{font-family: "DejaVu Sans Mono", monospace}
+    .cell-prompt rect{fill:#d9f1eb;stroke:#b5ddd3}.cell-prompt text{fill:#11665a}
+    .cell-decode1 rect{fill:#ffebce;stroke:#edcf9f}.cell-decode1 text{fill:#945a0c}
+    .cell-decode2 rect{fill:#e9e2fb;stroke:#cfc0ee}.cell-decode2 text{fill:#6840a3}
+    .cell-empty rect{fill:#f1f4f8;stroke:#dfe6ef}.cell-empty text{fill:#a5b1c2}
+    .muted{opacity:.24} [data-phase]{transition:opacity .18s ease}
+    @media (prefers-reduced-motion:reduce){[data-phase]{transition:none}}
+  </style>
+</defs>
+<rect x="0" y="0" width="1480" height="1610" rx="0" fill="#f4f7fb" stroke="#f4f7fb" />
+<rect x="16" y="16" width="1448" height="1578" rx="24" fill="#ffffff" stroke="#e0e7f0" />
+<rect x="48" y="43" width="5" height="101" rx="2" fill="#168579" stroke="#168579" />
+<text x="70" y="63" font-size="14" fill="#168579" font-weight="700" letter-spacing="2">HOUMO  /  RUNTIME ANATOMY</text>
+<text x="70" y="107" font-size="35" fill="#14263e" font-weight="700" >两段计算，一组按层复用的 KV 缓存</text>
+<text x="70" y="144" font-size="19" fill="#5e7088" font-weight="400" >Prefill 写入 prompt · Decode 逐 token 接续 · 缓存对象数量保持不变</text>
+<rect x="1170" y="50" width="252" height="30" rx="15" fill="#edf2f8" stroke="#edf2f8" />
+<text x="1296.0" y="71" font-size="14" fill="#536680" font-weight="600" text-anchor="middle" >普通文本路径 · 逻辑结构示意</text>
+<rect x="70" y="172" width="174" height="30" rx="15" fill="#eef3f9" stroke="#eef3f9" />
+<text x="157.0" y="193" font-size="14" fill="#425875" font-weight="600" text-anchor="middle" >示例：4 层 / 3 槽位</text>
+<rect x="256" y="172" width="150" height="30" rx="15" fill="#ede5fb" stroke="#ede5fb" />
+<text x="331.0" y="193" font-size="14" fill="#6d40aa" font-weight="600" text-anchor="middle" data-field="slot">槽位 b = 1</text>
+<rect x="418" y="172" width="195" height="30" rx="15" fill="#e5f3ef" stroke="#e5f3ef" />
+<text x="515.5" y="193" font-size="14" fill="#167364" font-weight="600" text-anchor="middle" >8 个 KV 输入对象</text>
+<rect x="625" y="172" width="231" height="30" rx="15" fill="#eef3f9" stroke="#eef3f9" />
+<text x="740.5" y="193" font-size="14" fill="#425875" font-weight="600" text-anchor="middle" >P = 3 · 序号从 0 开始</text>
+<text x="1420" y="195" font-size="13" fill="#6d7f96" font-weight="600" text-anchor="end" class="mono">INPUT INDEX ≠ TOKEN POSITION</text>
+<text x="48" y="253" font-size="22" fill="#7c3aed" font-weight="700" >01</text>
+<text x="96" y="253" font-size="23" fill="#233750" font-weight="700" >先选请求槽位，再绑定输入对象</text>
+<text x="1426" y="252" font-size="15" fill="#7c3aed" font-weight="500" text-anchor="end">虚线 = get_dev_input → set_input</text>
+<g data-phase="bind">
+<rect x="48" y="278" width="1384" height="160" rx="18" fill="#faf8fe" stroke="#e2d9f3" />
+<text x="72" y="309" font-size="14" fill="#6c4c96" font-weight="700" >DECODE / 已有的输入接口</text>
+<text x="72" y="347" font-size="25" fill="#30244b" font-weight="600" class="mono" data-field="decode-range">decode [13, 21)</text>
+<text x="72" y="380" font-size="16" fill="#68718a" font-weight="400" >先按编号取名字，再按名字取得设备对象</text>
+<text x="72" y="414" font-size="15" fill="#68718a" font-weight="400" >这里只选择 8 个 KV 参数，跳过长度参数</text>
+<path d="M 466 350 L 530 350" fill="none" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#arrow-bind)" stroke-dasharray="7 6"/>
+<text x="565" y="309" font-size="14" fill="#6c4c96" font-weight="700" >绑定循环 / 共 2N = 8 次</text>
+<text x="565" y="344" font-size="20" fill="#30244b" font-weight="500" >start = P + b × (2N + 2)</text>
+<text x="565" y="376" font-size="17" fill="#543678" font-weight="500" class="mono" data-field="mapping">decode[13 + j] → prefill[3 + j]</text>
+<text x="565" y="411" font-size="15" fill="#68718a" font-weight="400" >j = 0…7；循环遍历 KV 对象，不遍历 token</text>
+<path d="M 1018 350 L 1065 350" fill="none" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#arrow-bind)" stroke-dasharray="7 6"/>
+<text x="1095" y="309" font-size="14" fill="#6c4c96" font-weight="700" >PREFILL / 固定的一组接口</text>
+<text x="1095" y="347" font-size="24" fill="#30244b" font-weight="600" class="mono">prefill [3, 11)</text>
+<text x="1095" y="380" font-size="16" fill="#68718a" font-weight="400" >按相对顺序逐项设置缓存对象</text>
+<text x="1095" y="414" font-size="15" fill="#68718a" font-weight="400" >b 改变 → 重新选择对应槽位</text>
+</g>
+<text x="48" y="483" font-size="22" fill="#168579" font-weight="700" >02</text>
+<text x="96" y="483" font-size="23" fill="#233750" font-weight="700" >模型沿层计算，缓存沿 token 位置展开</text>
+<text x="1426" y="482" font-size="15" fill="#6e7f94" font-weight="400" text-anchor="end">按层画出的排列是逻辑视图，并非输入编号顺序</text>
+<rect x="48" y="506" width="302" height="606" rx="18" fill="#f2faf7" stroke="#cfe7df" />
+<rect x="393" y="506" width="694" height="606" rx="18" fill="#ffffff" stroke="#d5dfec" />
+<rect x="1130" y="506" width="302" height="606" rx="18" fill="#f3f7ff" stroke="#d1dff5" />
+<g data-phase="prefill">
+<text x="70" y="545" font-size="22" fill="#116b60" font-weight="700" letter-spacing="1">PREFILL</text>
+<rect x="230" y="521" width="98" height="30" rx="15" fill="#dbeee8" stroke="#dbeee8" />
+<text x="279.0" y="542" font-size="14" fill="#177c6c" font-weight="600" text-anchor="middle" >多 token</text>
+<rect x="68" y="566" width="262" height="70" rx="10" fill="#ffffff" stroke="#d5e9e2" />
+<text x="87" y="593" font-size="18" fill="#215f56" font-weight="500" >x₁  x₂  x₃ → embedding</text>
+<text x="87" y="620" font-size="15" fill="#567a70" font-weight="400" class="mono">valid = 0     current = 3</text>
+<text x="72" y="654" font-size="15" fill="#38766a" font-weight="400" >prefill.run() → sync()</text>
+</g>
+<text x="415" y="542" font-size="22" fill="#24364e" font-weight="700" >同一槽位的层级 KV 视图</text>
+<rect x="902" y="521" width="163" height="30" rx="15" fill="#eef2f8" stroke="#eef2f8" />
+<text x="983.5" y="542" font-size="14" fill="#526783" font-weight="600" text-anchor="middle" data-field="slot">槽位 b = 1</text>
+<text x="415" y="572" font-size="16" fill="#687c95" font-weight="400" >每层各一个 K 对象、一个 V 对象；横向是对象内部的 token 区域</text>
+<text x="415" y="604" font-size="15" fill="#8391a4" font-weight="400" >每个格子代表该 token 的多头向量；head 和向量维度在图中省略</text>
+<text x="418" y="643" font-size="14" fill="#738298" font-weight="600" >层 / 类型</text>
+<text x="553" y="643" font-size="13" fill="#8190a5" font-weight="400" text-anchor="middle" class="mono">t=0</text>
+<text x="617" y="643" font-size="13" fill="#8190a5" font-weight="400" text-anchor="middle" class="mono">t=1</text>
+<text x="681" y="643" font-size="13" fill="#8190a5" font-weight="400" text-anchor="middle" class="mono">t=2</text>
+<text x="745" y="643" font-size="13" fill="#8190a5" font-weight="400" text-anchor="middle" class="mono">t=3</text>
+<text x="809" y="643" font-size="13" fill="#8190a5" font-weight="400" text-anchor="middle" class="mono">t=4</text>
+<text x="873" y="643" font-size="13" fill="#8190a5" font-weight="400" text-anchor="middle" class="mono">t=5</text>
+<text x="937" y="643" font-size="13" fill="#8190a5" font-weight="400" text-anchor="middle" class="mono">t=6</text>
+<text x="1001" y="643" font-size="13" fill="#8190a5" font-weight="400" text-anchor="middle" class="mono">t=7</text>
+<g data-phase="decode">
+<text x="1152" y="545" font-size="22" fill="#244f99" font-weight="700" letter-spacing="1">DECODE</text>
+<rect x="1330" y="521" width="80" height="30" rx="15" fill="#e1ebfc" stroke="#e1ebfc" />
+<text x="1370.0" y="542" font-size="14" fill="#3469b9" font-weight="600" text-anchor="middle" >1 token</text>
+<rect x="1150" y="566" width="262" height="70" rx="10" fill="#ffffff" stroke="#d8e4f5" />
+<text x="1169" y="593" font-size="18" fill="#294e83" font-weight="500" data-field="decode-input">y₂ → embedding</text>
+<text x="1169" y="620" font-size="15" fill="#577499" font-weight="400" >使用历史及当前 token 的 K/V</text>
+<text x="1153" y="654" font-size="15" fill="#4d70a0" font-weight="400" >decode.run() → sync()</text>
+</g>
+<g data-phase="prefill">
+<rect x="70" y="676" width="258" height="56" rx="10" fill="#ffffff" stroke="#c8e1d8" />
+<text x="86" y="699" font-size="17" fill="#166e61" font-weight="700" >Layer 0</text>
+<text x="86" y="721" font-size="14" fill="#5d8278" font-weight="400" >Q/K/V → 因果 attention</text>
+<path d="M 330 704 L 410 704" fill="none" stroke="#168579" stroke-width="3" marker-end="url(#arrow-prefill)"/>
+<path d="M 196 734 L 196 766" fill="none" stroke="#71afa0" stroke-width="2" marker-end="url(#arrow-prefill)"/>
+</g>
+<rect x="412" y="665" width="656" height="79" rx="10" fill="#fbfcfe" stroke="#e4eaf2" />
+<text x="428" y="710" font-size="18" fill="#4b617e" font-weight="600" class="mono">L0</text>
+<text x="474" y="694" font-size="14" fill="#64758d" font-weight="600" class="mono">K0</text>
+<g class="cell-prompt" data-token-index="0" data-token="x₁" data-layer="0" data-kind="K">
+<title>第 0 层 K 缓存中的 token 位置 0；格子表示向量区域</title>
+<rect x="525" y="676" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="553" y="694" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">x₁</text>
+</g>
+<g class="cell-prompt" data-token-index="1" data-token="x₂" data-layer="0" data-kind="K">
+<title>第 0 层 K 缓存中的 token 位置 1；格子表示向量区域</title>
+<rect x="589" y="676" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="617" y="694" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">x₂</text>
+</g>
+<g class="cell-prompt" data-token-index="2" data-token="x₃" data-layer="0" data-kind="K">
+<title>第 0 层 K 缓存中的 token 位置 2；格子表示向量区域</title>
+<rect x="653" y="676" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="681" y="694" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">x₃</text>
+</g>
+<g class="cell-decode1" data-token-index="3" data-token="y₁" data-layer="0" data-kind="K">
+<title>第 0 层 K 缓存中的 token 位置 3；格子表示向量区域</title>
+<rect x="717" y="676" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="745" y="694" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">y₁</text>
+</g>
+<g class="cell-decode2" data-token-index="4" data-token="y₂" data-layer="0" data-kind="K">
+<title>第 0 层 K 缓存中的 token 位置 4；格子表示向量区域</title>
+<rect x="781" y="676" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="809" y="694" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">y₂</text>
+</g>
+<g class="cell-empty" data-token-index="5" data-token="·" data-layer="0" data-kind="K">
+<title>第 0 层 K 缓存中的 token 位置 5；格子表示向量区域</title>
+<rect x="845" y="676" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="873" y="694" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">·</text>
+</g>
+<g class="cell-empty" data-token-index="6" data-token="·" data-layer="0" data-kind="K">
+<title>第 0 层 K 缓存中的 token 位置 6；格子表示向量区域</title>
+<rect x="909" y="676" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="937" y="694" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">·</text>
+</g>
+<g class="cell-empty" data-token-index="7" data-token="·" data-layer="0" data-kind="K">
+<title>第 0 层 K 缓存中的 token 位置 7；格子表示向量区域</title>
+<rect x="973" y="676" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="1001" y="694" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">·</text>
+</g>
+<text x="474" y="726" font-size="14" fill="#64758d" font-weight="600" class="mono">V0</text>
+<g class="cell-prompt" data-token-index="0" data-token="x₁" data-layer="0" data-kind="V">
+<title>第 0 层 V 缓存中的 token 位置 0；格子表示向量区域</title>
+<rect x="525" y="708" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="553" y="726" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">x₁</text>
+</g>
+<g class="cell-prompt" data-token-index="1" data-token="x₂" data-layer="0" data-kind="V">
+<title>第 0 层 V 缓存中的 token 位置 1；格子表示向量区域</title>
+<rect x="589" y="708" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="617" y="726" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">x₂</text>
+</g>
+<g class="cell-prompt" data-token-index="2" data-token="x₃" data-layer="0" data-kind="V">
+<title>第 0 层 V 缓存中的 token 位置 2；格子表示向量区域</title>
+<rect x="653" y="708" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="681" y="726" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">x₃</text>
+</g>
+<g class="cell-decode1" data-token-index="3" data-token="y₁" data-layer="0" data-kind="V">
+<title>第 0 层 V 缓存中的 token 位置 3；格子表示向量区域</title>
+<rect x="717" y="708" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="745" y="726" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">y₁</text>
+</g>
+<g class="cell-decode2" data-token-index="4" data-token="y₂" data-layer="0" data-kind="V">
+<title>第 0 层 V 缓存中的 token 位置 4；格子表示向量区域</title>
+<rect x="781" y="708" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="809" y="726" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">y₂</text>
+</g>
+<g class="cell-empty" data-token-index="5" data-token="·" data-layer="0" data-kind="V">
+<title>第 0 层 V 缓存中的 token 位置 5；格子表示向量区域</title>
+<rect x="845" y="708" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="873" y="726" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">·</text>
+</g>
+<g class="cell-empty" data-token-index="6" data-token="·" data-layer="0" data-kind="V">
+<title>第 0 层 V 缓存中的 token 位置 6；格子表示向量区域</title>
+<rect x="909" y="708" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="937" y="726" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">·</text>
+</g>
+<g class="cell-empty" data-token-index="7" data-token="·" data-layer="0" data-kind="V">
+<title>第 0 层 V 缓存中的 token 位置 7；格子表示向量区域</title>
+<rect x="973" y="708" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="1001" y="726" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">·</text>
+</g>
+<g data-phase="decode">
+<rect x="1152" y="676" width="258" height="56" rx="10" fill="#ffffff" stroke="#c9d9f0" />
+<text x="1168" y="699" font-size="17" fill="#2a589e" font-weight="700" >Layer 0</text>
+<text x="1168" y="721" font-size="14" fill="#617ca3" font-weight="400" >Qₜ + 可见 K/V → attention</text>
+<path d="M 1068 677 H 1078 V 732 H 1068" fill="none" stroke="#a6b9d4" stroke-width="1.5"/>
+<path d="M 1079 693 L 1150 693" fill="none" stroke="#2563eb" stroke-width="2.5" marker-end="url(#arrow-read)"/>
+<path d="M 1150 715 L 1079 715" fill="none" stroke="#d97706" stroke-width="2.5" marker-end="url(#arrow-write)"/>
+<text x="1112" y="685" font-size="11" fill="#2563eb" font-weight="500" text-anchor="middle">读 K/V</text>
+<text x="1112" y="730" font-size="11" fill="#b47723" font-weight="500" text-anchor="middle">写 K/V</text>
+<path d="M 1280 734 L 1280 766" fill="none" stroke="#8ca8d0" stroke-width="2" marker-end="url(#arrow-read)"/>
+</g>
+<g data-phase="prefill">
+<rect x="70" y="770" width="258" height="56" rx="10" fill="#ffffff" stroke="#c8e1d8" />
+<text x="86" y="793" font-size="17" fill="#166e61" font-weight="700" >Layer 1</text>
+<text x="86" y="815" font-size="14" fill="#5d8278" font-weight="400" >Q/K/V → 因果 attention</text>
+<path d="M 330 798 L 410 798" fill="none" stroke="#168579" stroke-width="3" marker-end="url(#arrow-prefill)"/>
+<path d="M 196 828 L 196 860" fill="none" stroke="#71afa0" stroke-width="2" marker-end="url(#arrow-prefill)"/>
+</g>
+<rect x="412" y="759" width="656" height="79" rx="10" fill="#fbfcfe" stroke="#e4eaf2" />
+<text x="428" y="804" font-size="18" fill="#4b617e" font-weight="600" class="mono">L1</text>
+<text x="474" y="788" font-size="14" fill="#64758d" font-weight="600" class="mono">K1</text>
+<g class="cell-prompt" data-token-index="0" data-token="x₁" data-layer="1" data-kind="K">
+<title>第 1 层 K 缓存中的 token 位置 0；格子表示向量区域</title>
+<rect x="525" y="770" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="553" y="788" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">x₁</text>
+</g>
+<g class="cell-prompt" data-token-index="1" data-token="x₂" data-layer="1" data-kind="K">
+<title>第 1 层 K 缓存中的 token 位置 1；格子表示向量区域</title>
+<rect x="589" y="770" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="617" y="788" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">x₂</text>
+</g>
+<g class="cell-prompt" data-token-index="2" data-token="x₃" data-layer="1" data-kind="K">
+<title>第 1 层 K 缓存中的 token 位置 2；格子表示向量区域</title>
+<rect x="653" y="770" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="681" y="788" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">x₃</text>
+</g>
+<g class="cell-decode1" data-token-index="3" data-token="y₁" data-layer="1" data-kind="K">
+<title>第 1 层 K 缓存中的 token 位置 3；格子表示向量区域</title>
+<rect x="717" y="770" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="745" y="788" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">y₁</text>
+</g>
+<g class="cell-decode2" data-token-index="4" data-token="y₂" data-layer="1" data-kind="K">
+<title>第 1 层 K 缓存中的 token 位置 4；格子表示向量区域</title>
+<rect x="781" y="770" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="809" y="788" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">y₂</text>
+</g>
+<g class="cell-empty" data-token-index="5" data-token="·" data-layer="1" data-kind="K">
+<title>第 1 层 K 缓存中的 token 位置 5；格子表示向量区域</title>
+<rect x="845" y="770" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="873" y="788" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">·</text>
+</g>
+<g class="cell-empty" data-token-index="6" data-token="·" data-layer="1" data-kind="K">
+<title>第 1 层 K 缓存中的 token 位置 6；格子表示向量区域</title>
+<rect x="909" y="770" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="937" y="788" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">·</text>
+</g>
+<g class="cell-empty" data-token-index="7" data-token="·" data-layer="1" data-kind="K">
+<title>第 1 层 K 缓存中的 token 位置 7；格子表示向量区域</title>
+<rect x="973" y="770" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="1001" y="788" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">·</text>
+</g>
+<text x="474" y="820" font-size="14" fill="#64758d" font-weight="600" class="mono">V1</text>
+<g class="cell-prompt" data-token-index="0" data-token="x₁" data-layer="1" data-kind="V">
+<title>第 1 层 V 缓存中的 token 位置 0；格子表示向量区域</title>
+<rect x="525" y="802" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="553" y="820" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">x₁</text>
+</g>
+<g class="cell-prompt" data-token-index="1" data-token="x₂" data-layer="1" data-kind="V">
+<title>第 1 层 V 缓存中的 token 位置 1；格子表示向量区域</title>
+<rect x="589" y="802" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="617" y="820" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">x₂</text>
+</g>
+<g class="cell-prompt" data-token-index="2" data-token="x₃" data-layer="1" data-kind="V">
+<title>第 1 层 V 缓存中的 token 位置 2；格子表示向量区域</title>
+<rect x="653" y="802" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="681" y="820" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">x₃</text>
+</g>
+<g class="cell-decode1" data-token-index="3" data-token="y₁" data-layer="1" data-kind="V">
+<title>第 1 层 V 缓存中的 token 位置 3；格子表示向量区域</title>
+<rect x="717" y="802" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="745" y="820" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">y₁</text>
+</g>
+<g class="cell-decode2" data-token-index="4" data-token="y₂" data-layer="1" data-kind="V">
+<title>第 1 层 V 缓存中的 token 位置 4；格子表示向量区域</title>
+<rect x="781" y="802" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="809" y="820" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">y₂</text>
+</g>
+<g class="cell-empty" data-token-index="5" data-token="·" data-layer="1" data-kind="V">
+<title>第 1 层 V 缓存中的 token 位置 5；格子表示向量区域</title>
+<rect x="845" y="802" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="873" y="820" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">·</text>
+</g>
+<g class="cell-empty" data-token-index="6" data-token="·" data-layer="1" data-kind="V">
+<title>第 1 层 V 缓存中的 token 位置 6；格子表示向量区域</title>
+<rect x="909" y="802" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="937" y="820" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">·</text>
+</g>
+<g class="cell-empty" data-token-index="7" data-token="·" data-layer="1" data-kind="V">
+<title>第 1 层 V 缓存中的 token 位置 7；格子表示向量区域</title>
+<rect x="973" y="802" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="1001" y="820" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">·</text>
+</g>
+<g data-phase="decode">
+<rect x="1152" y="770" width="258" height="56" rx="10" fill="#ffffff" stroke="#c9d9f0" />
+<text x="1168" y="793" font-size="17" fill="#2a589e" font-weight="700" >Layer 1</text>
+<text x="1168" y="815" font-size="14" fill="#617ca3" font-weight="400" >Qₜ + 可见 K/V → attention</text>
+<path d="M 1068 771 H 1078 V 826 H 1068" fill="none" stroke="#a6b9d4" stroke-width="1.5"/>
+<path d="M 1079 787 L 1150 787" fill="none" stroke="#2563eb" stroke-width="2.5" marker-end="url(#arrow-read)"/>
+<path d="M 1150 809 L 1079 809" fill="none" stroke="#d97706" stroke-width="2.5" marker-end="url(#arrow-write)"/>
+<text x="1112" y="779" font-size="11" fill="#2563eb" font-weight="500" text-anchor="middle">读 K/V</text>
+<text x="1112" y="824" font-size="11" fill="#b47723" font-weight="500" text-anchor="middle">写 K/V</text>
+<path d="M 1280 828 L 1280 860" fill="none" stroke="#8ca8d0" stroke-width="2" marker-end="url(#arrow-read)"/>
+</g>
+<g data-phase="prefill">
+<rect x="70" y="864" width="258" height="56" rx="10" fill="#ffffff" stroke="#c8e1d8" />
+<text x="86" y="887" font-size="17" fill="#166e61" font-weight="700" >Layer 2</text>
+<text x="86" y="909" font-size="14" fill="#5d8278" font-weight="400" >Q/K/V → 因果 attention</text>
+<path d="M 330 892 L 410 892" fill="none" stroke="#168579" stroke-width="3" marker-end="url(#arrow-prefill)"/>
+<path d="M 196 922 L 196 954" fill="none" stroke="#71afa0" stroke-width="2" marker-end="url(#arrow-prefill)"/>
+</g>
+<rect x="412" y="853" width="656" height="79" rx="10" fill="#fbfcfe" stroke="#e4eaf2" />
+<text x="428" y="898" font-size="18" fill="#4b617e" font-weight="600" class="mono">L2</text>
+<text x="474" y="882" font-size="14" fill="#64758d" font-weight="600" class="mono">K2</text>
+<g class="cell-prompt" data-token-index="0" data-token="x₁" data-layer="2" data-kind="K">
+<title>第 2 层 K 缓存中的 token 位置 0；格子表示向量区域</title>
+<rect x="525" y="864" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="553" y="882" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">x₁</text>
+</g>
+<g class="cell-prompt" data-token-index="1" data-token="x₂" data-layer="2" data-kind="K">
+<title>第 2 层 K 缓存中的 token 位置 1；格子表示向量区域</title>
+<rect x="589" y="864" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="617" y="882" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">x₂</text>
+</g>
+<g class="cell-prompt" data-token-index="2" data-token="x₃" data-layer="2" data-kind="K">
+<title>第 2 层 K 缓存中的 token 位置 2；格子表示向量区域</title>
+<rect x="653" y="864" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="681" y="882" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">x₃</text>
+</g>
+<g class="cell-decode1" data-token-index="3" data-token="y₁" data-layer="2" data-kind="K">
+<title>第 2 层 K 缓存中的 token 位置 3；格子表示向量区域</title>
+<rect x="717" y="864" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="745" y="882" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">y₁</text>
+</g>
+<g class="cell-decode2" data-token-index="4" data-token="y₂" data-layer="2" data-kind="K">
+<title>第 2 层 K 缓存中的 token 位置 4；格子表示向量区域</title>
+<rect x="781" y="864" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="809" y="882" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">y₂</text>
+</g>
+<g class="cell-empty" data-token-index="5" data-token="·" data-layer="2" data-kind="K">
+<title>第 2 层 K 缓存中的 token 位置 5；格子表示向量区域</title>
+<rect x="845" y="864" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="873" y="882" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">·</text>
+</g>
+<g class="cell-empty" data-token-index="6" data-token="·" data-layer="2" data-kind="K">
+<title>第 2 层 K 缓存中的 token 位置 6；格子表示向量区域</title>
+<rect x="909" y="864" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="937" y="882" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">·</text>
+</g>
+<g class="cell-empty" data-token-index="7" data-token="·" data-layer="2" data-kind="K">
+<title>第 2 层 K 缓存中的 token 位置 7；格子表示向量区域</title>
+<rect x="973" y="864" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="1001" y="882" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">·</text>
+</g>
+<text x="474" y="914" font-size="14" fill="#64758d" font-weight="600" class="mono">V2</text>
+<g class="cell-prompt" data-token-index="0" data-token="x₁" data-layer="2" data-kind="V">
+<title>第 2 层 V 缓存中的 token 位置 0；格子表示向量区域</title>
+<rect x="525" y="896" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="553" y="914" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">x₁</text>
+</g>
+<g class="cell-prompt" data-token-index="1" data-token="x₂" data-layer="2" data-kind="V">
+<title>第 2 层 V 缓存中的 token 位置 1；格子表示向量区域</title>
+<rect x="589" y="896" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="617" y="914" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">x₂</text>
+</g>
+<g class="cell-prompt" data-token-index="2" data-token="x₃" data-layer="2" data-kind="V">
+<title>第 2 层 V 缓存中的 token 位置 2；格子表示向量区域</title>
+<rect x="653" y="896" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="681" y="914" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">x₃</text>
+</g>
+<g class="cell-decode1" data-token-index="3" data-token="y₁" data-layer="2" data-kind="V">
+<title>第 2 层 V 缓存中的 token 位置 3；格子表示向量区域</title>
+<rect x="717" y="896" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="745" y="914" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">y₁</text>
+</g>
+<g class="cell-decode2" data-token-index="4" data-token="y₂" data-layer="2" data-kind="V">
+<title>第 2 层 V 缓存中的 token 位置 4；格子表示向量区域</title>
+<rect x="781" y="896" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="809" y="914" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">y₂</text>
+</g>
+<g class="cell-empty" data-token-index="5" data-token="·" data-layer="2" data-kind="V">
+<title>第 2 层 V 缓存中的 token 位置 5；格子表示向量区域</title>
+<rect x="845" y="896" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="873" y="914" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">·</text>
+</g>
+<g class="cell-empty" data-token-index="6" data-token="·" data-layer="2" data-kind="V">
+<title>第 2 层 V 缓存中的 token 位置 6；格子表示向量区域</title>
+<rect x="909" y="896" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="937" y="914" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">·</text>
+</g>
+<g class="cell-empty" data-token-index="7" data-token="·" data-layer="2" data-kind="V">
+<title>第 2 层 V 缓存中的 token 位置 7；格子表示向量区域</title>
+<rect x="973" y="896" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="1001" y="914" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">·</text>
+</g>
+<g data-phase="decode">
+<rect x="1152" y="864" width="258" height="56" rx="10" fill="#ffffff" stroke="#c9d9f0" />
+<text x="1168" y="887" font-size="17" fill="#2a589e" font-weight="700" >Layer 2</text>
+<text x="1168" y="909" font-size="14" fill="#617ca3" font-weight="400" >Qₜ + 可见 K/V → attention</text>
+<path d="M 1068 865 H 1078 V 920 H 1068" fill="none" stroke="#a6b9d4" stroke-width="1.5"/>
+<path d="M 1079 881 L 1150 881" fill="none" stroke="#2563eb" stroke-width="2.5" marker-end="url(#arrow-read)"/>
+<path d="M 1150 903 L 1079 903" fill="none" stroke="#d97706" stroke-width="2.5" marker-end="url(#arrow-write)"/>
+<text x="1112" y="873" font-size="11" fill="#2563eb" font-weight="500" text-anchor="middle">读 K/V</text>
+<text x="1112" y="918" font-size="11" fill="#b47723" font-weight="500" text-anchor="middle">写 K/V</text>
+<path d="M 1280 922 L 1280 954" fill="none" stroke="#8ca8d0" stroke-width="2" marker-end="url(#arrow-read)"/>
+</g>
+<g data-phase="prefill">
+<rect x="70" y="958" width="258" height="56" rx="10" fill="#ffffff" stroke="#c8e1d8" />
+<text x="86" y="981" font-size="17" fill="#166e61" font-weight="700" >Layer 3</text>
+<text x="86" y="1003" font-size="14" fill="#5d8278" font-weight="400" >Q/K/V → 因果 attention</text>
+<path d="M 330 986 L 410 986" fill="none" stroke="#168579" stroke-width="3" marker-end="url(#arrow-prefill)"/>
+</g>
+<rect x="412" y="947" width="656" height="79" rx="10" fill="#fbfcfe" stroke="#e4eaf2" />
+<text x="428" y="992" font-size="18" fill="#4b617e" font-weight="600" class="mono">L3</text>
+<text x="474" y="976" font-size="14" fill="#64758d" font-weight="600" class="mono">K3</text>
+<g class="cell-prompt" data-token-index="0" data-token="x₁" data-layer="3" data-kind="K">
+<title>第 3 层 K 缓存中的 token 位置 0；格子表示向量区域</title>
+<rect x="525" y="958" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="553" y="976" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">x₁</text>
+</g>
+<g class="cell-prompt" data-token-index="1" data-token="x₂" data-layer="3" data-kind="K">
+<title>第 3 层 K 缓存中的 token 位置 1；格子表示向量区域</title>
+<rect x="589" y="958" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="617" y="976" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">x₂</text>
+</g>
+<g class="cell-prompt" data-token-index="2" data-token="x₃" data-layer="3" data-kind="K">
+<title>第 3 层 K 缓存中的 token 位置 2；格子表示向量区域</title>
+<rect x="653" y="958" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="681" y="976" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">x₃</text>
+</g>
+<g class="cell-decode1" data-token-index="3" data-token="y₁" data-layer="3" data-kind="K">
+<title>第 3 层 K 缓存中的 token 位置 3；格子表示向量区域</title>
+<rect x="717" y="958" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="745" y="976" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">y₁</text>
+</g>
+<g class="cell-decode2" data-token-index="4" data-token="y₂" data-layer="3" data-kind="K">
+<title>第 3 层 K 缓存中的 token 位置 4；格子表示向量区域</title>
+<rect x="781" y="958" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="809" y="976" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">y₂</text>
+</g>
+<g class="cell-empty" data-token-index="5" data-token="·" data-layer="3" data-kind="K">
+<title>第 3 层 K 缓存中的 token 位置 5；格子表示向量区域</title>
+<rect x="845" y="958" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="873" y="976" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">·</text>
+</g>
+<g class="cell-empty" data-token-index="6" data-token="·" data-layer="3" data-kind="K">
+<title>第 3 层 K 缓存中的 token 位置 6；格子表示向量区域</title>
+<rect x="909" y="958" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="937" y="976" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">·</text>
+</g>
+<g class="cell-empty" data-token-index="7" data-token="·" data-layer="3" data-kind="K">
+<title>第 3 层 K 缓存中的 token 位置 7；格子表示向量区域</title>
+<rect x="973" y="958" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="1001" y="976" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">·</text>
+</g>
+<text x="474" y="1008" font-size="14" fill="#64758d" font-weight="600" class="mono">V3</text>
+<g class="cell-prompt" data-token-index="0" data-token="x₁" data-layer="3" data-kind="V">
+<title>第 3 层 V 缓存中的 token 位置 0；格子表示向量区域</title>
+<rect x="525" y="990" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="553" y="1008" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">x₁</text>
+</g>
+<g class="cell-prompt" data-token-index="1" data-token="x₂" data-layer="3" data-kind="V">
+<title>第 3 层 V 缓存中的 token 位置 1；格子表示向量区域</title>
+<rect x="589" y="990" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="617" y="1008" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">x₂</text>
+</g>
+<g class="cell-prompt" data-token-index="2" data-token="x₃" data-layer="3" data-kind="V">
+<title>第 3 层 V 缓存中的 token 位置 2；格子表示向量区域</title>
+<rect x="653" y="990" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="681" y="1008" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">x₃</text>
+</g>
+<g class="cell-decode1" data-token-index="3" data-token="y₁" data-layer="3" data-kind="V">
+<title>第 3 层 V 缓存中的 token 位置 3；格子表示向量区域</title>
+<rect x="717" y="990" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="745" y="1008" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">y₁</text>
+</g>
+<g class="cell-decode2" data-token-index="4" data-token="y₂" data-layer="3" data-kind="V">
+<title>第 3 层 V 缓存中的 token 位置 4；格子表示向量区域</title>
+<rect x="781" y="990" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="809" y="1008" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">y₂</text>
+</g>
+<g class="cell-empty" data-token-index="5" data-token="·" data-layer="3" data-kind="V">
+<title>第 3 层 V 缓存中的 token 位置 5；格子表示向量区域</title>
+<rect x="845" y="990" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="873" y="1008" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">·</text>
+</g>
+<g class="cell-empty" data-token-index="6" data-token="·" data-layer="3" data-kind="V">
+<title>第 3 层 V 缓存中的 token 位置 6；格子表示向量区域</title>
+<rect x="909" y="990" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="937" y="1008" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">·</text>
+</g>
+<g class="cell-empty" data-token-index="7" data-token="·" data-layer="3" data-kind="V">
+<title>第 3 层 V 缓存中的 token 位置 7；格子表示向量区域</title>
+<rect x="973" y="990" width="56" height="25" rx="5" fill="#ffffff" stroke="#dce4ee" data-cell=""/>
+<text x="1001" y="1008" font-size="15" fill="#172b44" font-weight="600" text-anchor="middle" data-cell-label="">·</text>
+</g>
+<g data-phase="decode">
+<rect x="1152" y="958" width="258" height="56" rx="10" fill="#ffffff" stroke="#c9d9f0" />
+<text x="1168" y="981" font-size="17" fill="#2a589e" font-weight="700" >Layer 3</text>
+<text x="1168" y="1003" font-size="14" fill="#617ca3" font-weight="400" >Qₜ + 可见 K/V → attention</text>
+<path d="M 1068 959 H 1078 V 1014 H 1068" fill="none" stroke="#a6b9d4" stroke-width="1.5"/>
+<path d="M 1079 975 L 1150 975" fill="none" stroke="#2563eb" stroke-width="2.5" marker-end="url(#arrow-read)"/>
+<path d="M 1150 997 L 1079 997" fill="none" stroke="#d97706" stroke-width="2.5" marker-end="url(#arrow-write)"/>
+<text x="1112" y="967" font-size="11" fill="#2563eb" font-weight="500" text-anchor="middle">读 K/V</text>
+<text x="1112" y="1012" font-size="11" fill="#b47723" font-weight="500" text-anchor="middle">写 K/V</text>
+</g>
+<g data-phase="prefill">
+<rect x="70" y="1060" width="258" height="30" rx="15" fill="#dbefe8" stroke="#dbefe8" />
+<text x="199.0" y="1081" font-size="14" fill="#167664" font-weight="600" text-anchor="middle" >logits → 确定 y₁</text>
+</g>
+<g data-phase="decode">
+<rect x="1152" y="1060" width="258" height="30" rx="15" fill="#e0eafa" stroke="#e0eafa" />
+<text x="1281.0" y="1081" font-size="14" fill="#345f9c" font-weight="600" text-anchor="middle" data-field="decode-output">logits → y₃</text>
+</g>
+<path d="M 422 1052 L 454 1052" fill="none" stroke="#168579" stroke-width="2.5" marker-end="url(#arrow-prefill)"/>
+<text x="465" y="1058" font-size="13" fill="#397b6e" font-weight="400" >prefill 写本层 K/V</text>
+<path d="M 681 1052 L 713 1052" fill="none" stroke="#2563eb" stroke-width="2.5" marker-end="url(#arrow-read)"/>
+<text x="725" y="1058" font-size="13" fill="#446ca5" font-weight="400" >decode 使用已有 KV</text>
+<path d="M 946 1052 L 914 1052" fill="none" stroke="#d97706" stroke-width="2.5" marker-end="url(#arrow-write)"/>
+<text x="957" y="1058" font-size="13" fill="#a5722e" font-weight="400" >追加 K/V</text>
+<text x="415" y="1090" font-size="14" fill="#7a8ba0" font-weight="400" >当前 token 的 K/V 也参与 attention；图不规定其实际写入与读取先后。</text>
+<text x="48" y="1158" font-size="22" fill="#b24f76" font-weight="700" >03</text>
+<text x="96" y="1158" font-size="23" fill="#233750" font-weight="700" >token 接力：有效列增加，8 个缓存对象始终保留</text>
+<rect x="48" y="1182" width="334" height="151" rx="14" fill="#edf2f8" stroke="#edf2f8" />
+<text x="66" y="1213" font-size="19" fill="#5f748d" font-weight="700" >绑定完成</text>
+<text x="66" y="1245" font-size="17" fill="#344b66" font-weight="500" >本请求尚无有效 KV</text>
+<text x="66" y="1277" font-size="16" fill="#5f748d" font-weight="500" >有效长度 0（新 prompt 示例）</text>
+<text x="66" y="1310" font-size="13" fill="#6c7b91" font-weight="400" >旧内容可能仍在；绑定不等于清零</text>
+<path d="M 383 1255 L 396 1255" fill="none" stroke="#b24f76" stroke-width="2" marker-end="url(#arrow-feedback)"/>
+<rect x="398" y="1182" width="334" height="151" rx="14" fill="#e3f3ee" stroke="#e3f3ee" />
+<text x="416" y="1213" font-size="19" fill="#147867" font-weight="700" >Prefill 完成</text>
+<text x="416" y="1245" font-size="17" fill="#344b66" font-weight="500" >输入 x₁ x₂ x₃ → 选出 y₁</text>
+<text x="416" y="1277" font-size="16" fill="#147867" font-weight="500" >valid 0 + current 3 → KV 3</text>
+<text x="416" y="1310" font-size="13" fill="#6c7b91" font-weight="400" >y₁ 已产生，但它自己的 K/V 尚未计算</text>
+<path d="M 733 1255 L 746 1255" fill="none" stroke="#b24f76" stroke-width="2" marker-end="url(#arrow-feedback)"/>
+<rect x="748" y="1182" width="334" height="151" rx="14" fill="#fff0da" stroke="#fff0da" />
+<text x="766" y="1213" font-size="19" fill="#ac6b16" font-weight="700" >Decode 1 完成</text>
+<text x="766" y="1245" font-size="17" fill="#344b66" font-weight="500" >输入 y₁ → 选出 y₂</text>
+<text x="766" y="1277" font-size="16" fill="#ac6b16" font-weight="500" >valid 3 + current 1 → KV 4</text>
+<text x="766" y="1310" font-size="13" fill="#6c7b91" font-weight="400" >本次新增各层 K(y₁)、V(y₁)</text>
+<path d="M 1083 1255 L 1096 1255" fill="none" stroke="#b24f76" stroke-width="2" marker-end="url(#arrow-feedback)"/>
+<rect x="1098" y="1182" width="334" height="151" rx="14" fill="#ece5fa" stroke="#ece5fa" />
+<text x="1116" y="1213" font-size="19" fill="#7550ab" font-weight="700" >Decode 2 完成</text>
+<text x="1116" y="1245" font-size="17" fill="#344b66" font-weight="500" >输入 y₂ → 选出 y₃</text>
+<text x="1116" y="1277" font-size="16" fill="#7550ab" font-weight="500" >valid 4 + current 1 → KV 5</text>
+<text x="1116" y="1310" font-size="13" fill="#6c7b91" font-weight="400" >下轮将 y₃ 作为输入继续执行</text>
+<g data-phase="feedback">
+<rect x="896" y="1350" width="536" height="60" rx="12" fill="#fcf3f7" stroke="#eddae3" />
+<path d="M 1382 1333 L 1382 1348" fill="none" stroke="#b24f76" stroke-width="2" marker-end="url(#arrow-feedback)"/>
+<text x="917" y="1375" font-size="17" fill="#9d5272" font-weight="600" >下一轮 decode</text>
+<text x="917" y="1398" font-size="14" fill="#9d5272" font-weight="400" >logits → token → embedding → 继续执行</text>
+</g>
+<rect x="48" y="1350" width="164" height="30" rx="15" fill="#edf2f8" stroke="#edf2f8" />
+<text x="130.0" y="1371" font-size="14" fill="#506985" font-weight="600" text-anchor="middle" data-field="phase-label">全景 · KV 接续</text>
+<text x="235" y="1366" font-size="13" fill="#8290a2" font-weight="500" >执行前 valid_length</text>
+<text x="235" y="1398" font-size="27" fill="#2a405e" font-weight="700" class="mono" data-field="valid-length">4</text>
+<text x="411" y="1366" font-size="13" fill="#8290a2" font-weight="500" >本次 current_length</text>
+<text x="411" y="1398" font-size="27" fill="#2a405e" font-weight="700" class="mono" data-field="current-length">1</text>
+<text x="587" y="1366" font-size="13" fill="#8290a2" font-weight="500" >执行后有效 KV 长度</text>
+<text x="587" y="1398" font-size="27" fill="#2a405e" font-weight="700" class="mono" data-field="cached-length">5</text>
+<path d="M 48 1430 L 1432 1430" fill="none" stroke="#e4eaf2" stroke-width="1"/>
+<text x="48" y="1463" font-size="16" fill="#506983" font-weight="600" >代码定位 / vllm_houmo/model_runner.py</text>
+<text x="48" y="1494" font-size="14" fill="#74849b" font-weight="400" >1077–1081  初始化绑定</text>
+<text x="380" y="1494" font-size="14" fill="#74849b" font-weight="400" >1425–1435  按槽位重绑定</text>
+<text x="754" y="1494" font-size="14" fill="#74849b" font-weight="400" >1513–1517  prefill 执行</text>
+<text x="1114" y="1494" font-size="14" fill="#74849b" font-weight="400" >1648 / 1671  decode 执行</text>
+<text x="48" y="1531" font-size="15" fill="#71829a" font-weight="400" >读图约定：只展开示例槽位；8 列只是序列容量示意。按层 K/V 的排列不代表 runtime 的实际输入排序。</text>
+<text x="48" y="1558" font-size="15" fill="#71829a" font-weight="400" >空格表示尚无本请求有效数据。图展示源码的缓存复用意图；底层是否同址、零拷贝及物理写入方式需由 runtime 确认。</text>
+<text x="1430" y="1581" font-size="11" fill="#9ba7b7" font-weight="500" text-anchor="end" letter-spacing="1">HOUMO NOTES  ·  06 / KV CACHE</text>
+</svg>
+      </div>
+    </div>
+    <footer class="footer">
+      <div class="legend" aria-label="缓存颜色含义">
+        <span class="legend-item"><i class="swatch prompt" aria-hidden="true"></i>Prompt</span>
+        <span class="legend-item"><i class="swatch decode1" aria-hidden="true"></i>Decode 1 写入</span>
+        <span class="legend-item"><i class="swatch decode2" aria-hidden="true"></i>Decode 2 写入</span>
+        <span class="legend-item"><i class="swatch empty" aria-hidden="true"></i>尚无本请求有效 KV</span>
+      </div>
+      <p id="view-help">放大后可滚动查看；聚焦图示后按 + / − 缩放、0 适应。图中颜色表示不同执行阶段写入的 token。</p>
+    </footer>
+    <span class="sr-only" id="view-announcement" role="status" aria-live="polite"></span>
+    <noscript><p style="padding: 0 24px 16px">当前显示完整静态图；启用 JavaScript 后可切换阶段、槽位和缩放。也可通过“打开 SVG”查看原图。</p></noscript>
+  </main>
+  <script>
+    // Pure display-state calculation. B = 3, N = 4, P = 3.
+    function stateFor(mode, b) {
+      const slot = Number.isInteger(Number(b)) && Number(b) >= 0 && Number(b) <= 2 ? Number(b) : 1;
+      const phases = {
+        all: { visibleTokens: 5, valid: "4", current: "1", cached: "5", label: "全景 · KV 接续", active: null },
+        bind: { visibleTokens: 0, valid: "—", current: "—", cached: "—", label: "绑定 · 待执行", active: ["bind"] },
+        prefill: { visibleTokens: 3, valid: "0", current: "3", cached: "3", label: "Prefill · KV 3", active: ["bind", "prefill"] },
+        decode1: { visibleTokens: 4, valid: "3", current: "1", cached: "4", label: "Decode 1 · KV 4", active: ["decode", "feedback"] },
+        decode2: { visibleTokens: 5, valid: "4", current: "1", cached: "5", label: "Decode 2 · KV 5", active: ["decode", "feedback"] }
+      };
+      const resolvedMode = Object.prototype.hasOwnProperty.call(phases, mode) ? mode : "all";
+      const phase = phases[resolvedMode];
+      const start = 3 + slot * (2 * 4 + 2);
+      const end = start + 2 * 4;
+      const descriptions = {
+        all: "全景示意展示到 Decode 2 完成后的缓存；长度输入显示最后一次 decode 的 4 / 1。切换槽位可查看 runtime 输入编号的变化。",
+        bind: "将槽位 b = " + slot + " 的 8 个 K/V 输入绑定到 prefill 的同一组输入接口。此时尚无本请求有效 KV，旧内容可能仍在；这段循环没有显式清零，图中空格仅表示有效性；K/V 计算发生在后续执行中。",
+        prefill: "输入 x₁、x₂、x₃，valid_length = 0，current_length = 3。各层已写入 3 个 token 的 K/V；选出的 y₁ 要在下一次 decode 输入后才会进入缓存。",
+        decode1: "输入 y₁，valid_length = 3，current_length = 1。各层新增 y₁ 的 K/V，缓存有效长度变为 4；本轮输出用于选出 y₂。",
+        decode2: "输入 y₂，valid_length = 4，current_length = 1。各层新增 y₂ 的 K/V，缓存有效长度变为 5；本轮输出用于选出 y₃。"
+      };
+      return {
+        mode: resolvedMode,
+        visibleTokens: phase.visibleTokens,
+        activePhases: phase.active,
+        description: descriptions[resolvedMode] + " 切换示例槽位仅重算输入编号并重演同一教学过程，不会在槽位之间复制缓存。",
+        slot: "槽位 b = " + slot,
+        "index-start": String(start),
+        "index-end": String(end),
+        "decode-range": "decode [" + start + ", " + end + ")",
+        mapping: "decode[" + start + " + j] → prefill[3 + j]",
+        "valid-length": phase.valid,
+        "current-length": phase.current,
+        "cached-length": phase.cached,
+        "phase-label": phase.label,
+        "decode-input": resolvedMode === "all" || resolvedMode === "decode2" ? "y₂ → embedding" : "y₁ → embedding",
+        "decode-output": resolvedMode === "all" || resolvedMode === "decode2" ? "logits → y₃" : "logits → y₂"
+      };
+    }
+
+    (() => {
+      "use strict";
+      const viewer = document.getElementById("viewer");
+      const viewport = document.getElementById("viewport");
+      const svg = document.querySelector("#canvas > svg");
+      const stages = Array.from(document.querySelectorAll("[data-mode]"));
+      const slotSelect = document.getElementById("slot-select");
+      const description = document.getElementById("stage-description");
+      const zoomValue = document.getElementById("zoom-value");
+      const fullscreenButton = document.getElementById("fullscreen");
+      const announcement = document.getElementById("view-announcement");
+      let mode = "all";
+      let scale = 1;
+      let fitting = true;
+      let fitScale = 1;
+
+      function applyState() {
+        const state = stateFor(mode, slotSelect.value);
+        stages.forEach(button => button.setAttribute("aria-pressed", String(button.dataset.mode === state.mode)));
+        description.textContent = state.description;
+        if (!svg) return;
+        svg.querySelectorAll("[data-field]").forEach(node => {
+          const key = node.dataset.field;
+          if (Object.prototype.hasOwnProperty.call(state, key)) node.textContent = state[key];
+        });
+        svg.querySelectorAll("[data-token-index]").forEach(cell => {
+          const index = Number(cell.dataset.tokenIndex);
+          const visible = index < state.visibleTokens;
+          cell.classList.remove("cell-prompt", "cell-decode1", "cell-decode2", "cell-empty");
+          const cellClass = !visible ? "cell-empty" : index < 3 ? "cell-prompt" : index === 3 ? "cell-decode1" : "cell-decode2";
+          cell.classList.add(cellClass);
+          const label = cell.querySelector("[data-cell-label]");
+          if (label) label.textContent = visible ? (cell.dataset.token || "") : "·";
+        });
+        svg.querySelectorAll("[data-phase]").forEach(group => {
+          group.classList.toggle("muted", state.activePhases !== null && !state.activePhases.includes(group.dataset.phase));
+        });
+      }
+
+      stages.forEach(button => button.addEventListener("click", () => {
+        mode = button.dataset.mode;
+        applyState();
+      }));
+      slotSelect.addEventListener("change", applyState);
+      applyState();
+
+      if (!svg) {
+        document.querySelectorAll(".view-actions button").forEach(button => { button.disabled = true; });
+        return;
+      }
+
+      const box = svg.viewBox && svg.viewBox.baseVal;
+      const nativeWidth = box && box.width > 0 ? box.width : parseFloat(svg.getAttribute("width")) || 1600;
+      const nativeHeight = box && box.height > 0 ? box.height : parseFloat(svg.getAttribute("height")) || 1100;
+
+      function setScale(next, preserveCenter) {
+        const oldWidth = viewport.scrollWidth;
+        const oldHeight = viewport.scrollHeight;
+        const centerX = (viewport.scrollLeft + viewport.clientWidth / 2) / oldWidth;
+        const centerY = (viewport.scrollTop + viewport.clientHeight / 2) / oldHeight;
+        scale = Math.min(3, Math.max(Math.min(0.12, fitScale), next));
+        svg.style.width = (nativeWidth * scale) + "px";
+        svg.style.height = (nativeHeight * scale) + "px";
+        zoomValue.textContent = Math.round(scale * 100) + "%";
+        if (preserveCenter) {
+          viewport.scrollLeft = centerX * viewport.scrollWidth - viewport.clientWidth / 2;
+          viewport.scrollTop = centerY * viewport.scrollHeight - viewport.clientHeight / 2;
+        }
+      }
+
+      function fit() {
+        fitting = true;
+        const availableWidth = Math.max(100, viewport.clientWidth - 36);
+        fitScale = Math.min(1, availableWidth / nativeWidth);
+        setScale(fitScale, false);
+        viewport.scrollLeft = 0;
+        viewport.scrollTop = 0;
+      }
+
+      function zoom(factor) {
+        fitting = false;
+        setScale(scale * factor, true);
+      }
+
+      document.getElementById("zoom-in").addEventListener("click", () => zoom(1.2));
+      document.getElementById("zoom-out").addEventListener("click", () => zoom(1 / 1.2));
+      document.getElementById("fit").addEventListener("click", fit);
+      viewport.addEventListener("keydown", event => {
+        if (event.ctrlKey || event.metaKey || event.altKey || event.target !== viewport) return;
+        if (event.key === "+" || event.key === "=") { event.preventDefault(); zoom(1.2); }
+        if (event.key === "-" || event.key === "−") { event.preventDefault(); zoom(1 / 1.2); }
+        if (event.key === "0") { event.preventDefault(); fit(); }
+      });
+
+      if (!viewer.requestFullscreen || !document.fullscreenEnabled) {
+        fullscreenButton.disabled = true;
+        fullscreenButton.title = "当前嵌入环境不支持全屏；请独立打开交互图后使用全屏";
+      } else {
+        fullscreenButton.addEventListener("click", async () => {
+          try {
+            if (document.fullscreenElement === viewer) await document.exitFullscreen();
+            else await viewer.requestFullscreen();
+          } catch (error) {
+            announcement.textContent = "当前环境未允许全屏，可通过打开 SVG 查看完整图。";
+          }
+        });
+        document.addEventListener("fullscreenchange", () => {
+          const active = document.fullscreenElement === viewer;
+          fullscreenButton.textContent = active ? "退出全屏" : "全屏";
+          fullscreenButton.setAttribute("aria-pressed", String(active));
+          if (fitting) requestAnimationFrame(fit);
+        });
+      }
+
+      if (typeof ResizeObserver !== "undefined") {
+        new ResizeObserver(() => { if (fitting) fit(); }).observe(viewport);
+      } else {
+        window.addEventListener("resize", () => { if (fitting) fit(); });
+      }
+      requestAnimationFrame(fit);
+    })();
+  </script>
+</body>
+</html>
