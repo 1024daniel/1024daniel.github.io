@@ -29,7 +29,7 @@
 <rect x="70" y="172" width="174" height="30" rx="15" fill="#eef3f9" stroke="#eef3f9" />
 <text x="157.0" y="193" font-size="14" fill="#425875" font-weight="600" text-anchor="middle" >示例：4 层 / 3 槽位</text>
 <rect x="256" y="172" width="150" height="30" rx="15" fill="#ede5fb" stroke="#ede5fb" />
-<text x="331.0" y="193" font-size="14" fill="#6d40aa" font-weight="600" text-anchor="middle" data-field="slot">槽位 b = 1</text>
+<text x="331.0" y="193" font-size="14" fill="#6d40aa" font-weight="600" text-anchor="middle" data-field="slot">槽位 1 · 请求 B</text>
 <rect x="418" y="172" width="195" height="30" rx="15" fill="#e5f3ef" stroke="#e5f3ef" />
 <text x="515.5" y="193" font-size="14" fill="#167364" font-weight="600" text-anchor="middle" >8 个 KV 输入对象</text>
 <rect x="625" y="172" width="231" height="30" rx="15" fill="#eef3f9" stroke="#eef3f9" />
@@ -66,15 +66,15 @@
 <rect x="230" y="521" width="98" height="30" rx="15" fill="#dbeee8" stroke="#dbeee8" />
 <text x="279.0" y="542" font-size="14" fill="#177c6c" font-weight="600" text-anchor="middle" >多 token</text>
 <rect x="68" y="566" width="262" height="70" rx="10" fill="#ffffff" stroke="#d5e9e2" />
-<text x="87" y="593" font-size="18" fill="#215f56" font-weight="500" >x₁  x₂  x₃ → embedding</text>
-<text x="87" y="620" font-size="15" fill="#567a70" font-weight="400" class="mono">valid = 0     current = 3</text>
+<text x="87" y="593" font-size="18" fill="#215f56" font-weight="500" data-field="prefill-input">x₁ x₂ x₃ → embedding</text>
+<text x="87" y="620" font-size="15" fill="#567a70" font-weight="400" class="mono" data-field="prefill-lengths">valid = 0     current = 3</text>
 <text x="72" y="654" font-size="15" fill="#38766a" font-weight="400" >prefill.run() → sync()</text>
 </g>
 <text x="415" y="542" font-size="22" fill="#24364e" font-weight="700" >同一槽位的层级 KV 视图</text>
 <rect x="902" y="521" width="163" height="30" rx="15" fill="#eef2f8" stroke="#eef2f8" />
-<text x="983.5" y="542" font-size="14" fill="#526783" font-weight="600" text-anchor="middle" data-field="slot">槽位 b = 1</text>
+<text x="983.5" y="542" font-size="14" fill="#526783" font-weight="600" text-anchor="middle" data-field="slot">槽位 1 · 请求 B</text>
 <text x="415" y="572" font-size="16" fill="#687c95" font-weight="400" >每层各一个 K 对象、一个 V 对象；横向是对象内部的 token 区域</text>
-<text x="415" y="604" font-size="15" fill="#8391a4" font-weight="400" >每个格子代表该 token 的多头向量；head 和向量维度在图中省略</text>
+<text x="415" y="604" font-size="15" fill="#526783" font-weight="500" data-field="request-title">请求 B：3 个 prompt token 的独立缓存</text>
 <text x="418" y="643" font-size="14" fill="#738298" font-weight="600" >层 / 类型</text>
 <text x="553" y="643" font-size="13" fill="#8190a5" font-weight="400" text-anchor="middle" class="mono">t=0</text>
 <text x="617" y="643" font-size="13" fill="#8190a5" font-weight="400" text-anchor="middle" class="mono">t=1</text>
@@ -501,7 +501,7 @@
 </g>
 <g data-phase="prefill">
 <rect x="70" y="1060" width="258" height="30" rx="15" fill="#dbefe8" stroke="#dbefe8" />
-<text x="199.0" y="1081" font-size="14" fill="#167664" font-weight="600" text-anchor="middle" >logits → 确定 y₁</text>
+<text x="199.0" y="1081" font-size="14" fill="#167664" font-weight="600" text-anchor="middle" data-field="prefill-output">logits → 确定 y₁</text>
 </g>
 <g data-phase="decode">
 <rect x="1152" y="1060" width="258" height="30" rx="15" fill="#e0eafa" stroke="#e0eafa" />
@@ -515,7 +515,7 @@
 <text x="957" y="1058" font-size="13" fill="#a5722e" font-weight="400" >追加 K/V</text>
 <text x="415" y="1090" font-size="14" fill="#7a8ba0" font-weight="400" >当前 token 的 K/V 也参与 attention；图不规定其实际写入与读取先后。</text>
 <text x="48" y="1158" font-size="22" fill="#b24f76" font-weight="700" >03</text>
-<text x="96" y="1158" font-size="23" fill="#233750" font-weight="700" >token 接力：有效列增加，8 个缓存对象始终保留</text>
+<text x="96" y="1158" font-size="23" fill="#233750" font-weight="700" >单请求接续参考：有效列增加，8 个缓存对象保持不变</text>
 <rect x="48" y="1182" width="334" height="151" rx="14" fill="#edf2f8" stroke="#edf2f8" />
 <text x="66" y="1213" font-size="19" fill="#5f748d" font-weight="700" >绑定完成</text>
 <text x="66" y="1245" font-size="17" fill="#344b66" font-weight="500" >本请求尚无有效 KV</text>
@@ -524,21 +524,21 @@
 <path d="M 383 1255 L 396 1255" fill="none" stroke="#b24f76" stroke-width="2" marker-end="url(#arrow-feedback)"/>
 <rect x="398" y="1182" width="334" height="151" rx="14" fill="#e3f3ee" stroke="#e3f3ee" />
 <text x="416" y="1213" font-size="19" fill="#147867" font-weight="700" >Prefill 完成</text>
-<text x="416" y="1245" font-size="17" fill="#344b66" font-weight="500" >输入 x₁ x₂ x₃ → 选出 y₁</text>
-<text x="416" y="1277" font-size="16" fill="#147867" font-weight="500" >valid 0 + current 3 → KV 3</text>
-<text x="416" y="1310" font-size="13" fill="#6c7b91" font-weight="400" >y₁ 已产生，但它自己的 K/V 尚未计算</text>
+<text x="416" y="1245" font-size="17" fill="#344b66" font-weight="500" data-field="timeline-prefill-input">输入 x₁ x₂ x₃ → 选出 y₁</text>
+<text x="416" y="1277" font-size="16" fill="#147867" font-weight="500" data-field="timeline-prefill-lengths">valid 0 + current 3 → KV 3</text>
+<text x="416" y="1310" font-size="13" fill="#6c7b91" font-weight="400" data-field="timeline-prefill-note">y₁ 已产生，但它自己的 K/V 尚未计算</text>
 <path d="M 733 1255 L 746 1255" fill="none" stroke="#b24f76" stroke-width="2" marker-end="url(#arrow-feedback)"/>
 <rect x="748" y="1182" width="334" height="151" rx="14" fill="#fff0da" stroke="#fff0da" />
 <text x="766" y="1213" font-size="19" fill="#ac6b16" font-weight="700" >Decode 1 完成</text>
-<text x="766" y="1245" font-size="17" fill="#344b66" font-weight="500" >输入 y₁ → 选出 y₂</text>
-<text x="766" y="1277" font-size="16" fill="#ac6b16" font-weight="500" >valid 3 + current 1 → KV 4</text>
-<text x="766" y="1310" font-size="13" fill="#6c7b91" font-weight="400" >本次新增各层 K(y₁)、V(y₁)</text>
+<text x="766" y="1245" font-size="17" fill="#344b66" font-weight="500" data-field="timeline-decode1-input">输入 y₁ → 选出 y₂</text>
+<text x="766" y="1277" font-size="16" fill="#ac6b16" font-weight="500" data-field="timeline-decode1-lengths">valid 3 + current 1 → KV 4</text>
+<text x="766" y="1310" font-size="13" fill="#6c7b91" font-weight="400" data-field="timeline-decode1-note">本次新增各层 K(y₁)、V(y₁)</text>
 <path d="M 1083 1255 L 1096 1255" fill="none" stroke="#b24f76" stroke-width="2" marker-end="url(#arrow-feedback)"/>
 <rect x="1098" y="1182" width="334" height="151" rx="14" fill="#ece5fa" stroke="#ece5fa" />
 <text x="1116" y="1213" font-size="19" fill="#7550ab" font-weight="700" >Decode 2 完成</text>
-<text x="1116" y="1245" font-size="17" fill="#344b66" font-weight="500" >输入 y₂ → 选出 y₃</text>
-<text x="1116" y="1277" font-size="16" fill="#7550ab" font-weight="500" >valid 4 + current 1 → KV 5</text>
-<text x="1116" y="1310" font-size="13" fill="#6c7b91" font-weight="400" >下轮将 y₃ 作为输入继续执行</text>
+<text x="1116" y="1245" font-size="17" fill="#344b66" font-weight="500" data-field="timeline-decode2-input">输入 y₂ → 选出 y₃</text>
+<text x="1116" y="1277" font-size="16" fill="#7550ab" font-weight="500" data-field="timeline-decode2-lengths">valid 4 + current 1 → KV 5</text>
+<text x="1116" y="1310" font-size="13" fill="#6c7b91" font-weight="400" data-field="timeline-decode2-note">下轮将 y₃ 作为输入继续执行</text>
 <g data-phase="feedback">
 <rect x="896" y="1350" width="536" height="60" rx="12" fill="#fcf3f7" stroke="#eddae3" />
 <path d="M 1382 1333 L 1382 1348" fill="none" stroke="#b24f76" stroke-width="2" marker-end="url(#arrow-feedback)"/>
@@ -546,7 +546,7 @@
 <text x="917" y="1398" font-size="14" fill="#9d5272" font-weight="400" >logits → token → embedding → 继续执行</text>
 </g>
 <rect x="48" y="1350" width="164" height="30" rx="15" fill="#edf2f8" stroke="#edf2f8" />
-<text x="130.0" y="1371" font-size="14" fill="#506985" font-weight="600" text-anchor="middle" data-field="phase-label">全景 · KV 接续</text>
+<text x="130.0" y="1371" font-size="14" fill="#506985" font-weight="600" text-anchor="middle" data-field="phase-label">全景 · 至 Decode 2</text>
 <text x="235" y="1366" font-size="13" fill="#8290a2" font-weight="500" >执行前 valid_length</text>
 <text x="235" y="1398" font-size="27" fill="#2a405e" font-weight="700" class="mono" data-field="valid-length">4</text>
 <text x="411" y="1366" font-size="13" fill="#8290a2" font-weight="500" >本次 current_length</text>

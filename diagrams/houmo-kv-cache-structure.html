@@ -61,6 +61,47 @@
     .stage { padding: 8px 11px; font-size: 12px; font-weight: 650; white-space: nowrap; }
     .stage[aria-pressed="true"] { color: #164da9; background: var(--blue-soft); border-color: #9bb9f0; }
     .slot-control { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+    .slot-overview { margin: 0 24px 15px; }
+    .slot-heading { margin: 0 0 8px; font-size: 15px; line-height: 1.5; color: #233c5b; }
+    .slot-help { margin: 0 0 9px; color: var(--muted); font-size: 12px; line-height: 1.65; }
+    .batch-overview { padding-top: 18px; }
+    .batch-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .batch-controls .stages { flex: 1 1 100%; }
+    .batch-summary { margin: 0 0 12px; padding: 11px 13px; border-radius: 9px; background: #eef4ff; font-size: 12px; line-height: 1.7; color: #355578; }
+    .request-flow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 0 14px; }
+    .request-node { min-width: 0; padding: 9px; border: 1px solid #d6e2ed; border-radius: 9px; background: #f7faff; font-size: 12px; text-align: center; line-height: 1.6; }
+    .request-node span { display: block; font-size: 11px; color: var(--muted); }
+    .request-arrow { text-align: center; font-size: 12px; color: #7185a1; padding: 5px 0; }
+    .model-boundary { padding: 12px; border: 2px solid #c1d2ed; border-radius: 12px; background: #fbfdff; }
+    .model-title { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 5px 12px; margin: 0 0 11px; font-size: 13px; color: #345581; }
+    .model-title span { color: var(--muted); font-size: 11px; font-weight: 400; }
+    .prefill-unit { margin-bottom: 12px; padding: 10px 12px; border: 1px solid #d7e0eb; border-radius: 10px; background: #f6f8fb; font-size: 12px; line-height: 1.65; }
+    .prefill-unit[data-active="true"] { border-color: #69b4a1; background: #eef9f5; }
+    .prefill-unit strong, .prefill-unit span { display: block; }
+    .prefill-unit span { color: var(--muted); font-size: 11px; }
+    .slot-card[data-running="true"] { border-color: #55a991; background: #eef9f5; }
+    .slot-card[data-running="true"][aria-pressed="true"] { background: #eef9f5; border-color: #55a991; box-shadow: inset 0 0 0 2px #7297e6; }
+    .slot-card-activity { font-size: 11px; line-height: 1.6; color: #48775f; }
+    .batch-fan { display: block; width: 100%; height: 32px; color: #c5ceda; }
+    .batch-fan[data-active="true"] { color: #4379ca; }
+    .shared-decode { border: 1px solid #d3deed; border-radius: 10px; padding: 11px; background: #f0f3f7; font-size: 12px; line-height: 1.65; }
+    .shared-decode[data-active="true"] { border-color: #86a7dc; background: #ecf3ff; }
+    .shared-decode h3 { margin: 0 0 5px; font-size: 13px; color: #345581; }
+    .batch-inputs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 9px 0; }
+    .batch-input { min-width: 0; padding: 6px; border: 1px solid #d7e2f0; border-radius: 6px; background: #fff; text-align: center; font-size: 11px; }
+    .batch-note { margin: 9px 0 0; font-size: 11px; line-height: 1.65; color: var(--muted); }
+    .detail-heading { padding: 15px 24px 0; margin: 0; border-top: 1px solid var(--line); font-size: 16px; }
+    .slot-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .slot-card { display: flex; flex-direction: column; gap: 8px; padding: 12px; text-align: left; min-width: 0; }
+    .slot-card[aria-pressed="true"] { border-color: #8dacf0; background: #f2f6ff; box-shadow: inset 0 0 0 1px #8dacf0; }
+    .slot-card-title { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; font-weight: 700; }
+    .slot-card-phase { font-size: 11px; font-weight: 500; color: var(--blue); }
+    .slot-card-meta, .slot-card-range { color: var(--muted); font-size: 11px; line-height: 1.5; }
+    .slot-tokens { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; }
+    .slot-token { padding: 5px 0; border: 1px solid #dfe6ef; border-radius: 5px; text-align: center; font-size: 12px; background: #f1f4f8; color: #8391a4; }
+    .slot-token.prompt { background: #d9f1eb; border-color: #b5ddd3; color: #11665a; }
+    .slot-token.decode1 { background: #ffebce; border-color: #edcf9f; color: #945a0c; }
+    .slot-token.decode2 { background: #e9e2fb; border-color: #cfc0ee; color: #6840a3; }
     select { height: 36px; border: 1px solid var(--line); border-radius: 9px; padding: 0 30px 0 10px; color: #233c5b; background: white; }
     .view-actions { margin-left: auto; display: flex; align-items: center; gap: 6px; }
     .tool-button { padding: 7px 10px; font-size: 12px; white-space: nowrap; }
@@ -83,7 +124,7 @@
     .status-dot { flex: 0 0 6px; width: 6px; height: 6px; margin-top: 7px; border-radius: 50%; background: #5b85c7; }
     .status p { margin: 0; }
     .viewport {
-      height: clamp(440px, calc(100dvh - 285px), 1050px);
+      height: clamp(440px, calc(100dvh - 460px), 1050px);
       min-height: 350px;
       overflow: auto;
       overscroll-behavior: contain;
@@ -105,8 +146,8 @@
     .swatch.decode1 { background: #ffebce; }
     .swatch.decode2 { background: #e9e2fb; }
     .swatch.empty { background: #f1f4f8; }
-    .viewer:fullscreen { max-width: none; width: 100%; height: 100dvh; margin: 0; border: 0; border-radius: 0; display: flex; flex-direction: column; }
-    .viewer:fullscreen .viewport { flex: 1; height: auto; min-height: 0; }
+    .viewer:fullscreen { max-width: none; width: 100%; height: 100dvh; margin: 0; border: 0; border-radius: 0; overflow-y: auto; }
+    .viewer:fullscreen .viewport { height: min(70dvh, 1050px); min-height: 350px; }
     .viewer:fullscreen .heading { padding-top: 15px; padding-bottom: 12px; }
     .viewer:fullscreen .footer { flex-shrink: 0; }
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
@@ -119,8 +160,20 @@
       .stage { padding: 8px 9px; font-size: 11px; }
       .view-actions { margin-left: 0; flex-wrap: wrap; }
       .status { margin: 0 15px 12px; }
+      .slot-overview { margin: 0 15px 12px; }
+      .slot-card-title { flex-direction: column; gap: 4px; }
       .viewport { height: 650px; }
       .footer { padding: 12px 15px; }
+    }
+    @media (max-width: 599px) {
+      .slot-cards { grid-template-columns: 1fr; }
+      .slot-card-title { flex-direction: row; }
+      .request-flow { padding: 0; gap: 5px; }
+      .request-node { padding: 7px 3px; font-size: 11px; }
+      .model-title { line-height: 1.6; }
+      .batch-fan { display: none; }
+      .shared-decode { margin-top: 12px; }
+      .detail-heading { padding: 15px 15px 0; }
     }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; } }
   </style>
@@ -129,19 +182,52 @@
   <main class="viewer" id="viewer" aria-labelledby="viewer-title">
     <header class="heading">
       <p class="eyebrow">HOUMO RUNTIME · KV CACHE</p>
-      <h1 id="viewer-title">从输入编号到 K/V 缓存，再到逐 token 生成</h1>
-      <p class="subtitle">固定示例：3 个 decode 槽位 · 4 层 Transformer · KV 前有 3 个输入 · prompt 为 x₁、x₂、x₃。点击阶段查看缓存变化。</p>
+      <h1 id="viewer-title">三个请求如何共用一个多槽位模型</h1>
+      <p class="subtitle">B = 3 个请求槽位 · N = 4 层 Transformer · P = 3 个 KV 前置输入。三个请求分别有 2、3、5 个 prompt token；槽位数不限制 prompt 长度。</p>
     </header>
-    <div class="toolbar" aria-label="图示控制">
-      <div class="stages" role="group" aria-label="执行阶段">
-        <button class="stage" type="button" data-mode="all" aria-pressed="true">全景</button>
-        <button class="stage" type="button" data-mode="bind" aria-pressed="false">绑定</button>
-        <button class="stage" type="button" data-mode="prefill" aria-pressed="false">Prefill 完成</button>
-        <button class="stage" type="button" data-mode="decode1" aria-pressed="false">Decode 1 完成</button>
-        <button class="stage" type="button" data-mode="decode2" aria-pressed="false">Decode 2 完成</button>
+    <section class="slot-overview batch-overview" aria-labelledby="slot-heading" hidden>
+      <h2 class="slot-heading" id="slot-heading">① 多请求 → 请求槽位 → 同一模型执行</h2>
+      <p class="slot-help">先沿共同时间线观察三个请求，再点击槽位查看下方的逐层缓存。切换槽位只改变查看对象。</p>
+      <div class="batch-controls" aria-label="共同时间线控制">
+        <div class="stages" role="group" aria-label="多请求共同时间线">
+          <button class="stage" type="button" data-step="0" aria-pressed="false">0 · 请求入槽</button>
+          <button class="stage" type="button" data-step="1" aria-pressed="false">1 · Prefill A</button>
+          <button class="stage" type="button" data-step="2" aria-pressed="false">2 · Prefill B</button>
+          <button class="stage" type="button" data-step="3" aria-pressed="false">3 · Prefill C</button>
+          <button class="stage" type="button" data-step="4" aria-pressed="true">4 · Batch Decode 1</button>
+          <button class="stage" type="button" data-step="5" aria-pressed="false">5 · Batch Decode 2</button>
+        </div>
+        <button class="tool-button" type="button" id="previous-step">← 上一步</button>
+        <button class="tool-button" type="button" id="next-step">下一步 →</button>
       </div>
-      <label class="slot-control" for="slot-select">示例槽位
-        <select id="slot-select"><option value="0">b = 0</option><option value="1" selected>b = 1</option><option value="2">b = 2</option></select>
+      <p class="batch-summary" id="batch-description" aria-live="polite" aria-atomic="true"></p>
+      <div class="prefill-unit" id="prefill-unit">
+        <strong id="prefill-route"></strong><span id="prefill-binding"></span>
+      </div>
+      <div class="request-flow" aria-label="三个独立请求的槽位映射">
+        <div><div class="request-node"><strong>请求 A</strong><span>a₁ a₂ · 2 tokens</span></div><div class="request-arrow">↓ b = 0</div></div>
+        <div><div class="request-node"><strong>请求 B</strong><span>x₁ x₂ x₃ · 3 tokens</span></div><div class="request-arrow">↓ b = 1</div></div>
+        <div><div class="request-node"><strong>请求 C</strong><span>c₁…c₅ · 5 tokens</span></div><div class="request-arrow">↓ b = 2</div></div>
+      </div>
+      <div class="model-boundary">
+        <h3 class="model-title">同一个 decode 模型 · B = 3 <span>每槽 4 层 × K/V = 8 个对象</span></h3>
+        <p class="slot-help">绿色表示本轮参与计算；蓝色边框表示下方正在查看的槽位。</p>
+        <div class="slot-cards" role="group" aria-label="选择要展开的槽位"></div>
+        <svg class="batch-fan" id="batch-fan" viewBox="0 0 600 32" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M100 0 V12 H300 M500 0 V12 H300 M300 0 V29 M293 22 L300 29 L307 22" stroke="currentColor" stroke-width="2" fill="none"/>
+        </svg>
+        <div class="shared-decode" id="shared-decode">
+          <h3 id="batch-execution"></h3>
+          <div class="batch-inputs" id="batch-inputs" aria-label="本轮 decode 输入"></div>
+          <div id="batch-result"></div>
+        </div>
+      </div>
+      <p class="batch-note">示例假设 A/B/C 同时入槽，无前缀复用、提前结束或槽位重排；分配和执行顺序用于教学。展示当前普通路径：prefill 每轮只处理一个请求，纯 decode 才批量推进；符号 token 表达接续关系，具体采样见正文。</p>
+    </section>
+    <h2 class="detail-heading">② 展开一个槽位：输入绑定与逐层 K/V</h2>
+    <div class="toolbar" aria-label="图示控制">
+      <label class="slot-control" for="slot-select">查看请求
+        <select id="slot-select"><option value="0">槽位 0 · 请求 A</option><option value="1" selected>槽位 1 · 请求 B</option><option value="2">槽位 2 · 请求 C</option></select>
       </label>
       <div class="view-actions" role="group" aria-label="视图操作">
         <button class="tool-button zoom-button" type="button" id="zoom-out" aria-label="缩小">−</button>
@@ -150,7 +236,7 @@
         <button class="tool-button" type="button" id="fit" title="适应图示宽度；可上下滚动">适应</button>
         <button class="tool-button" type="button" id="fullscreen" aria-pressed="false">全屏</button>
         <a class="svg-link" href="houmo-kv-cache-structure.html" target="_blank" rel="noopener">独立打开 ↗</a>
-        <a class="svg-link" href="houmo-kv-cache-structure.svg" target="_blank" rel="noopener" aria-label="在新标签页打开完整 SVG">打开 SVG ↗</a>
+        <a class="svg-link" id="export-svg" href="houmo-kv-cache-structure.svg" target="_blank" rel="noopener">打开静态 SVG ↗</a>
       </div>
     </div>
     <div class="status" aria-live="polite" aria-atomic="true"><span class="status-dot" aria-hidden="true"></span><p id="stage-description">全景示意展示到 Decode 2 完成后的缓存；长度输入显示最后一次 decode 的 4 / 1。</p></div>
@@ -187,7 +273,7 @@
 <rect x="70" y="172" width="174" height="30" rx="15" fill="#eef3f9" stroke="#eef3f9" />
 <text x="157.0" y="193" font-size="14" fill="#425875" font-weight="600" text-anchor="middle" >示例：4 层 / 3 槽位</text>
 <rect x="256" y="172" width="150" height="30" rx="15" fill="#ede5fb" stroke="#ede5fb" />
-<text x="331.0" y="193" font-size="14" fill="#6d40aa" font-weight="600" text-anchor="middle" data-field="slot">槽位 b = 1</text>
+<text x="331.0" y="193" font-size="14" fill="#6d40aa" font-weight="600" text-anchor="middle" data-field="slot">槽位 1 · 请求 B</text>
 <rect x="418" y="172" width="195" height="30" rx="15" fill="#e5f3ef" stroke="#e5f3ef" />
 <text x="515.5" y="193" font-size="14" fill="#167364" font-weight="600" text-anchor="middle" >8 个 KV 输入对象</text>
 <rect x="625" y="172" width="231" height="30" rx="15" fill="#eef3f9" stroke="#eef3f9" />
@@ -224,15 +310,15 @@
 <rect x="230" y="521" width="98" height="30" rx="15" fill="#dbeee8" stroke="#dbeee8" />
 <text x="279.0" y="542" font-size="14" fill="#177c6c" font-weight="600" text-anchor="middle" >多 token</text>
 <rect x="68" y="566" width="262" height="70" rx="10" fill="#ffffff" stroke="#d5e9e2" />
-<text x="87" y="593" font-size="18" fill="#215f56" font-weight="500" >x₁  x₂  x₃ → embedding</text>
-<text x="87" y="620" font-size="15" fill="#567a70" font-weight="400" class="mono">valid = 0     current = 3</text>
+<text x="87" y="593" font-size="18" fill="#215f56" font-weight="500" data-field="prefill-input">x₁ x₂ x₃ → embedding</text>
+<text x="87" y="620" font-size="15" fill="#567a70" font-weight="400" class="mono" data-field="prefill-lengths">valid = 0     current = 3</text>
 <text x="72" y="654" font-size="15" fill="#38766a" font-weight="400" >prefill.run() → sync()</text>
 </g>
 <text x="415" y="542" font-size="22" fill="#24364e" font-weight="700" >同一槽位的层级 KV 视图</text>
 <rect x="902" y="521" width="163" height="30" rx="15" fill="#eef2f8" stroke="#eef2f8" />
-<text x="983.5" y="542" font-size="14" fill="#526783" font-weight="600" text-anchor="middle" data-field="slot">槽位 b = 1</text>
+<text x="983.5" y="542" font-size="14" fill="#526783" font-weight="600" text-anchor="middle" data-field="slot">槽位 1 · 请求 B</text>
 <text x="415" y="572" font-size="16" fill="#687c95" font-weight="400" >每层各一个 K 对象、一个 V 对象；横向是对象内部的 token 区域</text>
-<text x="415" y="604" font-size="15" fill="#8391a4" font-weight="400" >每个格子代表该 token 的多头向量；head 和向量维度在图中省略</text>
+<text x="415" y="604" font-size="15" fill="#526783" font-weight="500" data-field="request-title">请求 B：3 个 prompt token 的独立缓存</text>
 <text x="418" y="643" font-size="14" fill="#738298" font-weight="600" >层 / 类型</text>
 <text x="553" y="643" font-size="13" fill="#8190a5" font-weight="400" text-anchor="middle" class="mono">t=0</text>
 <text x="617" y="643" font-size="13" fill="#8190a5" font-weight="400" text-anchor="middle" class="mono">t=1</text>
@@ -659,7 +745,7 @@
 </g>
 <g data-phase="prefill">
 <rect x="70" y="1060" width="258" height="30" rx="15" fill="#dbefe8" stroke="#dbefe8" />
-<text x="199.0" y="1081" font-size="14" fill="#167664" font-weight="600" text-anchor="middle" >logits → 确定 y₁</text>
+<text x="199.0" y="1081" font-size="14" fill="#167664" font-weight="600" text-anchor="middle" data-field="prefill-output">logits → 确定 y₁</text>
 </g>
 <g data-phase="decode">
 <rect x="1152" y="1060" width="258" height="30" rx="15" fill="#e0eafa" stroke="#e0eafa" />
@@ -673,7 +759,7 @@
 <text x="957" y="1058" font-size="13" fill="#a5722e" font-weight="400" >追加 K/V</text>
 <text x="415" y="1090" font-size="14" fill="#7a8ba0" font-weight="400" >当前 token 的 K/V 也参与 attention；图不规定其实际写入与读取先后。</text>
 <text x="48" y="1158" font-size="22" fill="#b24f76" font-weight="700" >03</text>
-<text x="96" y="1158" font-size="23" fill="#233750" font-weight="700" >token 接力：有效列增加，8 个缓存对象始终保留</text>
+<text x="96" y="1158" font-size="23" fill="#233750" font-weight="700" >单请求接续参考：有效列增加，8 个缓存对象保持不变</text>
 <rect x="48" y="1182" width="334" height="151" rx="14" fill="#edf2f8" stroke="#edf2f8" />
 <text x="66" y="1213" font-size="19" fill="#5f748d" font-weight="700" >绑定完成</text>
 <text x="66" y="1245" font-size="17" fill="#344b66" font-weight="500" >本请求尚无有效 KV</text>
@@ -682,21 +768,21 @@
 <path d="M 383 1255 L 396 1255" fill="none" stroke="#b24f76" stroke-width="2" marker-end="url(#arrow-feedback)"/>
 <rect x="398" y="1182" width="334" height="151" rx="14" fill="#e3f3ee" stroke="#e3f3ee" />
 <text x="416" y="1213" font-size="19" fill="#147867" font-weight="700" >Prefill 完成</text>
-<text x="416" y="1245" font-size="17" fill="#344b66" font-weight="500" >输入 x₁ x₂ x₃ → 选出 y₁</text>
-<text x="416" y="1277" font-size="16" fill="#147867" font-weight="500" >valid 0 + current 3 → KV 3</text>
-<text x="416" y="1310" font-size="13" fill="#6c7b91" font-weight="400" >y₁ 已产生，但它自己的 K/V 尚未计算</text>
+<text x="416" y="1245" font-size="17" fill="#344b66" font-weight="500" data-field="timeline-prefill-input">输入 x₁ x₂ x₃ → 选出 y₁</text>
+<text x="416" y="1277" font-size="16" fill="#147867" font-weight="500" data-field="timeline-prefill-lengths">valid 0 + current 3 → KV 3</text>
+<text x="416" y="1310" font-size="13" fill="#6c7b91" font-weight="400" data-field="timeline-prefill-note">y₁ 已产生，但它自己的 K/V 尚未计算</text>
 <path d="M 733 1255 L 746 1255" fill="none" stroke="#b24f76" stroke-width="2" marker-end="url(#arrow-feedback)"/>
 <rect x="748" y="1182" width="334" height="151" rx="14" fill="#fff0da" stroke="#fff0da" />
 <text x="766" y="1213" font-size="19" fill="#ac6b16" font-weight="700" >Decode 1 完成</text>
-<text x="766" y="1245" font-size="17" fill="#344b66" font-weight="500" >输入 y₁ → 选出 y₂</text>
-<text x="766" y="1277" font-size="16" fill="#ac6b16" font-weight="500" >valid 3 + current 1 → KV 4</text>
-<text x="766" y="1310" font-size="13" fill="#6c7b91" font-weight="400" >本次新增各层 K(y₁)、V(y₁)</text>
+<text x="766" y="1245" font-size="17" fill="#344b66" font-weight="500" data-field="timeline-decode1-input">输入 y₁ → 选出 y₂</text>
+<text x="766" y="1277" font-size="16" fill="#ac6b16" font-weight="500" data-field="timeline-decode1-lengths">valid 3 + current 1 → KV 4</text>
+<text x="766" y="1310" font-size="13" fill="#6c7b91" font-weight="400" data-field="timeline-decode1-note">本次新增各层 K(y₁)、V(y₁)</text>
 <path d="M 1083 1255 L 1096 1255" fill="none" stroke="#b24f76" stroke-width="2" marker-end="url(#arrow-feedback)"/>
 <rect x="1098" y="1182" width="334" height="151" rx="14" fill="#ece5fa" stroke="#ece5fa" />
 <text x="1116" y="1213" font-size="19" fill="#7550ab" font-weight="700" >Decode 2 完成</text>
-<text x="1116" y="1245" font-size="17" fill="#344b66" font-weight="500" >输入 y₂ → 选出 y₃</text>
-<text x="1116" y="1277" font-size="16" fill="#7550ab" font-weight="500" >valid 4 + current 1 → KV 5</text>
-<text x="1116" y="1310" font-size="13" fill="#6c7b91" font-weight="400" >下轮将 y₃ 作为输入继续执行</text>
+<text x="1116" y="1245" font-size="17" fill="#344b66" font-weight="500" data-field="timeline-decode2-input">输入 y₂ → 选出 y₃</text>
+<text x="1116" y="1277" font-size="16" fill="#7550ab" font-weight="500" data-field="timeline-decode2-lengths">valid 4 + current 1 → KV 5</text>
+<text x="1116" y="1310" font-size="13" fill="#6c7b91" font-weight="400" data-field="timeline-decode2-note">下轮将 y₃ 作为输入继续执行</text>
 <g data-phase="feedback">
 <rect x="896" y="1350" width="536" height="60" rx="12" fill="#fcf3f7" stroke="#eddae3" />
 <path d="M 1382 1333 L 1382 1348" fill="none" stroke="#b24f76" stroke-width="2" marker-end="url(#arrow-feedback)"/>
@@ -704,7 +790,7 @@
 <text x="917" y="1398" font-size="14" fill="#9d5272" font-weight="400" >logits → token → embedding → 继续执行</text>
 </g>
 <rect x="48" y="1350" width="164" height="30" rx="15" fill="#edf2f8" stroke="#edf2f8" />
-<text x="130.0" y="1371" font-size="14" fill="#506985" font-weight="600" text-anchor="middle" data-field="phase-label">全景 · KV 接续</text>
+<text x="130.0" y="1371" font-size="14" fill="#506985" font-weight="600" text-anchor="middle" data-field="phase-label">全景 · 至 Decode 2</text>
 <text x="235" y="1366" font-size="13" fill="#8290a2" font-weight="500" >执行前 valid_length</text>
 <text x="235" y="1398" font-size="27" fill="#2a405e" font-weight="700" class="mono" data-field="valid-length">4</text>
 <text x="411" y="1366" font-size="13" fill="#8290a2" font-weight="500" >本次 current_length</text>
@@ -733,47 +819,101 @@
       <p id="view-help">放大后可滚动查看；聚焦图示后按 + / − 缩放、0 适应。图中颜色表示不同执行阶段写入的 token。</p>
     </footer>
     <span class="sr-only" id="view-announcement" role="status" aria-live="polite"></span>
-    <noscript><p style="padding: 0 24px 16px">当前显示完整静态图；启用 JavaScript 后可切换阶段、槽位和缩放。也可通过“打开 SVG”查看原图。</p></noscript>
+    <noscript><p style="padding: 0 24px 16px">当前显示请求 B 的完整静态图；启用 JavaScript 后可切换请求和阶段。也可通过“打开静态 SVG”查看原图。</p></noscript>
   </main>
   <script>
-    // Pure display-state calculation. B = 3, N = 4, P = 3.
+    // One shared illustrative schedule: three serial prefills, then batched decode.
+    // B = 3, N = 4, P = 3. Prompt lengths are independent of all three.
+    const requests = [
+      { name: "请求 A", prompt: ["a₁", "a₂"], generated: ["a₃", "a₄", "a₅"] },
+      { name: "请求 B", prompt: ["x₁", "x₂", "x₃"], generated: ["y₁", "y₂", "y₃"] },
+      { name: "请求 C", prompt: ["c₁", "c₂", "c₃", "c₄", "c₅"], generated: ["c₆", "c₇", "c₈"] }
+    ];
+
     function stateFor(mode, b) {
       const slot = Number.isInteger(Number(b)) && Number(b) >= 0 && Number(b) <= 2 ? Number(b) : 1;
+      const request = requests[slot];
+      const length = request.prompt.length;
+      const [first, second, third] = request.generated;
+      const prompt = request.prompt.join(" ");
+      const shortPrompt = length > 3 ? request.prompt[0] + "…" + request.prompt[length - 1] : prompt;
       const phases = {
-        all: { visibleTokens: 5, valid: "4", current: "1", cached: "5", label: "全景 · KV 接续", active: null },
-        bind: { visibleTokens: 0, valid: "—", current: "—", cached: "—", label: "绑定 · 待执行", active: ["bind"] },
-        prefill: { visibleTokens: 3, valid: "0", current: "3", cached: "3", label: "Prefill · KV 3", active: ["bind", "prefill"] },
-        decode1: { visibleTokens: 4, valid: "3", current: "1", cached: "4", label: "Decode 1 · KV 4", active: ["decode", "feedback"] },
-        decode2: { visibleTokens: 5, valid: "4", current: "1", cached: "5", label: "Decode 2 · KV 5", active: ["decode", "feedback"] }
+        waiting: { visibleTokens: 0, valid: "—", current: "—", label: "等待 Prefill", active: [] },
+        all: { visibleTokens: length + 2, valid: length + 1, current: 1, label: "全景 · 至 Decode 2", active: null },
+        bind: { visibleTokens: 0, valid: "—", current: "—", label: "绑定 · 待执行", active: ["bind"] },
+        prefill: { visibleTokens: length, valid: 0, current: length, label: "Prefill 完成", active: ["bind", "prefill"] },
+        decode1: { visibleTokens: length + 1, valid: length, current: 1, label: "Decode 1 完成", active: ["decode", "feedback"] },
+        decode2: { visibleTokens: length + 2, valid: length + 1, current: 1, label: "Decode 2 完成", active: ["decode", "feedback"] }
       };
       const resolvedMode = Object.prototype.hasOwnProperty.call(phases, mode) ? mode : "all";
       const phase = phases[resolvedMode];
       const start = 3 + slot * (2 * 4 + 2);
       const end = start + 2 * 4;
       const descriptions = {
-        all: "全景示意展示到 Decode 2 完成后的缓存；长度输入显示最后一次 decode 的 4 / 1。切换槽位可查看 runtime 输入编号的变化。",
-        bind: "将槽位 b = " + slot + " 的 8 个 K/V 输入绑定到 prefill 的同一组输入接口。此时尚无本请求有效 KV，旧内容可能仍在；这段循环没有显式清零，图中空格仅表示有效性；K/V 计算发生在后续执行中。",
-        prefill: "输入 x₁、x₂、x₃，valid_length = 0，current_length = 3。各层已写入 3 个 token 的 K/V；选出的 y₁ 要在下一次 decode 输入后才会进入缓存。",
-        decode1: "输入 y₁，valid_length = 3，current_length = 1。各层新增 y₁ 的 K/V，缓存有效长度变为 4；本轮输出用于选出 y₂。",
-        decode2: "输入 y₂，valid_length = 4，current_length = 1。各层新增 y₂ 的 K/V，缓存有效长度变为 5；本轮输出用于选出 y₃。"
+        waiting: "请求已经入槽，但尚未执行 prefill。此请求的有效 KV 长度为 0；下方淡色流程仅用于说明后续如何执行。",
+        all: `全景展示到 Decode 2 完成：${length} 个 prompt token 加上 ${first}、${second}，有效 KV 长度为 ${length + 2}。长度输入显示最后一次 decode 的 ${length + 1} / 1。`,
+        bind: "将本槽位的 8 个 K/V 输入绑定到 prefill 的同一组接口。此时尚无本请求有效 KV，旧内容可能仍在；绑定没有显式清零。",
+        prefill: `输入 ${prompt}，valid_length = 0，current_length = ${length}。各层已写入 ${length} 个 token 的 K/V；选出的 ${first} 要在下一次 decode 输入后才会进入缓存。`,
+        decode1: `输入 ${first}，valid_length = ${length}，current_length = 1。各层新增 ${first} 的 K/V，有效长度变为 ${length + 1}；本轮输出用于选出 ${second}。`,
+        decode2: `输入 ${second}，valid_length = ${length + 1}，current_length = 1。各层新增 ${second} 的 K/V，有效长度变为 ${length + 2}；本轮输出用于选出 ${third}。`
       };
       return {
         mode: resolvedMode,
+        requestName: request.name,
+        promptLength: length,
+        tokens: request.prompt.concat(request.generated.slice(0, 2)),
         visibleTokens: phase.visibleTokens,
         activePhases: phase.active,
-        description: descriptions[resolvedMode] + " 切换示例槽位仅重算输入编号并重演同一教学过程，不会在槽位之间复制缓存。",
-        slot: "槽位 b = " + slot,
+        description: `${request.name} · 槽位 ${slot} · ${length} 个 prompt token。` + descriptions[resolvedMode],
+        slot: `槽位 ${slot} · ${request.name}`,
+        "request-title": `${request.name}：${length} 个 prompt token 的独立缓存`,
         "index-start": String(start),
         "index-end": String(end),
         "decode-range": "decode [" + start + ", " + end + ")",
         mapping: "decode[" + start + " + j] → prefill[3 + j]",
         "valid-length": phase.valid,
         "current-length": phase.current,
-        "cached-length": phase.cached,
+        "cached-length": phase.visibleTokens,
         "phase-label": phase.label,
-        "decode-input": resolvedMode === "all" || resolvedMode === "decode2" ? "y₂ → embedding" : "y₁ → embedding",
-        "decode-output": resolvedMode === "all" || resolvedMode === "decode2" ? "logits → y₃" : "logits → y₂"
+        "prefill-input": `${shortPrompt} → embedding`,
+        "prefill-lengths": `valid = 0     current = ${length}`,
+        "prefill-output": `logits → 确定 ${first}`,
+        "decode-input": (resolvedMode === "all" || resolvedMode === "decode2" ? second : first) + " → embedding",
+        "decode-output": "logits → " + (resolvedMode === "all" || resolvedMode === "decode2" ? third : second),
+        "timeline-prefill-input": `输入 ${shortPrompt} → 选出 ${first}`,
+        "timeline-prefill-lengths": `valid 0 + current ${length} → KV ${length}`,
+        "timeline-prefill-note": `${first} 已产生，但它自己的 K/V 尚未计算`,
+        "timeline-decode1-input": `输入 ${first} → 选出 ${second}`,
+        "timeline-decode1-lengths": `valid ${length} + current 1 → KV ${length + 1}`,
+        "timeline-decode1-note": `本次新增各层 K(${first})、V(${first})`,
+        "timeline-decode2-input": `输入 ${second} → 选出 ${third}`,
+        "timeline-decode2-lengths": `valid ${length + 1} + current 1 → KV ${length + 2}`,
+        "timeline-decode2-note": `下轮将 ${third} 作为输入继续执行`
       };
+    }
+
+    function batchState(step) {
+      const round = Number.isInteger(step) && step >= 0 && step <= 5 ? step : 4;
+      const isDecode = round >= 4;
+      const prefillSlot = round >= 1 && round <= 3 ? round - 1 : -1;
+      const before = requests.map((request, slot) => round === 0 || slot >= round - 1 ? 0 : request.prompt.length + Math.max(0, round - 4));
+      const slots = requests.map((request, slot) => {
+        const mode = isDecode ? (round === 4 ? "decode1" : "decode2") : slot < round ? "prefill" : "waiting";
+        const state = stateFor(mode, slot);
+        const running = isDecode || prefillSlot === slot;
+        const activity = running ? `本轮 ${before[slot]} → ${state.visibleTokens} 个有效 KV token` : state.visibleTokens > 0 ? `本轮等待，保留 ${state.visibleTokens} 个 KV token` : "等待 Prefill，尚无有效 KV";
+        return { ...state, running, activity, activePhases: running ? state.activePhases : [], description: activity + "。" + (running || mode === "waiting" ? "" : "下面保留上次执行的结果与长度输入。") + state.description };
+      });
+      const after = slots.map(state => state.visibleTokens);
+      const descriptions = [
+        "请求 A / B / C 分别进入槽位 0 / 1 / 2。三个槽位同属于一个 decode 模型，每槽保存一个请求的整套 KV；此时三个请求都还没有执行 prefill。",
+        "本轮只执行请求 A 的 prefill，填入槽位 0。B、C 等待，decode 不执行；槽位 1、2 的有效长度仍为 0。",
+        "本轮只执行请求 B 的 prefill，填入槽位 1。A 已有的 KV 保留，A 的 decode 延后；C 继续等待 prefill。",
+        "本轮只执行请求 C 的 prefill，填入槽位 2。A、B 保留已有 KV，decode 延后；现在三个请求都已准备好进入批量 decode。",
+        "一次 decode.run() 接收三个请求各自的一个 token。各槽位使用自己的历史 KV，三个请求在同一轮分别前进一步。",
+        "再次调用同一个 decode.run()，各请求把上一轮选出的 token 作为输入，各自追加一列 KV；本轮输出的下一 token 尚未写入缓存。"
+      ];
+      return { round, isDecode, prefillSlot, before, after, slots, description: descriptions[round] + ` 有效 KV 长度：[${before.join(", ")}] → [${after.join(", ")}]。` };
     }
 
     (() => {
@@ -781,21 +921,81 @@
       const viewer = document.getElementById("viewer");
       const viewport = document.getElementById("viewport");
       const svg = document.querySelector("#canvas > svg");
-      const stages = Array.from(document.querySelectorAll("[data-mode]"));
+      const steps = Array.from(document.querySelectorAll("[data-step]"));
       const slotSelect = document.getElementById("slot-select");
       const description = document.getElementById("stage-description");
       const zoomValue = document.getElementById("zoom-value");
       const fullscreenButton = document.getElementById("fullscreen");
       const announcement = document.getElementById("view-announcement");
-      let mode = "all";
+      let round = 4;
+      const overview = document.querySelector(".slot-overview");
+      const slotCards = requests.map((request, index) => {
+        const card = document.createElement("button");
+        card.type = "button";
+        card.className = "slot-card";
+        card.dataset.slot = index;
+        card.innerHTML = '<span class="slot-card-title"><span></span><span class="slot-card-phase"></span></span><span class="slot-card-meta"></span><span class="slot-tokens" aria-hidden="true"></span><span class="slot-card-activity"></span><span class="slot-card-range"></span>';
+        for (let i = 0; i < 8; i++) {
+          const token = document.createElement("span");
+          token.className = "slot-token";
+          card.querySelector(".slot-tokens").appendChild(token);
+        }
+        card.addEventListener("click", () => {
+          slotSelect.value = String(index);
+          applyState();
+        });
+        overview.querySelector(".slot-cards").appendChild(card);
+        return card;
+      });
+      overview.hidden = false;
       let scale = 1;
       let fitting = true;
       let fitScale = 1;
 
+      function tokenKind(state, index) {
+        return index >= state.visibleTokens ? "empty" : index < state.promptLength ? "prompt" : index === state.promptLength ? "decode1" : "decode2";
+      }
+
       function applyState() {
-        const state = stateFor(mode, slotSelect.value);
-        stages.forEach(button => button.setAttribute("aria-pressed", String(button.dataset.mode === state.mode)));
-        description.textContent = state.description;
+        const selectedSlot = Number(slotSelect.value);
+        const batch = batchState(round);
+        const state = batch.slots[selectedSlot];
+        steps.forEach(button => button.setAttribute("aria-pressed", String(Number(button.dataset.step) === round)));
+        document.getElementById("previous-step").disabled = round === 0;
+        document.getElementById("next-step").disabled = round === 5;
+        document.getElementById("batch-description").textContent = batch.description;
+        document.getElementById("prefill-unit").dataset.active = String(batch.prefillSlot >= 0);
+        document.getElementById("prefill-route").textContent = batch.prefillSlot >= 0 ? `一个 prefill 实例 → 本轮只处理${requests[batch.prefillSlot].name} → 写槽位 ${batch.prefillSlot}` : "一个 prefill 实例 · 本轮不执行";
+        document.getElementById("prefill-binding").textContent = batch.prefillSlot >= 0 ? `绑定 decode [${3 + batch.prefillSlot * 10}, ${11 + batch.prefillSlot * 10}) 的 8 个 KV 对象到 prefill [3, 11)。长 prompt 可在此阶段内分段执行。` : "每次 prefill 选择一个目标槽位；其他槽位的历史 KV 保留。";
+        document.getElementById("batch-fan").dataset.active = String(batch.isDecode);
+        document.getElementById("shared-decode").dataset.active = String(batch.isDecode);
+        document.getElementById("batch-execution").textContent = batch.isDecode ? "三个请求合成一个 batch → 一次 decode.run()" : "共享的 decode.run() · 本轮未执行";
+        const inputs = document.getElementById("batch-inputs");
+        inputs.replaceChildren();
+        requests.forEach((request, slot) => {
+          const input = document.createElement("div");
+          input.className = "batch-input";
+          input.textContent = batch.isDecode ? `b${slot}: ${request.generated[round - 4]} · 1 token` : `b${slot}: ${batch.slots[slot].visibleTokens > 0 ? "已就绪，等待" : "待 Prefill"}`;
+          inputs.appendChild(input);
+        });
+        document.getElementById("batch-result").textContent = batch.isDecode ? `输入 embedding 形状 [3, 1, E]；每槽 current_length = 1。输出分别选出 ${requests.map(request => request.generated[round - 3]).join(" / ")}，供下一轮输入。` : "本轮不组成 decode batch；已完成 prefill 的请求也等待。";
+        slotCards.forEach((card, index) => {
+          const snapshot = batch.slots[index];
+          const selected = index === selectedSlot;
+          card.setAttribute("aria-pressed", String(selected));
+          card.dataset.running = String(snapshot.running);
+          card.setAttribute("aria-label", `槽位 ${index}，${snapshot.requestName}，prompt ${snapshot.promptLength} 个 token，${snapshot["phase-label"]}，有效 KV ${snapshot.visibleTokens} 个 token`);
+          card.querySelector(".slot-card-title > span").textContent = `槽位 ${index} · ${snapshot.requestName}`;
+          card.querySelector(".slot-card-phase").textContent = snapshot["phase-label"];
+          card.querySelector(".slot-card-meta").textContent = `Prompt ${snapshot.promptLength} tokens · 有效 KV ${snapshot.visibleTokens} tokens`;
+          card.querySelector(".slot-card-activity").textContent = snapshot.activity;
+          card.querySelector(".slot-card-range").textContent = "KV 输入：" + snapshot["decode-range"];
+          card.querySelectorAll(".slot-token").forEach((token, position) => {
+            token.className = "slot-token " + tokenKind(snapshot, position);
+            token.textContent = position < snapshot.visibleTokens ? snapshot.tokens[position] : "·";
+          });
+        });
+        description.textContent = `共同时间线第 ${round} 步 · 查看${state.requestName}。` + state.description;
         if (!svg) return;
         svg.querySelectorAll("[data-field]").forEach(node => {
           const key = node.dataset.field;
@@ -805,20 +1005,25 @@
           const index = Number(cell.dataset.tokenIndex);
           const visible = index < state.visibleTokens;
           cell.classList.remove("cell-prompt", "cell-decode1", "cell-decode2", "cell-empty");
-          const cellClass = !visible ? "cell-empty" : index < 3 ? "cell-prompt" : index === 3 ? "cell-decode1" : "cell-decode2";
+          const cellClass = "cell-" + tokenKind(state, index);
           cell.classList.add(cellClass);
           const label = cell.querySelector("[data-cell-label]");
-          if (label) label.textContent = visible ? (cell.dataset.token || "") : "·";
+          if (label) label.textContent = visible ? state.tokens[index] : "·";
+          cell.dataset.token = visible ? state.tokens[index] : "·";
+          cell.querySelector("title").textContent = `${state.requestName} · 第 ${cell.dataset.layer} 层 ${cell.dataset.kind} · token 位置 ${index}：` + (visible ? state.tokens[index] + " 的向量区域" : "尚无本请求有效 KV");
         });
         svg.querySelectorAll("[data-phase]").forEach(group => {
           group.classList.toggle("muted", state.activePhases !== null && !state.activePhases.includes(group.dataset.phase));
         });
+        svg.querySelector("#kv-description").textContent = `共同时间线第 ${round} 步。` + state.description + " 每层各有 K/V 两个对象，共 8 个；8 列为示意容量。下方是单请求完整接续的参考，并不表示这些步骤都已执行。";
       }
 
-      stages.forEach(button => button.addEventListener("click", () => {
-        mode = button.dataset.mode;
+      steps.forEach(button => button.addEventListener("click", () => {
+        round = Number(button.dataset.step);
         applyState();
       }));
+      document.getElementById("previous-step").addEventListener("click", () => { round = Math.max(0, round - 1); applyState(); });
+      document.getElementById("next-step").addEventListener("click", () => { round = Math.min(5, round + 1); applyState(); });
       slotSelect.addEventListener("change", applyState);
       applyState();
 
@@ -826,6 +1031,23 @@
         document.querySelectorAll(".view-actions button").forEach(button => { button.disabled = true; });
         return;
       }
+
+      const exportLink = document.getElementById("export-svg");
+      exportLink.textContent = "导出槽位详情 SVG ↓";
+      exportLink.addEventListener("click", event => {
+        event.preventDefault();
+        const snapshot = svg.cloneNode(true);
+        snapshot.removeAttribute("style");
+        const content = new XMLSerializer().serializeToString(snapshot);
+        const url = URL.createObjectURL(new Blob([content], { type: "image/svg+xml;charset=utf-8" }));
+        const download = document.createElement("a");
+        download.href = url;
+        download.download = `houmo-kv-step-${round}-slot-${slotSelect.value}.svg`;
+        document.body.appendChild(download);
+        download.click();
+        download.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      });
 
       const box = svg.viewBox && svg.viewBox.baseVal;
       const nativeWidth = box && box.width > 0 ? box.width : parseFloat(svg.getAttribute("width")) || 1600;
