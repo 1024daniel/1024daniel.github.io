@@ -1,0 +1,230 @@
+{
+  "document": "ai/kvspec-deep-dive-20261018/09-kvspec-houmo-vllm-ascend.md",
+  "document_sha256": "18b9f13500e0ed5d8358616db1c0532175262c4b704e3e77d81890b808b640eb",
+  "status": "passed",
+  "errors": [],
+  "chapters": 12,
+  "figures": 22,
+  "code_fences": {
+    "text": 14,
+    "mermaid": 16,
+    "python": 35
+  },
+  "anchors": 46,
+  "local_source_links": 37,
+  "relative_link_targets": [
+    "assets/input-name-contract.mmd",
+    "assets/input-name-contract.png",
+    "assets/input-name-contract.svg",
+    "results/source-fingerprints.json",
+    "results/validation.json",
+    "scripts/validate_document.py"
+  ],
+  "image_assets": [
+    {
+      "path": "assets/input-name-contract.svg",
+      "sha256": "ee1bb563c46f38676a862f8b7e680958111cfcd8b4813139162b57aaa3c84c77"
+    },
+    {
+      "path": "assets/input-name-contract.png",
+      "sha256": "c3001d35b33feb7973d8ee0e4393b0ca9eac64a7a8687a2f1dfacd89afc528da"
+    },
+    {
+      "path": "assets/input-name-contract.mmd",
+      "sha256": "4334ee3e81d0592fd75e047098bb40a500f59c20ab9af1be6846ae21d1d998c6"
+    }
+  ],
+  "unique_source_files": 33,
+  "verbatim_snippets_checked": [
+    {
+      "document_line": 163,
+      "matching_source_files": [
+        "houmo-examples-xh2/hmodel/xh2/xhmodel_merak/xh_llm/types.py"
+      ]
+    },
+    {
+      "document_line": 176,
+      "matching_source_files": [
+        "houmo-examples-xh2/hmodel/xh2/xhmodel_merak/xh_llm/text_llm_model.py"
+      ]
+    },
+    {
+      "document_line": 192,
+      "matching_source_files": [
+        "houmo-examples-xh2/hmodel/xh2/xhmodel_merak/xh_llm/kv_cache_mixin.py"
+      ]
+    },
+    {
+      "document_line": 247,
+      "matching_source_files": [
+        "houmo-examples-xh2/hmodel/xh2/xhmodel_merak/xh_llm/models/qwen3/_model.py"
+      ]
+    },
+    {
+      "document_line": 332,
+      "matching_source_files": [
+        "vllm-postmo/vllm_houmo/model_runner.py"
+      ]
+    },
+    {
+      "document_line": 345,
+      "matching_source_files": [
+        "vllm-postmo/vllm_houmo/model_runner.py"
+      ]
+    },
+    {
+      "document_line": 512,
+      "matching_source_files": [
+        "houmo-examples-xh2/hmodel/xh2/xhmodel_merak/xh_llm/base_llm_model.py"
+      ]
+    },
+    {
+      "document_line": 535,
+      "matching_source_files": [
+        "houmo-examples-xh2/hmodel/xh2/xh_model_zoo/xh_llm/models/base_converter.py",
+        "houmo-examples-xh2/hmodel/xh2/xhmodel_merak/xh_llm/base_llm_model.py"
+      ]
+    },
+    {
+      "document_line": 547,
+      "matching_source_files": [
+        "houmo-examples-xh2/hmodel/xh2/xh_model_zoo/xh_llm/models/qwen3_legacy/qwen3_converter.py"
+      ]
+    },
+    {
+      "document_line": 564,
+      "matching_source_files": [
+        "houmo-examples-xh2/hmatc/hmatc/exec/xh2_exec.py"
+      ]
+    },
+    {
+      "document_line": 604,
+      "matching_source_files": [
+        "houmo_tcim_runtime_xh2_linux_x86_64-1.4.0/python/tcim_lite/runtime.py"
+      ]
+    },
+    {
+      "document_line": 620,
+      "matching_source_files": [
+        "houmo_tcim_runtime_xh2_linux_x86_64-1.4.0/python/tcim_lite/runtime.py"
+      ]
+    },
+    {
+      "document_line": 678,
+      "matching_source_files": [
+        "vllm-postmo/vllm_houmo/model_runner.py"
+      ]
+    },
+    {
+      "document_line": 758,
+      "matching_source_files": [
+        "houmo-examples-xh2/hmodel/xh2/xhmodel_merak/xh_llm/models/gemma4_series/llm_text.py"
+      ]
+    },
+    {
+      "document_line": 797,
+      "matching_source_files": [
+        "vllm-postmo/vllm_houmo/models/qwen3_5/houmoqwen3_5.py"
+      ]
+    },
+    {
+      "document_line": 833,
+      "matching_source_files": [
+        "houmo-vllm-18f6bf5/vllm/model_executor/layers/attention/attention.py"
+      ]
+    },
+    {
+      "document_line": 848,
+      "matching_source_files": [
+        "houmo-vllm-18f6bf5/vllm/v1/kv_cache_interface.py"
+      ]
+    },
+    {
+      "document_line": 901,
+      "matching_source_files": [
+        "houmo-vllm-18f6bf5/vllm/v1/worker/gpu_model_runner.py"
+      ]
+    },
+    {
+      "document_line": 913,
+      "matching_source_files": [
+        "houmo-vllm-18f6bf5/vllm/v1/worker/utils.py"
+      ]
+    },
+    {
+      "document_line": 961,
+      "matching_source_files": [
+        "houmo-vllm-18f6bf5/vllm/v1/worker/block_table.py"
+      ]
+    },
+    {
+      "document_line": 989,
+      "matching_source_files": [
+        "houmo-vllm-18f6bf5/vllm/v1/attention/backends/flash_attn.py"
+      ]
+    },
+    {
+      "document_line": 1008,
+      "matching_source_files": [
+        "houmo-vllm-18f6bf5/vllm/v1/worker/block_table.py"
+      ]
+    },
+    {
+      "document_line": 1033,
+      "matching_source_files": [
+        "houmo-vllm-18f6bf5/vllm/v1/core/kv_cache_utils.py"
+      ]
+    }
+  ],
+  "numerical_examples": {
+    "houmo_declared_layer_page_bytes": 524288,
+    "gpu_example_layer_page_bytes": 65536,
+    "all_layer_page_bytes": 2097152,
+    "bytes_per_token_all_layers": 131072,
+    "configured_blocks_for_16_gib": 8192,
+    "usable_blocks_after_null": 8191,
+    "fixed_four_slot_bytes": 4294967296,
+    "four_short_requests_bytes": 536870912,
+    "mixed_length_pages_bytes": 408944640,
+    "mixed_length_tail_tokens": 25,
+    "mixed_length_tail_bytes": 3276800,
+    "shared_prefix_bytes": 268435456,
+    "gpu_example_slot_ids": [
+      126,
+      127,
+      32,
+      33,
+      144
+    ],
+    "houmo_slot_ranges": [
+      [
+        3,
+        7
+      ],
+      [
+        9,
+        13
+      ],
+      [
+        15,
+        19
+      ]
+    ]
+  },
+  "git": {
+    "vllm-postmo": {
+      "head": "de45f66ac99118c395d3266bbf10a46dde4372fd",
+      "tracked_status": ""
+    },
+    "houmo-vllm-18f6bf5": {
+      "head": "c21d131f3ce03e1742c98523b3a920cde0c84d59",
+      "tracked_status": ""
+    }
+  },
+  "limitations": [
+    "Mermaid declarations checked; Mermaid syntax/layout not render-tested. Figure 8 SVG was rendered with Inkscape and visually reviewed separately.",
+    "No hardware inference, export, model compilation or performance tests.",
+    "Remote sources reviewed separately; this script does not test external URLs.",
+    "Normalized excerpt checks verify selected line sequences, not runtime semantics."
+  ]
+}

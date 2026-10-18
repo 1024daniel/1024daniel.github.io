@@ -1,0 +1,24 @@
+flowchart LR
+    subgraph Export[左：模型准备与导出]
+        direction TB
+        E1[模型侧构造语义名称列表] --> E2[兼容函数转换名称]
+        E2 --> E3[复制列表并保留顺序；未匹配项不变]
+        E3 --> E4[导出器使用 input_names 命名图输入]
+        T[decode_inputs 是导出用张量] --> E4
+        E4 --> E5[HMONNX]
+        E5 --> E6[TCIM 编译与可选多 batch 改写]
+        E6 --> E7[HMM 最终输入接口]
+    end
+    subgraph Runtime[右：加载与推理]
+        direction TB
+        R1[tcim.runtime.load] --> R2[get_input_name：编号到名称]
+        R2 --> R3[get_input_info：名称到规格]
+        R3 --> R4[get_dev_input：名称到设备 Tensor]
+        R4 --> R5[普通插件 set_input 绑定 prefill 的 KV]
+        R5 --> R6[set_input 写入 valid/current 主机数组]
+        R6 --> R7[run 与 sync：执行模型并读写缓存]
+        R1 --> META[Python 缓存 input_names 与 input_infos]
+    end
+    E7 --> R1
+    RULE[名称和顺序按最终产物核对；设备绑定需匹配规格与设备] -.-> R3
+    API[set_dev_input 是显式设备绑定接口] -.-> R5

@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1480" viewBox="0 0 1800 1480" role="img" aria-labelledby="title description">
+<title id="title">Houmo 输入命名约定：左侧导出前转换，右侧 TCIM 加载后的查询、绑定和写入</title>
+<desc id="description">导出代码构造语义名称，经兼容函数改名后交给 HMONNX 导出器，TCIM 编译产生最终 HMM 输入接口。推理端加载后按编号查询名称、按名称查询规格、获取设备 KV 并绑定 prefill，再写入长度并执行。输入名称列表与设备缓存存储分开。</desc>
+<defs>
+  <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L10,5 L0,10 Z" fill="#3b69a7"/></marker>
+  <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L10,5 L0,10 Z" fill="#27816a"/></marker>
+  <marker id="arrow-amber" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#b97819"/></marker>
+</defs>
+<style>
+  text { font-family: 'DejaVu Sans', 'Droid Sans Fallback', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif; fill: #243449; }
+  .code { font-family: 'DejaVu Sans Mono', 'Droid Sans Fallback', 'Noto Sans CJK SC', monospace; }
+</style>
+<rect width="1800" height="1480" fill="#f7f9fc"/>
+
+<text x="48" y="66" font-size="36" style="fill:#16283e" font-weight="bold">输入命名约定：导出前转换，推理时查询与读写</text>
+<text x="48" y="108" font-size="22" style="fill:#526478" font-weight="normal">同一组输入有三类信息：名称是索引键，TensorInfo 是规格，Tensor 承载数据或设备存储。</text>
+<rect x="40" y="144" width="820" height="1144" rx="20" fill="#edf3fc" stroke="#d2e0f3"/>
+<rect x="940" y="144" width="820" height="1144" rx="20" fill="#edf7f3" stroke="#cce7dc"/>
+<text x="64" y="190" font-size="29" style="fill:#245a9c" font-weight="bold">左｜模型准备与导出</text>
+<text x="964" y="190" font-size="29" style="fill:#176f5c" font-weight="bold">右｜加载与推理：以普通插件路径为例</text>
+<rect x="64" y="220" width="772" height="160" rx="14" fill="#ffffff" stroke="#c7d8ee"/>
+<rect x="64" y="220" width="7" height="160" rx="3" fill="#245a9c" stroke="none"/>
+<text x="88" y="258" font-size="26" style="fill:#245a9c" font-weight="bold">01  先构造模型侧的语义名称</text>
+<text x="88" y="292" font-size="23" style="fill:#243449" font-weight="normal">名称来自导出代码构造的 Python 列表。</text>
+<text x="88" y="326" font-size="22" style="fill:#243449" font-weight="normal" class="code">inputs_embeds, past_seq_length, …</text>
+<text x="88" y="357" font-size="21" style="fill:#526478" font-weight="normal">名称与展开后的输入张量按约定顺序对应。</text>
+<rect x="64" y="408" width="772" height="264" rx="14" fill="#ffffff" stroke="#c7d8ee"/>
+<rect x="64" y="408" width="7" height="264" rx="3" fill="#245a9c" stroke="none"/>
+<text x="88" y="446" font-size="26" style="fill:#245a9c" font-weight="bold">02  命名兼容：xh1_hmonnx_compatible</text>
+<text x="88" y="478" font-size="21" style="fill:#243449" font-weight="normal" class="code">inputs_embeds        → input_1</text>
+<text x="88" y="509" font-size="21" style="fill:#243449" font-weight="normal" class="code">past_seq_length      → valid_length</text>
+<text x="88" y="540" font-size="21" style="fill:#243449" font-weight="normal" class="code">current_input_length → current_length</text>
+<text x="88" y="571" font-size="21" style="fill:#243449" font-weight="normal" class="code">past_key_cache_0</text>
+<text x="88" y="599" font-size="21" style="fill:#243449" font-weight="normal" class="code">  → model_layers_0_self_attn_kcache_input</text>
+<text x="88" y="628" font-size="20" style="fill:#526478" font-weight="normal">V 同类改名；复制列表、保序、未匹配项原样。</text>
+<text x="88" y="655" font-size="20" style="fill:#526478" font-weight="normal">规则可复用；此步骤不修改张量内容。</text>
+<rect x="64" y="700" width="772" height="180" rx="14" fill="#ffffff" stroke="#c7d8ee"/>
+<rect x="64" y="700" width="7" height="180" rx="3" fill="#245a9c" stroke="none"/>
+<text x="88" y="738" font-size="26" style="fill:#245a9c" font-weight="bold">03  导出器定义整张图的输入接口</text>
+<text x="88" y="777" font-size="21" style="fill:#243449" font-weight="normal" class="code">convert_quanted_model_to_hmonnx(...)</text>
+<text x="88" y="814" font-size="22" style="fill:#243449" font-weight="normal" class="code">input_names  → 图输入的名称</text>
+<text x="88" y="850" font-size="22" style="fill:#243449" font-weight="normal" class="code">decode_inputs → 导出时使用的张量</text>
+<rect x="64" y="908" width="772" height="160" rx="14" fill="#ffffff" stroke="#c7d8ee"/>
+<rect x="64" y="908" width="7" height="160" rx="3" fill="#245a9c" stroke="none"/>
+<text x="88" y="946" font-size="26" style="fill:#245a9c" font-weight="bold">04  TCIM 编译确定最终接口</text>
+<text x="88" y="982" font-size="21" style="fill:#243449" font-weight="normal" class="code">modify_llm.batch → 请求多 batch 改写</text>
+<text x="88" y="1014" font-size="21" style="fill:#526478" font-weight="normal">具体复制与重排位于外部 builder。</text>
+<text x="88" y="1045" font-size="21" style="fill:#526478" font-weight="normal">最终输入名称与编号以编译产物为准。</text>
+<rect x="64" y="1096" width="772" height="166" rx="14" fill="#ffffff" stroke="#c7d8ee"/>
+<rect x="64" y="1096" width="7" height="166" rx="3" fill="#245a9c" stroke="none"/>
+<text x="88" y="1134" font-size="26" style="fill:#245a9c" font-weight="bold">05  HMM 保存编译后的模型接口</text>
+<text x="88" y="1172" font-size="23" style="fill:#243449" font-weight="normal">包含最终输入声明与模型执行信息。</text>
+<text x="88" y="1208" font-size="21" style="fill:#526478" font-weight="normal">独立文件，或 GGUF 内嵌的模型数据段。</text>
+<text x="88" y="1240" font-size="21" style="fill:#526478" font-weight="normal">接口信息不是请求运行中产生的 KV 数据。</text>
+<path d="M450,380 V403" fill="none" stroke="#3b69a7" stroke-width="2.5" marker-end="url(#arrow-blue)"/>
+<path d="M450,672 V695" fill="none" stroke="#3b69a7" stroke-width="2.5" marker-end="url(#arrow-blue)"/>
+<path d="M450,880 V903" fill="none" stroke="#3b69a7" stroke-width="2.5" marker-end="url(#arrow-blue)"/>
+<path d="M450,1068 V1091" fill="none" stroke="#3b69a7" stroke-width="2.5" marker-end="url(#arrow-blue)"/>
+<rect x="964" y="220" width="772" height="160" rx="14" fill="#ffffff" stroke="#c1dfd2"/>
+<rect x="964" y="220" width="7" height="160" rx="3" fill="#176f5c" stroke="none"/>
+<text x="988" y="258" font-size="26" style="fill:#176f5c" font-weight="bold">01  TCIM Runtime 加载编译模型</text>
+<text x="988" y="292" font-size="21" style="fill:#243449" font-weight="normal" class="code">prefill = tcim.runtime.load(prefill_path, option1)</text>
+<text x="988" y="325" font-size="21" style="fill:#243449" font-weight="normal" class="code">decode = tcim.runtime.load(decode_path, option2)</text>
+<text x="988" y="357" font-size="20" style="fill:#526478" font-weight="normal">prefill 的 KV 设为 dummy；加载后缓存接口元信息。</text>
+<rect x="964" y="408" width="772" height="220" rx="14" fill="#ffffff" stroke="#c1dfd2"/>
+<rect x="964" y="408" width="7" height="220" rx="3" fill="#176f5c" stroke="none"/>
+<text x="988" y="446" font-size="26" style="fill:#176f5c" font-weight="bold">02  查询名称与规格：尚未读取 KV 内容</text>
+<text x="988" y="481" font-size="22" style="fill:#243449" font-weight="normal" class="code">name = decode.get_input_name(i)</text>
+<text x="988" y="514" font-size="21" style="fill:#526478" font-weight="normal">编号 → 名称字符串；查询的是 C++ Module。</text>
+<text x="988" y="550" font-size="22" style="fill:#243449" font-weight="normal" class="code">info = decode.get_input_info(name)</text>
+<text x="988" y="583" font-size="21" style="fill:#526478" font-weight="normal">名称 → shape / dtype / format 等输入描述。</text>
+<text x="988" y="612" font-size="20" style="fill:#526478" font-weight="normal">核对最终输入表；索引连续不代表物理地址连续。</text>
+<rect x="964" y="656" width="772" height="302" rx="14" fill="#ffffff" stroke="#c1dfd2"/>
+<rect x="964" y="656" width="7" height="302" rx="3" fill="#176f5c" stroke="none"/>
+<text x="988" y="694" font-size="26" style="fill:#176f5c" font-weight="bold">03  获取并绑定设备 KV：传递 Tensor 对象</text>
+<text x="988" y="734" font-size="21" style="fill:#243449" font-weight="normal" class="code">k_name = decode.get_input_name(i)</text>
+<text x="988" y="769" font-size="21" style="fill:#243449" font-weight="normal" class="code">p_name = prefill.get_input_name(j)</text>
+<text x="988" y="804" font-size="21" style="fill:#243449" font-weight="normal" class="code">kv = decode.get_dev_input(k_name)</text>
+<text x="988" y="839" font-size="21" style="fill:#243449" font-weight="normal" class="code">prefill.set_input(p_name, kv)</text>
+<text x="988" y="878" font-size="20" style="fill:#526478" font-weight="normal">普通插件：将 decode 的设备 KV 绑定给 prefill。</text>
+<text x="988" y="909" font-size="20" style="fill:#526478" font-weight="normal">另有 set_dev_input(name, tensor) 显式设备接口。</text>
+<text x="988" y="939" font-size="20" style="fill:#526478" font-weight="normal">需匹配目标规格与设备；dummy 输入须在执行前绑定。</text>
+<rect x="964" y="986" width="772" height="150" rx="14" fill="#ffffff" stroke="#c1dfd2"/>
+<rect x="964" y="986" width="7" height="150" rx="3" fill="#176f5c" stroke="none"/>
+<text x="988" y="1024" font-size="26" style="fill:#176f5c" font-weight="bold">04  写入长度：向已有输入提供数据</text>
+<text x="988" y="1058" font-size="21" style="fill:#243449" font-weight="normal" class="code">prefill.set_input(valid_name, valid_array)</text>
+<text x="988" y="1093" font-size="21" style="fill:#243449" font-weight="normal" class="code">prefill.set_input(current_name, current_array)</text>
+<text x="988" y="1121" font-size="20" style="fill:#526478" font-weight="normal">主机数组按输入描述包装，再交给 runtime。</text>
+<rect x="964" y="1164" width="772" height="98" rx="14" fill="#ffffff" stroke="#c1dfd2"/>
+<rect x="964" y="1164" width="7" height="98" rx="3" fill="#176f5c" stroke="none"/>
+<text x="988" y="1202" font-size="26" style="fill:#176f5c" font-weight="bold">05  执行模型，读写已绑定的缓存</text>
+<text x="988" y="1238" font-size="22" style="fill:#243449" font-weight="normal" class="code">prefill.run() / prefill.sync()</text>
+<path d="M1350,380 V403" fill="none" stroke="#27816a" stroke-width="2.5" marker-end="url(#arrow-green)"/>
+<path d="M1350,628 V651" fill="none" stroke="#27816a" stroke-width="2.5" marker-end="url(#arrow-green)"/>
+<path d="M1350,958 V981" fill="none" stroke="#27816a" stroke-width="2.5" marker-end="url(#arrow-green)"/>
+<path d="M1350,1136 V1159" fill="none" stroke="#27816a" stroke-width="2.5" marker-end="url(#arrow-green)"/>
+<path d="M836,1178 H900 V296 H956" fill="none" stroke="#b97819" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-amber)"/>
+<text x="929" y="842" font-size="18" style="fill:#996317" transform="rotate(-90 929 842)">编译产物传递到加载端</text>
+<rect x="40" y="1310" width="1720" height="134" rx="16" fill="#ffffff" stroke="#d7dfe9"/>
+<text x="64" y="1348" font-size="22" style="fill:#243449" font-weight="bold">接口约定：左侧统一名称；右侧按最终名称和规格提供数据。直接改名也可行，但需同步所有消费者。</text>
+<text x="64" y="1384" font-size="20" style="fill:#526478" font-weight="normal">设备 Tensor 按接口契约可复用已有存储；绑定不等于清零或执行。后续 decode 使用对应槽位缓存继续推理。</text>
+<text x="64" y="1419" font-size="18" style="fill:#526478" font-weight="normal">依据：模型导出代码、Houmo model_runner、TCIM runtime 1.4.0 接口；图内变量为语义示例，未执行设备推理。</text>
+<text x="48" y="1466" font-size="16" style="fill:#6b7b8e" font-weight="normal">Houmo KVSpec 深入分析 · 图 8 · 2026-10-18</text>
+</svg>

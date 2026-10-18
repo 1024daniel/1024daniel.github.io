@@ -1,0 +1,134 @@
+[
+  {
+    "path": "houmo-examples-xh2/hmatc/hmatc/exec/xh2_exec.py",
+    "sha256": "77f292aed5fb3cb11930450311139781925023217f9571c8ee359a5d0a216f18"
+  },
+  {
+    "path": "houmo-examples-xh2/hmatc/hmatc/main.py",
+    "sha256": "225e01cd34e9b416ba3af743e80aadd5301c25dea5ad645f5e56b724b8f8948e"
+  },
+  {
+    "path": "houmo-examples-xh2/hmodel/xh2/xh_model_zoo/xh_llm/models/base_converter.py",
+    "sha256": "adf19a0931c96f474c1ce60981b7629045d49e9219f4093ee625293baa970ce8"
+  },
+  {
+    "path": "houmo-examples-xh2/hmodel/xh2/xh_model_zoo/xh_llm/models/qwen3_legacy/qwen3_converter.py",
+    "sha256": "565935fe62ebc0afb6e8505bd9b30177a4b2b7c59cb834ee816b23205520c798"
+  },
+  {
+    "path": "houmo-examples-xh2/hmodel/xh2/xhmodel_merak/xh_llm/base_llm_model.py",
+    "sha256": "e5b092a85083d18d548a01f930165a84878e7edc5d7593a85fe731a5e2505ae0"
+  },
+  {
+    "path": "houmo-examples-xh2/hmodel/xh2/xhmodel_merak/xh_llm/kv_cache_mixin.py",
+    "sha256": "a7057b3a9d64e898f18d9e0b3cb3e6dfc02a750951d15c9f8a7789ff957ba7a4"
+  },
+  {
+    "path": "houmo-examples-xh2/hmodel/xh2/xhmodel_merak/xh_llm/models/gemma4_series/llm_text.py",
+    "sha256": "6904612db40a408af15fd558360f6c9ca6e50151efa5a22be48b708a920f2d96"
+  },
+  {
+    "path": "houmo-examples-xh2/hmodel/xh2/xhmodel_merak/xh_llm/models/qwen3/_model.py",
+    "sha256": "d14e8183a526602f1e2d4eaa8b3d9d9c0672d6aac4bfac5291670b0f2218abf7"
+  },
+  {
+    "path": "houmo-examples-xh2/hmodel/xh2/xhmodel_merak/xh_llm/models/qwen3_5/qwen3_5_llm_model.py",
+    "sha256": "6461fb7217c78ad47b5ea9e1e81d768bd6bf88048c77680ddfa6bf61b7a4df92"
+  },
+  {
+    "path": "houmo-examples-xh2/hmodel/xh2/xhmodel_merak/xh_llm/text_llm_model.py",
+    "sha256": "fbd0af23cba317ef702b6cb52ee397e23959dcd80e3afa3ee4bf383c0d58c8a5"
+  },
+  {
+    "path": "houmo-examples-xh2/hmodel/xh2/xhmodel_merak/xh_llm/types.py",
+    "sha256": "6b9296146b6cb67c59939741dab56e996e4a674c86a45a91cd1077a6f8691b03"
+  },
+  {
+    "path": "houmo-examples-xh2/models/llm/qwen3/build.py",
+    "sha256": "6b2b6f1638912b6db1c9eecd8a4b0a636ffbb9fcc33503b7c563191d83fe46f1"
+  },
+  {
+    "path": "houmo-vllm-18f6bf5/vllm/model_executor/layers/attention/attention.py",
+    "sha256": "7f9b2fd715014e079816c0eec94276234a5225e5ea8460e6a251bed80fe24aca"
+  },
+  {
+    "path": "houmo-vllm-18f6bf5/vllm/model_executor/models/llama.py",
+    "sha256": "4047097027f575c0c3d3faf63ba9e59f2ae321194189aa679e3c2a492881e0a9"
+  },
+  {
+    "path": "houmo-vllm-18f6bf5/vllm/v1/attention/backends/flash_attn.py",
+    "sha256": "eb48f7c647e62c13e2c347d4433a1857b8bc7e701804c31a3dc649904365796d"
+  },
+  {
+    "path": "houmo-vllm-18f6bf5/vllm/v1/attention/backends/flashinfer.py",
+    "sha256": "24fa28b32b464e512be69fe046a1e2cd0870538222af9d4455a248e07fa374a6"
+  },
+  {
+    "path": "houmo-vllm-18f6bf5/vllm/v1/core/block_pool.py",
+    "sha256": "c2a8eb59aaae2f15f7e75e5d14a68bd321730d2e62158c822af7179b85157347"
+  },
+  {
+    "path": "houmo-vllm-18f6bf5/vllm/v1/core/kv_cache_manager.py",
+    "sha256": "05e5f1f9391a959b6328cc75e3f0a6315682a593b50d54ec30c215c768c3e224"
+  },
+  {
+    "path": "houmo-vllm-18f6bf5/vllm/v1/core/kv_cache_utils.py",
+    "sha256": "dc843efbc7783945813b2a0adfe2a7e2cfaf441dd2e920affea0fdd808a3a0f3"
+  },
+  {
+    "path": "houmo-vllm-18f6bf5/vllm/v1/core/single_type_kv_cache_manager.py",
+    "sha256": "a2efa95089cdf3981add5549a57afe2917108df0e271ac121f33f8e4beb34bf9"
+  },
+  {
+    "path": "houmo-vllm-18f6bf5/vllm/v1/engine/core.py",
+    "sha256": "e9e6fb5ebdc0ec7814f504273fb85626e153f6acd947bb372add3ae72bef18d5"
+  },
+  {
+    "path": "houmo-vllm-18f6bf5/vllm/v1/kv_cache_interface.py",
+    "sha256": "7039d1b5696385764303d0dc5458b4936cd2fd4258432ab6bb810e33053c37fe"
+  },
+  {
+    "path": "houmo-vllm-18f6bf5/vllm/v1/worker/block_table.py",
+    "sha256": "b79a46abf8feb0e2ad9e9de64b55e6fc6d3597eadbd903993cbf4e3e74f1f324"
+  },
+  {
+    "path": "houmo-vllm-18f6bf5/vllm/v1/worker/gpu_model_runner.py",
+    "sha256": "c5bf45e867495892065291f5e77a93584369f41046e207d9c0bc6826e14e725d"
+  },
+  {
+    "path": "houmo-vllm-18f6bf5/vllm/v1/worker/gpu_worker.py",
+    "sha256": "53196cef1d32b5c5207c8986a5666352fd5ba0b79c418c074311147f266cadc4"
+  },
+  {
+    "path": "houmo-vllm-18f6bf5/vllm/v1/worker/utils.py",
+    "sha256": "c4c81ece4ceb8bc6ba210514b3680baeacff68f6c7a5f6e9d7e8cc1550b39151"
+  },
+  {
+    "path": "houmo_tcim_runtime_xh2_linux_x86_64-1.4.0/include/tcim/tcim_runtime.h",
+    "sha256": "10be0e08713116e6c1f381ce3bf2fb5bace7809bb708672f8297e83133c13c25"
+  },
+  {
+    "path": "houmo_tcim_runtime_xh2_linux_x86_64-1.4.0/python/pytcim.cc",
+    "sha256": "c8319842129c57506e1bdcb70834db350199bc8750df782079cd44c1a3b827c9"
+  },
+  {
+    "path": "houmo_tcim_runtime_xh2_linux_x86_64-1.4.0/python/tcim_lite/runtime.py",
+    "sha256": "d0135805b688821dafb17ef75692db288209f73af9da6851c2f46bb84670b474"
+  },
+  {
+    "path": "vllm-postmo/vllm_houmo/model_runner.py",
+    "sha256": "40aabff33ba45d7fc3186d1b4fa0087992b6187e69263631fa85718a358dff77"
+  },
+  {
+    "path": "vllm-postmo/vllm_houmo/models/qwen3_5/houmoqwen3_5.py",
+    "sha256": "2952953d8cf9054c05d9aceed2c8383d832babb5a7dc09caee31676cb34dfa9b"
+  },
+  {
+    "path": "vllm-postmo/vllm_houmo/platform.py",
+    "sha256": "ad8bc866e072a22908da56b4d33f13ddfe6543bbc447215f6b8917ad96684d19"
+  },
+  {
+    "path": "vllm-postmo/vllm_houmo/worker/worker.py",
+    "sha256": "3590f3d34b2321a997ad9f422d2901a6c30a637dd917a8e23fd4be1b981e1442"
+  }
+]
