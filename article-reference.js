@@ -1,16 +1,26 @@
 (async () => {
+  function handleImage(image) {
+    const remove = () => image.parentElement?.remove();
+    image.addEventListener('error', remove, {once: true});
+    // A cloned lazy image has not started loading until its card is connected.
+    if (image.isConnected && image.complete && !image.naturalWidth) remove();
+  }
+  document.querySelectorAll('.preview-card__image').forEach(handleImage);
+
   // Native {{< relref >}} URLs can remain shortcode placeholders in render hooks.
   // Enhance their final URLs from the same build-time metadata used by the hook.
   const source = document.querySelector('script[data-article-index]');
-  if (source && document.querySelector('.post-content a[href]')) {
+  const candidates = [...document.querySelectorAll(
+    '.post-content a[href]:not(.article-reference):not(.link-preview-card):not(.video-embed__link):not(.code-preview-link)'
+  )].filter(link => !link.getAttribute('href').startsWith('#') && !link.querySelector('img'));
+  if (source && candidates.length) {
     try {
       const response = await fetch(source.dataset.articleIndex);
       if (!response.ok) throw new Error('Article metadata unavailable');
       const index = await response.json();
-      for (const link of document.querySelectorAll('.post-content a[href]:not(.article-reference)')) {
+      for (const link of candidates) {
         const href = link.getAttribute('href');
-        if (!href || href.startsWith('#') || link.querySelector('img')
-          || link.classList.contains('link-preview-card') || link.classList.contains('video-embed__link')) continue;
+        if (!href) continue;
         const url = new URL(href, location.href);
         if (!['http:', 'https:'].includes(url.protocol)
           || (url.host !== location.host && url.host !== index.host)) continue;
@@ -23,14 +33,6 @@
         link.dataset.articleDescription = data.description;
         link.dataset.articleMeta = data.meta;
         if (data.image) link.dataset.articleImage = data.image;
-        const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        icon.setAttribute('class', 'article-reference__icon');
-        icon.setAttribute('viewBox', '0 0 20 20');
-        icon.setAttribute('width', '16');
-        icon.setAttribute('height', '16');
-        icon.setAttribute('aria-hidden', 'true');
-        icon.innerHTML = '<path d="M4 2.5h8l4 4v11H4z M12 2.5v4h4 M7 10h6 M7 13h5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>';
-        link.prepend(icon);
       }
     } catch {
       // Navigation and server-rendered references still work if metadata cannot load.
@@ -38,9 +40,10 @@
   }
 
   const links = [...document.querySelectorAll('a.article-reference')];
-  if (!links.length) return;
+  const template = document.getElementById('preview-card-content');
+  if (!links.length || !template) return;
   const preview = document.createElement('div');
-  preview.className = 'article-preview';
+  preview.className = 'preview-card article-preview';
   preview.id = 'article-reference-preview';
   preview.role = 'tooltip';
   preview.hidden = true;
@@ -48,25 +51,28 @@
   let active = null, timer, previousDescription = null;
 
   function content(link) {
-    const fragment = document.createDocumentFragment();
-    const body = document.createElement('span');
-    body.className = 'article-preview__content';
-    for (const [key, name] of [['articleTitle', 'title'], ['articleDescription', 'description'], ['articleMeta', 'meta']]) {
-      if (!link.dataset[key]) continue;
-      const item = document.createElement('span');
-      item.className = 'article-preview__' + name;
-      item.textContent = link.dataset[key];
-      body.append(item);
-    }
-    fragment.append(body);
-    if (link.dataset.articleImage) {
-      const img = document.createElement('img');
-      img.className = 'article-preview__image';
-      img.src = link.dataset.articleImage;
-      img.alt = '';
-      img.loading = 'lazy';
-      img.addEventListener('error', () => img.remove(), {once: true});
-      fragment.append(img);
+    const fragment = template.content.cloneNode(true);
+    const data = {
+      title: link.dataset.articleTitle,
+      description: link.dataset.articleDescription,
+      meta: link.dataset.articleMeta,
+      image: link.dataset.articleImage,
+    };
+    for (const field of fragment.querySelectorAll('[data-preview-field]')) {
+      const name = field.dataset.previewField;
+      const value = data[name];
+      if (name === 'image') {
+        if (value) {
+          field.src = value;
+          handleImage(field);
+        } else {
+          field.parentElement.remove();
+        }
+      } else if (value) {
+        field.textContent = value;
+      } else {
+        field.remove();
+      }
     }
     return fragment;
   }
@@ -114,7 +120,7 @@
     // A standalone reference becomes a full card; prose references stay inline.
     if (parent.tagName === 'P' && parent.children.length === 1
       && parent.textContent.trim() === link.textContent.trim()) {
-      link.classList.add('article-reference--card');
+      link.classList.add('preview-card', 'article-reference--card');
       link.replaceChildren(content(link));
       continue;
     }
