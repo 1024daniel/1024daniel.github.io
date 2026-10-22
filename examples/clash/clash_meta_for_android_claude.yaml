@@ -1,0 +1,109 @@
+# 把 airport.url 换成自己的 Clash/Mihomo 机场订阅链接。
+mixed-port: 7890
+mode: rule
+log-level: info
+ipv6: false
+unified-delay: true
+tcp-concurrent: true
+
+clash-for-android:
+  append-system-dns: false
+
+proxy-providers:
+  airport:
+    type: http
+    url: "https://example.com/replace-with-clash-subscription"
+    path: ./providers/airport.yaml
+    interval: 86400
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 600
+    exclude-filter: '(?i)(剩余|流量|到期|过期|官网|套餐|重置|Expire|Traffic)'
+
+proxy-groups:
+  - name: Claude
+    type: url-test
+    url: https://www.gstatic.com/generate_204
+    interval: 600
+    timeout: 3000
+    tolerance: 200
+    use: [airport]
+    # filter: '(?i)(日本|Japan|JP|东京|Tokyo|TYO|大阪|Osaka|KIX)'
+    filter: '(?i)(🇺🇸|美国|美國|United ?States|\bUSA?\b|圣何塞|San ?Jose|SJC|洛杉矶|Los ?Angeles|LAX|西雅图|Seattle|硅谷)'
+    # 筛不到美国节点时阻断，不加入 DIRECT 或通用代理组。
+    proxies: [REJECT]
+    empty-fallback: REJECT
+
+  - name: 自动选择
+    type: url-test
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    use: [airport]
+
+  - name: 节点选择
+    type: select
+    proxies: [自动选择, DIRECT]
+    use: [airport]
+
+# 域名只维护这一份；DNS、代理和阻断规则共同引用。
+# inline 表示直接写在本文件中，不需要额外的规则文件。
+rule-providers:
+  claude-domains:
+    type: inline
+    behavior: domain
+    payload:
+      - '+.claude.ai'
+      - '+.claude.com'
+      - '+.anthropic.com'
+      - '+.claudeusercontent.com'
+      - '+.claude.app'
+      - '+.claudemcpcontent.com'
+
+# 尝试从 IP 连接中识别域名，不改写实际连接目标。
+sniffer:
+  enable: true
+  force-dns-mapping: true
+  parse-pure-ip: true
+  override-destination: false
+  sniff:
+    HTTP:
+      ports: [80]
+    TLS:
+      ports: [443, 8443]
+    QUIC:
+      ports: [443, 8443]
+
+dns:
+  enable: true
+  ipv6: false
+  enhanced-mode: fake-ip
+  fake-ip-filter:
+    - '+.lan'
+    - '+.local'
+    - '+.msftconnecttest.com'
+  default-nameserver:
+    - 223.5.5.5
+  nameserver:
+    - https://223.5.5.5/dns-query
+
+  # 单独解析机场节点域名，避免循环依赖。
+  proxy-server-nameserver:
+    - https://223.5.5.5/dns-query
+
+  # Claude 的上游 DNS 查询通过 Claude 组发送。
+  nameserver-policy:
+    'rule-set:claude-domains':
+      - 'https://1.1.1.1/dns-query#Claude&disable-ipv6=true&disable-qtype-65=true'
+
+rules:
+  - RULE-SET,claude-domains,Claude
+  # 上一条因节点不支持 UDP 而跳过时，在此阻断。
+  - RULE-SET,claude-domains,REJECT
+
+  # 其他流量：局域网及国内直连，其余交给“节点选择”。
+  - GEOIP,private,DIRECT,no-resolve
+  - GEOSITE,cn,DIRECT
+  - GEOIP,CN,DIRECT
+  - MATCH,节点选择
