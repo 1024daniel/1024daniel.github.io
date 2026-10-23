@@ -12,7 +12,7 @@ clash-for-android:
 proxy-providers:
   airport:
     type: http
-    url: "https://example.com/replace-with-clash-subscription"
+    url: "https://dasho.pqjc.site/api/v1/pq/d761660cde1f95110837c20747717a81"
     path: ./providers/airport.yaml
     interval: 86400
     health-check:
