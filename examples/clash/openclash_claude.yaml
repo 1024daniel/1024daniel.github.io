@@ -1,0 +1,105 @@
+# 自动生成，请编辑 claude.yaml 后运行 generate_claude_configs.py；不要手改此文件。
+# OpenClash：导入此完整配置，并启用同次生成、仅关联此配置的原生 .conf 模块。
+# 需要 Mihomo v1.19.19+；机场仅供应节点。
+mixed-port: 7893
+mode: rule
+log-level: info
+ipv6: true
+unified-delay: true
+tcp-concurrent: true
+find-process-mode: 'off'
+proxy-providers:
+  airport:
+    type: http
+    proxy: DIRECT
+    url: https://dasho.pqjc.site/api/v1/pq/d761660cde1f95110837c20747717a81
+    path: ./proxy_provider/claude-unified-airport.yaml
+    interval: 86400
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 600
+    exclude-filter: (?i)(剩余|流量|到期|过期|官网|套餐|重置|Expire|Traffic)
+proxy-groups:
+- name: Claude
+  type: url-test
+  url: https://www.gstatic.com/generate_204
+  interval: 600
+  timeout: 3000
+  tolerance: 200
+  use:
+  - airport
+  exclude-type: Direct|Compatible|Pass|PassRule
+  filter: (?i)(🇺🇸|美国|美國|United ?States|\bUSA?\b|圣何塞|San ?Jose|SJC|洛杉矶|Los ?Angeles|LAX|西雅图|Seattle|硅谷)
+  proxies:
+  - REJECT
+  empty-fallback: REJECT
+- name: 自动选择
+  type: url-test
+  url: https://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  use:
+  - airport
+  exclude-type: Direct|Compatible|Pass|PassRule
+  proxies:
+  - REJECT
+  empty-fallback: REJECT
+- name: 节点选择
+  type: select
+  proxies:
+  - Claude
+  - 自动选择
+  use:
+  - airport
+  exclude-type: Direct|Compatible|Pass|PassRule
+rule-providers:
+  claude-domains:
+    type: inline
+    behavior: domain
+    payload:
+    - +.claude.ai
+    - +.claude.com
+    - +.anthropic.com
+    - +.claudeusercontent.com
+    - +.claude.app
+    - +.claudemcpcontent.com
+sniffer:
+  enable: true
+  force-dns-mapping: true
+  parse-pure-ip: true
+  override-destination: false
+  sniff:
+    HTTP:
+      ports:
+      - 80
+    TLS:
+      ports:
+      - 443
+      - 8443
+    QUIC:
+      ports:
+      - 443
+      - 8443
+dns:
+  enable: true
+  ipv6: true
+  enhanced-mode: redir-host
+  respect-rules: false
+  default-nameserver:
+  - 223.5.5.5
+  nameserver:
+  - https://223.5.5.5/dns-query
+  proxy-server-nameserver:
+  - https://223.5.5.5/dns-query
+  nameserver-policy:
+    rule-set:claude-domains:
+    - https://1.1.1.1/dns-query#Claude&disable-ipv6=true&disable-qtype-65=true
+rules:
+- AND,((RULE-SET,claude-domains),(IP-CIDR6,::/0,no-resolve)),REJECT
+- RULE-SET,claude-domains,Claude
+- RULE-SET,claude-domains,REJECT
+- GEOIP,private,DIRECT,no-resolve
+- AND,((NETWORK,tcp),(GEOSITE,cn)),DIRECT
+- MATCH,节点选择
+- MATCH,REJECT

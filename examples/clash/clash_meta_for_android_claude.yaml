@@ -1,67 +1,85 @@
-# 把 airport.url 换成自己的 Clash/Mihomo 机场订阅链接。
-mixed-port: 7890
+# 自动生成，请编辑 claude.yaml 后运行 generate_claude_configs.py；不要手改此文件。
+# CMFA：导入本地配置；VPN 授权及网络 IPv6/访问控制仍需客户端设置。
+# 需要 Mihomo v1.19.19+；机场仅供应节点。
+mixed-port: 7893
 mode: rule
 log-level: info
-ipv6: false
+ipv6: true
 unified-delay: true
 tcp-concurrent: true
-
-clash-for-android:
-  append-system-dns: false
-
+find-process-mode: strict
 proxy-providers:
   airport:
     type: http
-    url: "https://dasho.pqjc.site/api/v1/pq/d761660cde1f95110837c20747717a81"
+    proxy: DIRECT
+    url: https://dasho.pqjc.site/api/v1/pq/d761660cde1f95110837c20747717a81
     path: ./providers/airport.yaml
     interval: 86400
     health-check:
       enable: true
       url: https://www.gstatic.com/generate_204
       interval: 600
-    exclude-filter: '(?i)(剩余|流量|到期|过期|官网|套餐|重置|Expire|Traffic)'
-
+    exclude-filter: (?i)(剩余|流量|到期|过期|官网|套餐|重置|Expire|Traffic)
 proxy-groups:
-  - name: Claude
-    type: url-test
-    url: https://www.gstatic.com/generate_204
-    interval: 600
-    timeout: 3000
-    tolerance: 200
-    use: [airport]
-    # filter: '(?i)(日本|Japan|JP|东京|Tokyo|TYO|大阪|Osaka|KIX)'
-    filter: '(?i)(🇺🇸|美国|美國|United ?States|\bUSA?\b|圣何塞|San ?Jose|SJC|洛杉矶|Los ?Angeles|LAX|西雅图|Seattle|硅谷)'
-    # 筛不到美国节点时阻断，不加入 DIRECT 或通用代理组。
-    proxies: [REJECT]
-    empty-fallback: REJECT
-
-  - name: 自动选择
-    type: url-test
-    url: https://www.gstatic.com/generate_204
-    interval: 300
-    tolerance: 50
-    use: [airport]
-
-  - name: 节点选择
-    type: select
-    proxies: [自动选择, DIRECT]
-    use: [airport]
-
-# 域名只维护这一份；DNS、代理和阻断规则共同引用。
-# inline 表示直接写在本文件中，不需要额外的规则文件。
+- name: Claude
+  type: url-test
+  url: https://www.gstatic.com/generate_204
+  interval: 600
+  timeout: 3000
+  tolerance: 200
+  use:
+  - airport
+  exclude-type: Direct|Compatible|Pass|PassRule
+  filter: (?i)(🇺🇸|美国|美國|United ?States|\bUSA?\b|圣何塞|San ?Jose|SJC|洛杉矶|Los ?Angeles|LAX|西雅图|Seattle|硅谷)
+  proxies:
+  - REJECT
+  empty-fallback: REJECT
+- name: 自动选择
+  type: url-test
+  url: https://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  use:
+  - airport
+  exclude-type: Direct|Compatible|Pass|PassRule
+  proxies:
+  - REJECT
+  empty-fallback: REJECT
+- name: 节点选择
+  type: select
+  proxies:
+  - Claude
+  - 自动选择
+  use:
+  - airport
+  exclude-type: Direct|Compatible|Pass|PassRule
 rule-providers:
+  claude-processes:
+    type: inline
+    behavior: classical
+    payload:
+    - PROCESS-NAME,com.anthropic.claude
+    - PROCESS-NAME,Claude.exe
+    - PROCESS-NAME,Code.exe
+    - PROCESS-NAME,Code - Insiders.exe
+    - PROCESS-PATH-REGEX,(?i)^/.*/Claude\.app/Contents/.*$
+    - PROCESS-PATH-REGEX,(?i)^/.*/Visual Studio Code( - Insiders)?\.app/Contents/.*$
+    - PROCESS-NAME,claude
+    - PROCESS-PATH-REGEX,^/.*/\.local/share/claude/versions/[^/]+$
+    - PROCESS-PATH-REGEX,^/.*/\.vscode(-server)?(-insiders)?/extensions/anthropic\.claude-code-[^/]+/resources/(native-binary|native-binaries/[^/]+)/claude$
+    - PROCESS-PATH-REGEX,^/.*/\.vscode-server(-insiders)?/(bin/[^/]+|cli/servers/[^/]+/server)/node$
+    - AND,((IN-PORT,7893),(PROCESS-NAME,ssh))
+    - AND,((IN-PORT,7893),(PROCESS-NAME,ssh.exe))
   claude-domains:
     type: inline
     behavior: domain
     payload:
-      - '+.claude.ai'
-      - '+.claude.com'
-      - '+.anthropic.com'
-      - '+.claudeusercontent.com'
-      - '+.claude.app'
-      - '+.claudemcpcontent.com'
-
-# 尝试从 IP 连接中识别域名，不改写实际连接目标。
+    - +.claude.ai
+    - +.claude.com
+    - +.anthropic.com
+    - +.claudeusercontent.com
+    - +.claude.app
+    - +.claudemcpcontent.com
 sniffer:
   enable: true
   force-dns-mapping: true
@@ -69,41 +87,39 @@ sniffer:
   override-destination: false
   sniff:
     HTTP:
-      ports: [80]
+      ports:
+      - 80
     TLS:
-      ports: [443, 8443]
+      ports:
+      - 443
+      - 8443
     QUIC:
-      ports: [443, 8443]
-
+      ports:
+      - 443
+      - 8443
 dns:
   enable: true
-  ipv6: false
-  enhanced-mode: fake-ip
-  fake-ip-filter:
-    - '+.lan'
-    - '+.local'
-    - '+.msftconnecttest.com'
+  ipv6: true
+  enhanced-mode: redir-host
+  respect-rules: false
   default-nameserver:
-    - 223.5.5.5
+  - 223.5.5.5
   nameserver:
-    - https://223.5.5.5/dns-query
-
-  # 单独解析机场节点域名，避免循环依赖。
+  - https://223.5.5.5/dns-query
   proxy-server-nameserver:
-    - https://223.5.5.5/dns-query
-
-  # Claude 的上游 DNS 查询通过 Claude 组发送。
+  - https://223.5.5.5/dns-query
   nameserver-policy:
-    'rule-set:claude-domains':
-      - 'https://1.1.1.1/dns-query#Claude&disable-ipv6=true&disable-qtype-65=true'
-
+    rule-set:claude-domains:
+    - https://1.1.1.1/dns-query#Claude&disable-ipv6=true&disable-qtype-65=true
 rules:
-  - RULE-SET,claude-domains,Claude
-  # 上一条因节点不支持 UDP 而跳过时，在此阻断。
-  - RULE-SET,claude-domains,REJECT
-
-  # 其他流量：局域网及国内直连，其余交给“节点选择”。
-  - GEOIP,private,DIRECT,no-resolve
-  - GEOSITE,cn,DIRECT
-  - GEOIP,CN,DIRECT
-  - MATCH,节点选择
+- AND,((RULE-SET,claude-domains),(IP-CIDR6,::/0,no-resolve)),REJECT
+- RULE-SET,claude-processes,Claude
+- RULE-SET,claude-processes,REJECT
+- RULE-SET,claude-domains,Claude
+- RULE-SET,claude-domains,REJECT
+- GEOIP,private,DIRECT,no-resolve
+- AND,((NETWORK,tcp),(GEOSITE,cn)),DIRECT
+- MATCH,节点选择
+- MATCH,REJECT
+clash-for-android:
+  append-system-dns: false

@@ -1,119 +1,85 @@
-# 在 Verge 界面选择规则模式、关闭 IPv6、开启 TUN，并关闭 DNS 覆写。
-# Clash Verge Rev / Windows、macOS：作为本地配置导入；WSL/远端可交给当地 Mihomo。
-# 把 airport.url 换成自己的 Clash/Mihomo 机场订阅链接。
-# 默认保护 Claude 桌面、原生 CLI、官方 VS Code 插件及 VS Code 宿主；其他插件也会受影响。
-# 进程规则只查询同一运行环境；Windows 无法据此识别 WSL/SSH 远端的 Linux 进程。
-# 统一使用默认 7890 端口；已接管流量仅允许局域网、国内域名 TCP 按规则直连。
-# 其他流量交给仅含代理的“节点选择”；本文件不会关闭系统网卡的 IPv6。
-mixed-port: 7890
+# 自动生成，请编辑 claude.yaml 后运行 generate_claude_configs.py；不要手改此文件。
+# Clash Verge：导入本地配置，确认 TUN/IPv6 开启且 DNS 覆写关闭。
+# 需要 Mihomo v1.19.19+；机场仅供应节点。
+mixed-port: 7893
 mode: rule
 log-level: info
-ipv6: false
+ipv6: true
 unified-delay: true
 tcp-concurrent: true
-# 遇到进程规则时查询来源进程；不要在 Verge 中覆写为 off。
 find-process-mode: strict
-
-# Verge 界面可能覆写 TUN 开关，导入后仍需确认已开启。
-tun:
-  enable: true
-  auto-route: true
-  auto-detect-interface: true
-  # Windows 下加强多网卡 DNS 防泄露，不是 TUN 停止后的断网保护。
-  strict-route: true
-  dns-hijack:
-    - any:53
-    - tcp://any:53
-
 proxy-providers:
   airport:
     type: http
-    url: "https://dasho.pqjc.site/api/v1/pq/d761660cde1f95110837c20747717a81"
+    proxy: DIRECT
+    url: https://dasho.pqjc.site/api/v1/pq/d761660cde1f95110837c20747717a81
     path: ./providers/airport.yaml
     interval: 86400
     health-check:
       enable: true
       url: https://www.gstatic.com/generate_204
       interval: 600
-    exclude-filter: '(?i)(剩余|流量|到期|过期|官网|套餐|重置|Expire|Traffic)'
-
+    exclude-filter: (?i)(剩余|流量|到期|过期|官网|套餐|重置|Expire|Traffic)
 proxy-groups:
-  - name: Claude
-    type: url-test
-    url: https://www.gstatic.com/generate_204
-    interval: 600
-    timeout: 3000
-    tolerance: 200
-    use: [airport]
-    # filter: '(?i)(日本|Japan|JP|东京|Tokyo|TYO|大阪|Osaka|KIX)'
-    filter: '(?i)(🇺🇸|美国|美國|United ?States|\bUSA?\b|圣何塞|San ?Jose|SJC|洛杉矶|Los ?Angeles|LAX|西雅图|Seattle|硅谷)'
-    # 筛不到美国节点时阻断，不加入 DIRECT 或通用代理组。
-    proxies: [REJECT]
-    empty-fallback: REJECT
-
-  - name: 自动选择
-    type: url-test
-    url: https://www.gstatic.com/generate_204
-    interval: 300
-    tolerance: 50
-    use: [airport]
-    # 订阅为空时拒绝，避免空组回退到 COMPATIBLE（直连）。
-    proxies: [REJECT]
-    empty-fallback: REJECT
-
-  - name: 节点选择
-    type: select
-    # 初始使用 Claude，也可手动选择其他代理；直连只由下方白名单规则允许。
-    # Verge 可能保留已有的合法节点选择；需要统一 Claude 出口时在界面核对。
-    proxies: [Claude, 自动选择]
-    use: [airport]
-
-# 域名只维护这一份；DNS、代理和阻断规则共同引用。
-# inline 表示直接写在本文件中，不需要额外的规则文件。
+- name: Claude
+  type: url-test
+  url: https://www.gstatic.com/generate_204
+  interval: 600
+  timeout: 3000
+  tolerance: 200
+  use:
+  - airport
+  exclude-type: Direct|Compatible|Pass|PassRule
+  filter: (?i)(🇺🇸|美国|美國|United ?States|\bUSA?\b|圣何塞|San ?Jose|SJC|洛杉矶|Los ?Angeles|LAX|西雅图|Seattle|硅谷)
+  proxies:
+  - REJECT
+  empty-fallback: REJECT
+- name: 自动选择
+  type: url-test
+  url: https://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  use:
+  - airport
+  exclude-type: Direct|Compatible|Pass|PassRule
+  proxies:
+  - REJECT
+  empty-fallback: REJECT
+- name: 节点选择
+  type: select
+  proxies:
+  - Claude
+  - 自动选择
+  use:
+  - airport
+  exclude-type: Direct|Compatible|Pass|PassRule
 rule-providers:
-  # 按来源进程保护所有目标，包括第三方 STUN/TURN、查 IP 服务和纯 IP 连接。
-  # 进程信息由本机系统查询，不来自网址；在连接详情核对进程名及可执行路径。
-  # 未识别进程继续按国内直连白名单和默认代理分流；不能保证其所有请求都走 Claude。
   claude-processes:
     type: inline
     behavior: classical
     payload:
-      # Windows 桌面、原生 CLI 及插件内置 CLI；进程名匹配忽略大小写。
-      - 'PROCESS-NAME,Claude.exe'
-      # 覆盖插件宿主自身的请求；也会让 VS Code 和其他扩展的连接走 Claude 组。
-      - 'PROCESS-NAME,Code.exe'
-      - 'PROCESS-NAME,Code - Insiders.exe'
-      # macOS：匹配 Claude.app 内的主程序及 Helper，不依赖固定安装目录。
-      - 'PROCESS-PATH-REGEX,(?i)^/.*/Claude\.app/Contents/.*$'
-      - 'PROCESS-PATH-REGEX,(?i)^/.*/Visual Studio Code( - Insiders)?\.app/Contents/.*$'
-      # macOS/Linux 原生 CLI；原生安装的启动链接可能解析为以版本号命名的真实文件。
-      - 'PROCESS-NAME,claude'
-      - 'PROCESS-PATH-REGEX,^/.*/\.local/share/claude/versions/[^/]+$'
-      # VS Code / Insiders / WSL / Remote SSH 默认扩展目录内的官方 CLI。
-      - 'PROCESS-PATH-REGEX,^/.*/\.vscode(-server)?(-insiders)?/extensions/anthropic\.claude-code-[^/]+/resources/(native-binary|native-binaries/[^/]+)/claude$'
-      # WSL/SSH 侧 VS Code Server 宿主，包括其其他扩展；需该环境自身运行 Mihomo。
-      - 'PROCESS-PATH-REGEX,^/.*/\.vscode-server(-insiders)?/(bin/[^/]+|cli/servers/[^/]+/server)/node$'
-      # 自定义安装位置、旧版 Node CLI、MCP、curl/Python 子进程和虚拟机需另查实际出网路径。
-      # 按需取消注释；会影响该浏览器所有网站，不能只区分某个标签页或用户配置。
-      # Windows：
-      # - 'PROCESS-NAME,chrome.exe'
-      # - 'PROCESS-NAME,msedge.exe'
-      # macOS：同时覆盖浏览器主程序和包内网络辅助进程。
-      # - 'PROCESS-PATH-REGEX,(?i)^/.*/Google Chrome\.app/Contents/.*$'
-      # - 'PROCESS-PATH-REGEX,(?i)^/.*/Microsoft Edge\.app/Contents/.*$'
-
+    - PROCESS-NAME,com.anthropic.claude
+    - PROCESS-NAME,Claude.exe
+    - PROCESS-NAME,Code.exe
+    - PROCESS-NAME,Code - Insiders.exe
+    - PROCESS-PATH-REGEX,(?i)^/.*/Claude\.app/Contents/.*$
+    - PROCESS-PATH-REGEX,(?i)^/.*/Visual Studio Code( - Insiders)?\.app/Contents/.*$
+    - PROCESS-NAME,claude
+    - PROCESS-PATH-REGEX,^/.*/\.local/share/claude/versions/[^/]+$
+    - PROCESS-PATH-REGEX,^/.*/\.vscode(-server)?(-insiders)?/extensions/anthropic\.claude-code-[^/]+/resources/(native-binary|native-binaries/[^/]+)/claude$
+    - PROCESS-PATH-REGEX,^/.*/\.vscode-server(-insiders)?/(bin/[^/]+|cli/servers/[^/]+/server)/node$
+    - AND,((IN-PORT,7893),(PROCESS-NAME,ssh))
+    - AND,((IN-PORT,7893),(PROCESS-NAME,ssh.exe))
   claude-domains:
     type: inline
     behavior: domain
     payload:
-      - '+.claude.ai'
-      - '+.claude.com'
-      - '+.anthropic.com'
-      - '+.claudeusercontent.com'
-      - '+.claude.app'
-      - '+.claudemcpcontent.com'
-
-# 尝试从 IP 连接中识别域名，不改写实际连接目标。
+    - +.claude.ai
+    - +.claude.com
+    - +.anthropic.com
+    - +.claudeusercontent.com
+    - +.claude.app
+    - +.claudemcpcontent.com
 sniffer:
   enable: true
   force-dns-mapping: true
@@ -121,51 +87,45 @@ sniffer:
   override-destination: false
   sniff:
     HTTP:
-      ports: [80]
+      ports:
+      - 80
     TLS:
-      ports: [443, 8443]
+      ports:
+      - 443
+      - 8443
     QUIC:
-      ports: [443, 8443]
-
+      ports:
+      - 443
+      - 8443
 dns:
   enable: true
-  ipv6: false
-  enhanced-mode: fake-ip
-  fake-ip-filter:
-    - '+.lan'
-    - '+.local'
-    - '+.msftconnecttest.com'
+  ipv6: true
+  enhanced-mode: redir-host
+  respect-rules: false
   default-nameserver:
-    - 223.5.5.5
+  - 223.5.5.5
   nameserver:
-    - https://223.5.5.5/dns-query
-
-  # 单独解析机场节点域名，避免循环依赖。
+  - https://223.5.5.5/dns-query
   proxy-server-nameserver:
-    - https://223.5.5.5/dns-query
-
-  # Claude 的上游 DNS 查询通过 Claude 组发送。
+  - https://223.5.5.5/dns-query
   nameserver-policy:
-    'rule-set:claude-domains':
-      - 'https://1.1.1.1/dns-query#Claude&disable-ipv6=true&disable-qtype-65=true'
-
+    rule-set:claude-domains:
+    - https://1.1.1.1/dns-query#Claude&disable-ipv6=true&disable-qtype-65=true
 rules:
-  # 进程规则必须位于私网、国内直连之前，第三方目标也只能代理或拒绝。
-  - RULE-SET,claude-processes,Claude
-  # 节点不支持 UDP 时上一条会被跳过，在此阻断，避免落入后续 DIRECT。
-  - RULE-SET,claude-processes,REJECT
-
-  # 为其他进程保留 Claude 域名保护；不能据此保护网页发起的所有第三方连接。
-  - RULE-SET,claude-domains,Claude
-  # 上一条因节点不支持 UDP 而跳过时，在此阻断。
-  - RULE-SET,claude-domains,REJECT
-
-  # 直连白名单：局域网；以及当前 GEOSITE cn 域名库中的 TCP 请求。
-  # 已识别的 Claude/VS Code 连接已在前面选定出口，不会落入这些直连规则。
-  - GEOIP,private,DIRECT,no-resolve
-  - AND,((NETWORK,tcp),(GEOSITE,cn)),DIRECT
-  # 不按中国 IP 放行：仍无域名的公网 IP、公网 UDP 都只能代理或拒绝。
-  # 来源未知且访问国内白名单域名的 TCP 仍会直连，这是保留国内直连的边界。
-  - MATCH,节点选择
-  # 最后一条代理规则也可能因不支持 UDP 而跳过，避免规则耗尽后默认直连。
-  - MATCH,REJECT
+- AND,((RULE-SET,claude-domains),(IP-CIDR6,::/0,no-resolve)),REJECT
+- RULE-SET,claude-processes,Claude
+- RULE-SET,claude-processes,REJECT
+- RULE-SET,claude-domains,Claude
+- RULE-SET,claude-domains,REJECT
+- GEOIP,private,DIRECT,no-resolve
+- AND,((NETWORK,tcp),(GEOSITE,cn)),DIRECT
+- MATCH,节点选择
+- MATCH,REJECT
+tun:
+  enable: true
+  auto-route: true
+  auto-detect-interface: true
+  strict-route: true
+  dns-hijack:
+  - any:53
+  - tcp://any:53

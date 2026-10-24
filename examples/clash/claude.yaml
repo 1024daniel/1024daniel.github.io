@@ -1,0 +1,257 @@
+# Claude 多客户端配置的唯一编辑源；这不是可直接导入的 Mihomo 配置。
+# Python 3.9+：python3 -m pip install -r requirements.txt
+# 生成：python3 generate_claude_configs.py --platform all
+# 在 Mac、Windows 或 Linux 电脑上生成，再将产物导入对应客户端；目标设备无需运行生成器。
+# 编辑 common.proxy-providers.airport.url，填写自己的 Clash/Mihomo 节点订阅。
+# common 的映射递归合并；clients.<平台>.config 中的数组整体替换，不追加。
+# 使用单文档 YAML；共享字段放在 common，不使用别名（*alias）或合并键（<<）。
+# 需要各客户端内置 Mihomo v1.19.19+；生成器不会替客户端升级核心。
+# 混合端口固定为 7893，包含 SSH 规则与现有 VS Code 示例。
+schema-version: 1
+
+# 自有 OpenWrt / VM / 容器：这里只声明目标直连，不创建系统路由或开放服务端口。
+# domains 使用完整域名，不写 URL；ipv6-prefixes 使用实际网络前缀，禁止 ::/0。
+# 动态 IPv6 前缀变化后应重新生成并导入；路由器捕获前的绕过另由 OpenClash 本地网段列表管理。
+local-services:
+  domains: []
+  ipv6-prefixes: []
+
+common:
+  mixed-port: 7893
+  mode: rule
+  log-level: info
+  ipv6: true
+  unified-delay: true
+  tcp-concurrent: true
+  # 遇到进程规则时查询来源进程；桌面和 Android 保持 strict；路由器产物关闭查询。
+  find-process-mode: strict
+
+  proxy-providers:
+    airport:
+      type: http
+      # 订阅下载/更新直接连接，避免首次启动无节点时被默认 REJECT 阻断。
+      # 仅影响订阅请求，Claude 等业务流量仍按下方规则使用代理。
+      proxy: DIRECT
+      url: "https://dasho.pqjc.site/api/v1/pq/d761660cde1f95110837c20747717a81"
+      path: ./providers/airport.yaml
+      interval: 86400
+      health-check:
+        enable: true
+        url: https://www.gstatic.com/generate_204
+        interval: 600
+      exclude-filter: '(?i)(剩余|流量|到期|过期|官网|套餐|重置|Expire|Traffic)'
+
+  proxy-groups:
+    - name: Claude
+      type: url-test
+      url: https://www.gstatic.com/generate_204
+      interval: 600
+      timeout: 3000
+      tolerance: 200
+      use: [airport]
+      # 排除订阅自定义的直连/跳过节点，三个客户端使用相同的候选节点限制。
+      exclude-type: 'Direct|Compatible|Pass|PassRule'
+      # filter: '(?i)(日本|Japan|JP|东京|Tokyo|TYO|大阪|Osaka|KIX)'
+      filter: '(?i)(🇺🇸|美国|美國|United ?States|\bUSA?\b|圣何塞|San ?Jose|SJC|洛杉矶|Los ?Angeles|LAX|西雅图|Seattle|硅谷)'
+      # 筛不到美国节点时阻断，不加入 DIRECT 或通用代理组。
+      proxies: [REJECT]
+      empty-fallback: REJECT
+
+    - name: 自动选择
+      type: url-test
+      url: https://www.gstatic.com/generate_204
+      interval: 300
+      tolerance: 50
+      use: [airport]
+      exclude-type: 'Direct|Compatible|Pass|PassRule'
+      # 订阅为空时拒绝，避免空组回退到 COMPATIBLE（直连）。
+      proxies: [REJECT]
+      empty-fallback: REJECT
+
+    - name: 节点选择
+      type: select
+      # 初始使用 Claude，也可手动选择其他代理；直连只由下方白名单规则允许。
+      # 客户端可能保留已有的合法节点选择；需要统一 Claude 出口时在界面核对。
+      proxies: [Claude, 自动选择]
+      use: [airport]
+      exclude-type: 'Direct|Compatible|Pass|PassRule'
+
+  # 域名只维护这一份；DNS、代理和阻断规则共同引用。
+  # inline 表示直接写在本文件中，不需要额外的规则文件。
+  rule-providers:
+    # 按来源进程保护所有目标，包括第三方 STUN/TURN、查 IP 服务和纯 IP 连接。
+    # 进程信息由本机系统查询，不来自网址；在连接详情核对进程名及可执行路径。
+    # 未识别进程继续按国内直连白名单和默认代理分流；不能保证其所有请求都走 Claude。
+    claude-processes:
+      type: inline
+      behavior: classical
+      payload:
+        # Windows 桌面、原生 CLI 及插件内置 CLI；进程名匹配忽略大小写。
+        # Android 按本机应用包名匹配；其他平台不会因此识别远端 Android 应用。
+        - 'PROCESS-NAME,com.anthropic.claude'
+        # 可选：整个 Termux 的连接都会进入 Claude 组。
+        # - 'PROCESS-NAME,com.termux'
+        - 'PROCESS-NAME,Claude.exe'
+        # 覆盖插件宿主自身的请求；也会让 VS Code 和其他扩展的连接走 Claude 组。
+        - 'PROCESS-NAME,Code.exe'
+        - 'PROCESS-NAME,Code - Insiders.exe'
+        # macOS：匹配 Claude.app 内的主程序及 Helper，不依赖固定安装目录。
+        - 'PROCESS-PATH-REGEX,(?i)^/.*/Claude\.app/Contents/.*$'
+        - 'PROCESS-PATH-REGEX,(?i)^/.*/Visual Studio Code( - Insiders)?\.app/Contents/.*$'
+        # macOS/Linux 原生 CLI；原生安装的启动链接可能解析为以版本号命名的真实文件。
+        - 'PROCESS-NAME,claude'
+        - 'PROCESS-PATH-REGEX,^/.*/\.local/share/claude/versions/[^/]+$'
+        # VS Code / Insiders / WSL / Remote SSH 默认扩展目录内的官方 CLI。
+        - 'PROCESS-PATH-REGEX,^/.*/\.vscode(-server)?(-insiders)?/extensions/anthropic\.claude-code-[^/]+/resources/(native-binary|native-binaries/[^/]+)/claude$'
+        # WSL/SSH 侧 VS Code Server 宿主，包括其其他扩展；需该环境自身运行 Mihomo。
+        - 'PROCESS-PATH-REGEX,^/.*/\.vscode-server(-insiders)?/(bin/[^/]+|cli/servers/[^/]+/server)/node$'
+        # SSH 反向转发：只匹配本机 ssh/ssh.exe 送入代理端口 7893 的请求。
+        # IN-PORT 是代理入站端口，不是目标网站端口；外层 SSH 连接不因这两条规则走 Claude。
+        # 经此入口转发的其他远端程序也受影响；未进入隧道的连接和原始 UDP 不在此范围。
+        - 'AND,((IN-PORT,7893),(PROCESS-NAME,ssh))'
+        - 'AND,((IN-PORT,7893),(PROCESS-NAME,ssh.exe))'
+        # 自定义安装位置、旧版 Node CLI、MCP、curl/Python 子进程和虚拟机需另查实际出网路径。
+        # 按需取消注释；会影响该浏览器所有网站，不能只区分某个标签页或用户配置。
+        # Windows：
+        # - 'PROCESS-NAME,chrome.exe'
+        # - 'PROCESS-NAME,msedge.exe'
+        # macOS：同时覆盖浏览器主程序和包内网络辅助进程。
+        # - 'PROCESS-PATH-REGEX,(?i)^/.*/Google Chrome\.app/Contents/.*$'
+        # - 'PROCESS-PATH-REGEX,(?i)^/.*/Microsoft Edge\.app/Contents/.*$'
+
+    claude-domains:
+      type: inline
+      behavior: domain
+      payload:
+        - '+.claude.ai'
+        - '+.claude.com'
+        - '+.anthropic.com'
+        - '+.claudeusercontent.com'
+        - '+.claude.app'
+        - '+.claudemcpcontent.com'
+
+  # 尝试从 IP 连接中识别域名，不改写实际连接目标。
+  sniffer:
+    enable: true
+    force-dns-mapping: true
+    parse-pure-ip: true
+    override-destination: false
+    sniff:
+      HTTP:
+        ports: [80]
+      TLS:
+        ports: [443, 8443]
+      QUIC:
+        ports: [443, 8443]
+
+  dns:
+    enable: true
+    ipv6: true
+    # 返回真实 A/AAAA，避免 fake-ip 无 IPv6 地址池时连带过滤普通域名的 AAAA。
+    enhanced-mode: redir-host
+    respect-rules: false
+    default-nameserver:
+      - 223.5.5.5
+    nameserver:
+      - https://223.5.5.5/dns-query
+
+    # 单独解析机场节点域名，避免循环依赖。
+    proxy-server-nameserver:
+      - https://223.5.5.5/dns-query
+
+    # Claude 的上游 DNS 查询通过 Claude 组发送。
+    nameserver-policy:
+      'rule-set:claude-domains':
+        - 'https://1.1.1.1/dns-query#Claude&disable-ipv6=true&disable-qtype-65=true'
+
+  rules:
+    # 只拒绝 Claude 域名对应的已知 IPv6 目标，且必须先于下方进程代理规则。
+    - AND,((RULE-SET,claude-domains),(IP-CIDR6,::/0,no-resolve)),REJECT
+
+    # 自有服务器的公网 IPv6 前缀不一定命中 GEOIP,private。
+    # 服务直连由 local-services 自动插入此处；不要把 ::/0 全部放行。
+    # 进程规则必须位于私网、国内直连之前，第三方目标也只能代理或拒绝。
+    # VS Code 宿主和 SSH 还承载其他连接，不按整个进程集合拒绝 IPv6。
+    - RULE-SET,claude-processes,Claude
+    # 节点不支持 UDP 时上一条会被跳过，在此阻断，避免落入后续 DIRECT。
+    - RULE-SET,claude-processes,REJECT
+
+    # 为其他进程保留 Claude 域名保护；不能据此保护网页发起的所有第三方连接。
+    - RULE-SET,claude-domains,Claude
+    # 上一条因节点不支持 UDP 而跳过时，在此阻断。
+    - RULE-SET,claude-domains,REJECT
+
+    # 直连白名单：局域网；以及当前 GEOSITE cn 域名库中的 TCP 请求。
+    # 已识别的 Claude/VS Code 连接已在前面选定出口，不会落入这些直连规则。
+    - GEOIP,private,DIRECT,no-resolve
+    - AND,((NETWORK,tcp),(GEOSITE,cn)),DIRECT
+    # 不按中国 IP 放行：仍无域名的公网 IP、公网 UDP 都只能代理或拒绝。
+    # 来源未知且访问国内白名单域名的 TCP 仍会直连，这是保留国内直连的边界。
+    - MATCH,节点选择
+    # 最后一条代理规则也可能因不支持 UDP 而跳过，避免规则耗尽后默认直连。
+    - MATCH,REJECT
+
+# 仅在这里维护平台差异，输出文件由脚本生成，不要逐份修改。
+clients:
+  verge:
+    process-rules: true
+    config:
+      tun:
+        enable: true
+        auto-route: true
+        auto-detect-interface: true
+        strict-route: true
+        dns-hijack: [any:53, 'tcp://any:53']
+  cmfa:
+    process-rules: true
+    config:
+      # Android VPN 和 IPv6 路由仍由 CMFA 管理，不能用桌面 TUN 参数代替。
+      clash-for-android:
+        append-system-dns: false
+  openclash:
+    # 网关无法识别 LAN 终端进程，生成时同时移除对应 provider 和规则。
+    process-rules: false
+    config:
+      find-process-mode: 'off'
+      # OpenClash 会按文件名归入 proxy_provider；避免与其它配置的 airport.yaml 共用缓存。
+      proxy-providers:
+        airport:
+          path: ./proxy_provider/claude-unified-airport.yaml
+    # 本地生成 OpenClash 原生 .conf 的 [General]，由插件覆盖本次运行参数。
+    # 这些不是 Mihomo 字段；不永久改写全局设置，不管理设备或网络服务。
+    # 首次导入仍需确认 Meta、关闭 Smart/Oix，并将生成模块仅关联本配置。
+    general:
+      CORE_TYPE: Meta
+      EN_MODE: redir-host-mix
+      PROXY_MODE: rule
+      MIXED_PORT: '7893'
+      ENABLE_UDP_PROXY: '1'
+      DISABLE_UDP_QUIC: '0'
+      ROUTER_SELF_PROXY: '1'
+      ENABLE_REDIRECT_DNS: '1'
+      CHINA_IP_ROUTE: '0'
+      CHINA_IP6_ROUTE: '0'
+      COMMON_PORTS: '0'
+      ENABLE_RULE_PROXY: '0'
+      IPV6_ENABLE: '1'
+      IPV6_DNS: '1'
+      IPV6_MODE: '3'
+      AUTO_SMART_SWITCH: '0'
+      FIND_PROCESS_MODE: 'off'
+      ENABLE_CUSTOM_DNS: '0'
+      CUSTOM_NAME_POLICY: '0'
+      CUSTOM_FALLBACK_FILTER: '0'
+      CUSTOM_FAKEIP_FILTER: '0'
+      APPEND_WAN_DNS: '0'
+      APPEND_DEFAULT_DNS: '0'
+      ENABLE_RESPECT_RULES: '0'
+      ENABLE_CUSTOM_CLASH_RULES: '0'
+      ENABLE_META_SNIFFER: '1'
+      ENABLE_META_SNIFFER_CUSTOM: '0'
+      ENABLE_META_SNIFFER_PURE_IP: '1'
+      ENABLE_TCP_CONCURRENT: '1'
+      ENABLE_UNIFIED_DELAY: '1'
+      GITHUB_ADDRESS_MOD: '0'
+      URLTEST_ADDRESS_MOD: '0'
+      URLTEST_INTERVAL_MOD: '0'
+      TOLERANCE: '0'
