@@ -64,6 +64,8 @@ rule-providers:
     - +.claudeusercontent.com
     - +.claude.app
     - +.claudemcpcontent.com
+    - +.withpersona.com
+    - +.yoti.com
 sniffer:
   enable: true
   force-dns-mapping: true

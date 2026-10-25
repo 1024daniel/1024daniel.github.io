@@ -129,6 +129,12 @@ common:
         - '+.claudeusercontent.com'
         - '+.claude.app'
         - '+.claudemcpcontent.com'
+        # Persona 身份验证：包含 inquiry、cdn、sdk、WebRTC 等已知子域。
+        # https://docs.withpersona.com/security#standard-domains-for-allowlisting
+        - '+.withpersona.com'
+        # Yoti 年龄验证：与 Claude 共用代理、DNS 和 IPv6 限制。
+        # https://support.claude.com/en/articles/15171100-age-assurance-on-claude
+        - '+.yoti.com'
 
   # 尝试从 IP 连接中识别域名，不改写实际连接目标。
   sniffer:
