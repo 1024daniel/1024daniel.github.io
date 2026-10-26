@@ -74,10 +74,10 @@ common:
       proxies: [REJECT]
       empty-fallback: REJECT
 
-  # 域名只维护这一份；DNS、代理和阻断规则共同引用。
+  # 按用途集中维护规则集；Claude 域名供 DNS、代理和阻断规则共用。
   # inline 表示直接写在本文件中，不需要额外的规则文件。
   rule-providers:
-    # 按来源进程保护所有目标，包括第三方 STUN/TURN、查 IP 服务和纯 IP 连接。
+    # 未命中前置直连例外时，按来源进程保护目标，包括第三方 STUN/TURN、查 IP 服务和纯 IP 连接。
     # 进程信息由本机系统查询，不来自网址；在连接详情核对进程名及可执行路径。
     # 未识别进程继续按国内直连白名单和默认代理分流；不能保证其所有请求都走 Claude。
     claude-processes:
@@ -134,6 +134,14 @@ common:
         # https://support.claude.com/en/articles/15171100-age-assurance-on-claude
         - '+.yoti.com'
 
+    # 自定义域名直连名单；后续只在 payload 追加，不逐条修改 rules。
+    # +. 匹配根域和全部子域；不要加入 Claude 或身份验证域名。
+    direct-domains:
+      type: inline
+      behavior: domain
+      payload:
+        - '+.nanocorechip.com'
+
   # 尝试从 IP 连接中识别域名，不改写实际连接目标。
   sniffer:
     enable: true
@@ -182,7 +190,11 @@ common:
 
     # 自有服务器的公网 IPv6 前缀不一定命中 GEOIP,private。
     # 服务直连由 local-services 自动插入此处；不要把 ::/0 全部放行。
-    # 进程规则必须位于私网、国内直连之前，第三方目标也只能代理或拒绝。
+    # 域名直连统一引用 direct-domains 名单，TCP / UDP、IPv4 / IPv6 均适用。
+    # 优先于进程代理，包括 Claude / VS Code / SSH；新增域名只编辑上方 payload。
+    - RULE-SET,direct-domains,DIRECT
+
+    # 进程规则必须位于私网、国内直连之前；未命中前置直连例外时，第三方目标也只能代理或拒绝。
     # VS Code 宿主和 SSH 还承载其他连接，不按整个进程集合拒绝 IPv6。
     - RULE-SET,claude-processes,Claude
     # 节点不支持 UDP 时上一条会被跳过，在此阻断，避免落入后续 DIRECT。

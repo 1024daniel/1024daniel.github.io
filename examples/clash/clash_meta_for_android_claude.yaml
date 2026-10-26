@@ -76,6 +76,11 @@ rule-providers:
     - +.claudemcpcontent.com
     - +.withpersona.com
     - +.yoti.com
+  direct-domains:
+    type: inline
+    behavior: domain
+    payload:
+    - +.nanocorechip.com
   direct-processes:
     type: inline
     behavior: classical
@@ -130,6 +135,7 @@ dns:
     - https://223.5.5.5/dns-query
 rules:
 - AND,((RULE-SET,claude-domains),(IP-CIDR6,::/0,no-resolve)),REJECT
+- RULE-SET,direct-domains,DIRECT
 - RULE-SET,claude-processes,Claude
 - RULE-SET,claude-processes,REJECT
 - RULE-SET,claude-domains,Claude
