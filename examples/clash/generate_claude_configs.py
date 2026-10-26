@@ -24,6 +24,7 @@ CLIENT_FILES = {
 }
 IPV6_GUARD = "AND,((RULE-SET,claude-domains),(IP-CIDR6,::/0,no-resolve)),REJECT"
 PROCESS_RULES = ("RULE-SET,claude-processes,Claude", "RULE-SET,claude-processes,REJECT")
+DIRECT_PROCESS_RULE = "RULE-SET,direct-processes,DIRECT"
 HEADER = "# 自动生成，请编辑 claude.yaml 后运行 generate_claude_configs.py；不要手改此文件。\n"
 OPENCLASH_GENERAL_KEYS = set("""
 CORE_TYPE EN_MODE PROXY_MODE MIXED_PORT ENABLE_UDP_PROXY DISABLE_UDP_QUIC
@@ -181,6 +182,35 @@ def validate_config(config, name):
                 raise ConfigError(f"{name}: HTTP 节点订阅必须显式设置 proxy（本示例使用 DIRECT），避免首次下载依赖空策略组")
 
 
+def adapt_direct_processes(config, enabled, name):
+    """Keep one native rule-set reference, or remove both it and its provider."""
+    providers = config["rule-providers"]
+    provider = providers.get("direct-processes")
+    if "direct-processes" in providers and (
+        not isinstance(provider, dict) or provider.get("type") != "inline"
+        or provider.get("behavior") != "classical" or not isinstance(provider.get("payload"), list)
+        or any(not isinstance(value, str) or not value.strip() for value in provider["payload"])
+    ):
+        raise ConfigError(f"{name}: direct-processes 需要 inline/classical 集合及字符串 payload 列表")
+    if not enabled or provider is None or not provider["payload"]:
+        providers.pop("direct-processes", None)
+        config["rules"] = [rule for rule in config["rules"] if rule != DIRECT_PROCESS_RULE]
+        return
+    if config.get("find-process-mode") == "off":
+        raise ConfigError(f"{name}: direct-processes 需要开启进程查询")
+    ordered_rules = (
+        *PROCESS_RULES, "RULE-SET,claude-domains,Claude", "RULE-SET,claude-domains,REJECT",
+        "GEOIP,private,DIRECT,no-resolve", "AND,((NETWORK,tcp),(GEOSITE,cn)),DIRECT",
+        DIRECT_PROCESS_RULE, "MATCH,自动选择",
+    )
+    try:
+        positions = [config["rules"].index(rule) for rule in ordered_rules]
+    except ValueError:
+        raise ConfigError(f"{name}: 进程直连补充需要保留 Claude、私网、国内域名及默认代理规则") from None
+    if config["rules"].count(DIRECT_PROCESS_RULE) != 1 or positions != sorted(positions):
+        raise ConfigError(f"{name}: direct-processes 必须只引用一次，位于国内域名规则之后、默认代理之前")
+
+
 def build_config(source, name):
     client = source["clients"][name]
     config = merge(source["common"], client["config"])
@@ -193,6 +223,7 @@ def build_config(source, name):
         config["rule-providers"].pop("claude-processes", None)
         config["rules"] = [rule for rule in config["rules"] if rule not in PROCESS_RULES]
         config["find-process-mode"] = "off"
+    adapt_direct_processes(config, client["process-rules"], name)
     direct_rules, _ = local_services(source)
     config["rules"][1:1] = direct_rules
     return config

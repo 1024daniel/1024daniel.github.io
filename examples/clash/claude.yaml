@@ -197,7 +197,10 @@ common:
     # 已识别的 Claude/VS Code 连接已在前面选定出口，不会落入这些直连规则。
     - GEOIP,private,DIRECT,no-resolve
     - AND,((NETWORK,tcp),(GEOSITE,cn)),DIRECT
-    # 不按中国 IP 放行：仍无域名的公网 IP、公网 UDP 都只能代理或拒绝。
+    # 国内域名规则未命中时，再使用本机进程直连补充；名单在对应客户端的 rule-providers 中维护。
+    # 未配置集合、payload 为空或关闭进程规则的客户端，生成时移除此引用。
+    - RULE-SET,direct-processes,DIRECT
+    # 不按中国 IP 放行：未命中前置规则的公网 IP、公网 UDP 只能代理或拒绝。
     # 来源未知且访问国内白名单域名的 TCP 仍会直连，这是保留国内直连的边界。
     - MATCH,自动选择
     # 最后一条代理规则也可能因不支持 UDP 而跳过，避免规则耗尽后默认直连。
@@ -208,6 +211,17 @@ clients:
   verge:
     process-rules: true
     config:
+      rule-providers:
+        # 与 claude-processes / claude-domains 一样集中维护，rules 只引用一次。
+        # 本机应用的直连补充；删除集合或设 payload: [] 可取消，不改变公共国内域名规则。
+        direct-processes:
+          type: inline
+          behavior: classical
+          payload:
+            # Windows 微信：以连接详情中的实际进程名为准。
+            - 'PROCESS-NAME,Weixin.exe'
+            # macOS 微信：覆盖应用包内的主程序及 Helper，不依赖固定安装目录。
+            - 'PROCESS-PATH-REGEX,(?i)^/.*/WeChat\.app/Contents/.*$'
       tun:
         enable: true
         auto-route: true
@@ -217,6 +231,29 @@ clients:
   cmfa:
     process-rules: true
     config:
+      rule-providers:
+        direct-processes:
+          type: inline
+          behavior: classical
+          payload:
+            # Android 按应用包名匹配，覆盖这些应用尚未命中国内域名规则的连接。
+            # 微信
+            - 'PROCESS-NAME,com.tencent.mm'
+            # 支付宝
+            - 'PROCESS-NAME,com.eg.android.AlipayGphone'
+            # 个人手机银行：工行、建行、农行、中行、交行、邮储、招行、杭州银行。
+            # 精确包名避免放行其他应用；企业版、地区版和其他银行需按实际包名补充。
+            - 'PROCESS-NAME,com.icbc'
+            - 'PROCESS-NAME,com.chinamworld.main'
+            - 'PROCESS-NAME,com.android.bankabc'
+            - 'PROCESS-NAME,com.chinamworld.bocmbci'
+            - 'PROCESS-NAME,com.bankcomm.Bankcomm'
+            - 'PROCESS-NAME,com.yitong.mbank.psbc'
+            - 'PROCESS-NAME,cmb.pb'
+            - 'PROCESS-NAME,cn.com.hzb.mobilebank.per'
+            # 证券行情与交易：同花顺股票主 App、中国银河证券主 App。
+            - 'PROCESS-NAME,com.hexin.plat.android'
+            - 'PROCESS-NAME,com.galaxy.stock'
       # Android VPN 和 IPv6 路由仍由 CMFA 管理，不能用桌面 TUN 参数代替。
       clash-for-android:
         append-system-dns: false

@@ -76,6 +76,12 @@ rule-providers:
     - +.claudemcpcontent.com
     - +.withpersona.com
     - +.yoti.com
+  direct-processes:
+    type: inline
+    behavior: classical
+    payload:
+    - PROCESS-NAME,Weixin.exe
+    - PROCESS-PATH-REGEX,(?i)^/.*/WeChat\.app/Contents/.*$
 sniffer:
   enable: true
   force-dns-mapping: true
@@ -120,6 +126,7 @@ rules:
 - RULE-SET,claude-domains,REJECT
 - GEOIP,private,DIRECT,no-resolve
 - AND,((NETWORK,tcp),(GEOSITE,cn)),DIRECT
+- RULE-SET,direct-processes,DIRECT
 - MATCH,自动选择
 - MATCH,REJECT
 tun:
