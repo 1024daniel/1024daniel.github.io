@@ -26,6 +26,10 @@ common:
   # 遇到进程规则时查询来源进程；桌面和 Android 保持 strict；路由器产物关闭查询。
   find-process-mode: strict
 
+  # 重新加载时不恢复曾手动固定的 url-test 节点，继续按测速自动选择。
+  profile:
+    store-selected: false
+
   proxy-providers:
     airport:
       type: http
@@ -38,7 +42,8 @@ common:
       health-check:
         enable: true
         url: https://www.gstatic.com/generate_204
-        interval: 600
+        # use 引入的节点使用 provider 的检查周期，与自动选择组保持一致。
+        interval: 300
       exclude-filter: '(?i)(剩余|流量|到期|过期|官网|套餐|重置|Expire|Traffic)'
 
   proxy-groups:
@@ -61,20 +66,13 @@ common:
       type: url-test
       url: https://www.gstatic.com/generate_204
       interval: 300
+      # 自动选择低时延节点，保留 50 ms 容差，减少小幅波动引起的切换。
       tolerance: 50
       use: [airport]
       exclude-type: 'Direct|Compatible|Pass|PassRule'
       # 订阅为空时拒绝，避免空组回退到 COMPATIBLE（直连）。
       proxies: [REJECT]
       empty-fallback: REJECT
-
-    - name: 节点选择
-      type: select
-      # 初始使用 Claude，也可手动选择其他代理；直连只由下方白名单规则允许。
-      # 客户端可能保留已有的合法节点选择；需要统一 Claude 出口时在界面核对。
-      proxies: [Claude, 自动选择]
-      use: [airport]
-      exclude-type: 'Direct|Compatible|Pass|PassRule'
 
   # 域名只维护这一份；DNS、代理和阻断规则共同引用。
   # inline 表示直接写在本文件中，不需要额外的规则文件。
@@ -158,17 +156,25 @@ common:
     respect-rules: false
     default-nameserver:
       - 223.5.5.5
+    # 未命中下方域名策略时，通过自动选择组查询境外 DNS，保留双栈。
     nameserver:
-      - https://223.5.5.5/dns-query
+      - 'https://1.1.1.1/dns-query#自动选择'
 
     # 单独解析机场节点域名，避免循环依赖。
     proxy-server-nameserver:
       - https://223.5.5.5/dns-query
 
-    # Claude 的上游 DNS 查询通过 Claude 组发送。
+    # DIRECT 订阅下载等直连连接独立解析，首次无节点时也能获取订阅。
+    direct-nameserver:
+      - https://223.5.5.5/dns-query
+    direct-nameserver-follow-policy: false
+
+    # Claude 优先使用专用策略；其余命中国内域名库的查询直连 AliDNS。
     nameserver-policy:
       'rule-set:claude-domains':
         - 'https://1.1.1.1/dns-query#Claude&disable-ipv6=true&disable-qtype-65=true'
+      'geosite:cn':
+        - https://223.5.5.5/dns-query
 
   rules:
     # 只拒绝 Claude 域名对应的已知 IPv6 目标，且必须先于下方进程代理规则。
@@ -193,7 +199,7 @@ common:
     - AND,((NETWORK,tcp),(GEOSITE,cn)),DIRECT
     # 不按中国 IP 放行：仍无域名的公网 IP、公网 UDP 都只能代理或拒绝。
     # 来源未知且访问国内白名单域名的 TCP 仍会直连，这是保留国内直连的边界。
-    - MATCH,节点选择
+    - MATCH,自动选择
     # 最后一条代理规则也可能因不支持 UDP 而跳过，避免规则耗尽后默认直连。
     - MATCH,REJECT
 

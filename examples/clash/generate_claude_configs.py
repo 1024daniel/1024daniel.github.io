@@ -156,8 +156,8 @@ def validate_config(config, name):
     if not isinstance(groups, list) or any(not isinstance(group, dict) or not isinstance(group.get("name"), str) for group in groups):
         raise ConfigError(f"{name}: proxy-groups 必须是具名策略组列表")
     names = [group["name"] for group in groups]
-    if len(names) != len(set(names)) or not {"Claude", "自动选择", "节点选择"}.issubset(names):
-        raise ConfigError(f"{name}: 需要三个无重名的 Claude/自动选择/节点选择策略组")
+    if len(names) != len(set(names)) or not {"Claude", "自动选择"}.issubset(names):
+        raise ConfigError(f"{name}: 策略组名称不能重复，且必须包含 Claude 和自动选择")
     if config.get("mixed-port") != 7893 or config.get("mode") != "rule":
         raise ConfigError(f"{name}: 当前示例要求 mixed-port: 7893 与 mode: rule")
     if config.get("ipv6") is not True or config.get("dns", {}).get("ipv6") is not True:
