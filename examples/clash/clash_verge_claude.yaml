@@ -19,13 +19,51 @@ proxy-providers:
     interval: 86400
     health-check:
       enable: true
-      url: https://www.gstatic.com/generate_204
+      url: https://cp.cloudflare.com/generate_204
       interval: 300
     exclude-filter: (?i)(剩余|流量|到期|过期|官网|套餐|重置|Expire|Traffic)
 proxy-groups:
+- name: 节点选择
+  type: select
+  url: https://cp.cloudflare.com/generate_204
+  proxies:
+  - 自动选择
+  - 日本节点自动选择
+  - 美国节点自动选择
+  - 新加坡节点自动选择
+  - 台湾节点自动选择
+  use:
+  - airport
+  exclude-type: Direct|Compatible|Pass|PassRule
+  empty-fallback: REJECT
 - name: Claude
+  type: select
+  url: https://cp.cloudflare.com/generate_204
+  proxies:
+  - 美国节点自动选择
+  - 日本节点自动选择
+  - 新加坡节点自动选择
+  - 台湾节点自动选择
+  use:
+  - airport
+  exclude-type: Direct|Compatible|Pass|PassRule
+  empty-fallback: REJECT
+- name: 日本节点自动选择
   type: url-test
-  url: https://www.gstatic.com/generate_204
+  url: https://cp.cloudflare.com/generate_204
+  interval: 300
+  timeout: 3000
+  tolerance: 50
+  use:
+  - airport
+  exclude-type: Direct|Compatible|Pass|PassRule
+  filter: (?i)(🇯🇵|日本|Japan|东京|東京|Tokyo|大阪|Osaka|(^|[^A-Za-z])(JP|JPN|TYO|KIX)([^A-Za-z]|$))
+  proxies:
+  - REJECT
+  empty-fallback: REJECT
+- name: 美国节点自动选择
+  type: url-test
+  url: https://cp.cloudflare.com/generate_204
   interval: 600
   timeout: 3000
   tolerance: 200
@@ -36,9 +74,35 @@ proxy-groups:
   proxies:
   - REJECT
   empty-fallback: REJECT
+- name: 新加坡节点自动选择
+  type: url-test
+  url: https://cp.cloudflare.com/generate_204
+  interval: 300
+  timeout: 3000
+  tolerance: 50
+  use:
+  - airport
+  exclude-type: Direct|Compatible|Pass|PassRule
+  filter: (?i)(🇸🇬|新加坡|狮城|獅城|Singapore|(^|[^A-Za-z])(SG|SGP|SIN)([^A-Za-z]|$))
+  proxies:
+  - REJECT
+  empty-fallback: REJECT
+- name: 台湾节点自动选择
+  type: url-test
+  url: https://cp.cloudflare.com/generate_204
+  interval: 300 
+  timeout: 3000
+  tolerance: 50
+  use:
+  - airport
+  exclude-type: Direct|Compatible|Pass|PassRule
+  filter: (?i)(🇹🇼|台湾|台灣|臺灣|台北|臺北|Taiwan|Taipei|高雄|Kaohsiung|(^|[^A-Za-z])(TW|TWN|TPE|KHH)([^A-Za-z]|$))
+  proxies:
+  - REJECT
+  empty-fallback: REJECT
 - name: 自动选择
   type: url-test
-  url: https://www.gstatic.com/generate_204
+  url: https://cp.cloudflare.com/generate_204
   interval: 300
   tolerance: 50
   use:
@@ -112,7 +176,7 @@ dns:
   default-nameserver:
   - 223.5.5.5
   nameserver:
-  - https://1.1.1.1/dns-query#自动选择
+  - https://1.1.1.1/dns-query#节点选择
   proxy-server-nameserver:
   - https://223.5.5.5/dns-query
   direct-nameserver:
@@ -131,9 +195,9 @@ rules:
 - RULE-SET,claude-domains,Claude
 - RULE-SET,claude-domains,REJECT
 - GEOIP,private,DIRECT,no-resolve
-- AND,((NETWORK,tcp),(GEOSITE,cn)),DIRECT
+- GEOSITE,cn,DIRECT
 - RULE-SET,direct-processes,DIRECT
-- MATCH,自动选择
+- MATCH,节点选择
 - MATCH,REJECT
 tun:
   enable: true

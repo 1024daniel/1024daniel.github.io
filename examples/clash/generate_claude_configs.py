@@ -157,8 +157,8 @@ def validate_config(config, name):
     if not isinstance(groups, list) or any(not isinstance(group, dict) or not isinstance(group.get("name"), str) for group in groups):
         raise ConfigError(f"{name}: proxy-groups 必须是具名策略组列表")
     names = [group["name"] for group in groups]
-    if len(names) != len(set(names)) or not {"Claude", "自动选择"}.issubset(names):
-        raise ConfigError(f"{name}: 策略组名称不能重复，且必须包含 Claude 和自动选择")
+    if len(names) != len(set(names)) or not {"Claude", "美国节点自动选择", "自动选择", "节点选择"}.issubset(names):
+        raise ConfigError(f"{name}: 策略组名称不能重复，且必须包含 Claude、美国节点自动选择、自动选择和节点选择")
     if config.get("mixed-port") != 7893 or config.get("mode") != "rule":
         raise ConfigError(f"{name}: 当前示例要求 mixed-port: 7893 与 mode: rule")
     if config.get("ipv6") is not True or config.get("dns", {}).get("ipv6") is not True:
@@ -200,8 +200,8 @@ def adapt_direct_processes(config, enabled, name):
         raise ConfigError(f"{name}: direct-processes 需要开启进程查询")
     ordered_rules = (
         *PROCESS_RULES, "RULE-SET,claude-domains,Claude", "RULE-SET,claude-domains,REJECT",
-        "GEOIP,private,DIRECT,no-resolve", "AND,((NETWORK,tcp),(GEOSITE,cn)),DIRECT",
-        DIRECT_PROCESS_RULE, "MATCH,自动选择",
+        "GEOIP,private,DIRECT,no-resolve", "GEOSITE,cn,DIRECT",
+        DIRECT_PROCESS_RULE, "MATCH,节点选择",
     )
     try:
         positions = [config["rules"].index(rule) for rule in ordered_rules]

@@ -26,7 +26,7 @@ common:
   # 遇到进程规则时查询来源进程；桌面和 Android 保持 strict；路由器产物关闭查询。
   find-process-mode: strict
 
-  # 重新加载时不恢复曾手动固定的 url-test 节点，继续按测速自动选择。
+  # 重新加载时不恢复手动选择，两个选择组均回到各自的自动测速组；运行期间仍可手选。
   profile:
     store-selected: false
 
@@ -41,30 +41,86 @@ common:
       interval: 86400
       health-check:
         enable: true
-        url: https://www.gstatic.com/generate_204
+        url: https://cp.cloudflare.com/generate_204
         # use 引入的节点使用 provider 的检查周期，与自动选择组保持一致。
         interval: 300
       exclude-filter: '(?i)(剩余|流量|到期|过期|官网|套餐|重置|Expire|Traffic)'
 
+  # 订阅与所有组使用同一测速 URL；避开内核默认 gstatic 地址，防止 select 向面板返回空 testUrl。
   proxy-groups:
+    - name: 节点选择
+      type: select
+      url: https://cp.cloudflare.com/generate_204
+      # 默认全体节点自动测速；也可选择共用地区组，或手选 airport 中的具体节点。
+      proxies: [自动选择, 日本节点自动选择, 美国节点自动选择, 新加坡节点自动选择, 台湾节点自动选择]
+      use: [airport]
+      exclude-type: 'Direct|Compatible|Pass|PassRule'
+      empty-fallback: REJECT
+
     - name: Claude
+      type: select
+      url: https://cp.cloudflare.com/generate_204
+      # 默认美国组；可切换其他共用地区组或手选订阅节点，规则和专用 DNS 仍引用 Claude。
+      proxies: [美国节点自动选择, 日本节点自动选择, 新加坡节点自动选择, 台湾节点自动选择]
+      use: [airport]
+      exclude-type: 'Direct|Compatible|Pass|PassRule'
+      empty-fallback: REJECT
+
+    # 地区测速组件：各定义一次，由两个选择入口共用；只按订阅名称分类，不验证出口位置。
+    # 无该地区候选时显式 REJECT，不跨地区回退；use 节点的健康检查仍由 airport 统一执行。
+    - name: 日本节点自动选择
       type: url-test
-      url: https://www.gstatic.com/generate_204
+      url: https://cp.cloudflare.com/generate_204
+      interval: 300
+      timeout: 3000
+      tolerance: 50
+      use: [airport]
+      exclude-type: 'Direct|Compatible|Pass|PassRule'
+      filter: '(?i)(🇯🇵|日本|Japan|东京|東京|Tokyo|大阪|Osaka|(^|[^A-Za-z])(JP|JPN|TYO|KIX)([^A-Za-z]|$))'
+      proxies: [REJECT]
+      empty-fallback: REJECT
+
+    - name: 美国节点自动选择
+      type: url-test
+      url: https://cp.cloudflare.com/generate_204
       interval: 600
       timeout: 3000
       tolerance: 200
       use: [airport]
       # 排除订阅自定义的直连/跳过节点，三个客户端使用相同的候选节点限制。
       exclude-type: 'Direct|Compatible|Pass|PassRule'
-      # filter: '(?i)(日本|Japan|JP|东京|Tokyo|TYO|大阪|Osaka|KIX)'
       filter: '(?i)(🇺🇸|美国|美國|United ?States|\bUSA?\b|圣何塞|San ?Jose|SJC|洛杉矶|Los ?Angeles|LAX|西雅图|Seattle|硅谷)'
       # 筛不到美国节点时阻断，不加入 DIRECT 或通用代理组。
       proxies: [REJECT]
       empty-fallback: REJECT
 
+    - name: 新加坡节点自动选择
+      type: url-test
+      url: https://cp.cloudflare.com/generate_204
+      interval: 300
+      timeout: 3000
+      tolerance: 50
+      use: [airport]
+      exclude-type: 'Direct|Compatible|Pass|PassRule'
+      filter: '(?i)(🇸🇬|新加坡|狮城|獅城|Singapore|(^|[^A-Za-z])(SG|SGP|SIN)([^A-Za-z]|$))'
+      proxies: [REJECT]
+      empty-fallback: REJECT
+
+    - name: 台湾节点自动选择
+      type: url-test
+      url: https://cp.cloudflare.com/generate_204
+      interval: 300
+      timeout: 3000
+      tolerance: 50
+      use: [airport]
+      exclude-type: 'Direct|Compatible|Pass|PassRule'
+      filter: '(?i)(🇹🇼|台湾|台灣|臺灣|台北|臺北|Taiwan|Taipei|高雄|Kaohsiung|(^|[^A-Za-z])(TW|TWN|TPE|KHH)([^A-Za-z]|$))'
+      proxies: [REJECT]
+      empty-fallback: REJECT
+
     - name: 自动选择
       type: url-test
-      url: https://www.gstatic.com/generate_204
+      url: https://cp.cloudflare.com/generate_204
       interval: 300
       # 自动选择低时延节点，保留 50 ms 容差，减少小幅波动引起的切换。
       tolerance: 50
@@ -164,9 +220,9 @@ common:
     respect-rules: false
     default-nameserver:
       - 223.5.5.5
-    # 未命中下方域名策略时，通过自动选择组查询境外 DNS，保留双栈。
+    # 未命中下方域名策略时，通过节点选择组查询境外 DNS，跟随普通流量的出口并保留双栈。
     nameserver:
-      - 'https://1.1.1.1/dns-query#自动选择'
+      - 'https://1.1.1.1/dns-query#节点选择'
 
     # 单独解析机场节点域名，避免循环依赖。
     proxy-server-nameserver:
@@ -205,16 +261,16 @@ common:
     # 上一条因节点不支持 UDP 而跳过时，在此阻断。
     - RULE-SET,claude-domains,REJECT
 
-    # 直连白名单：局域网；以及当前 GEOSITE cn 域名库中的 TCP 请求。
+    # 直连白名单：局域网；以及当前 GEOSITE cn 域名库中的 TCP / UDP 请求。
     # 已识别的 Claude/VS Code 连接已在前面选定出口，不会落入这些直连规则。
     - GEOIP,private,DIRECT,no-resolve
-    - AND,((NETWORK,tcp),(GEOSITE,cn)),DIRECT
+    - GEOSITE,cn,DIRECT
     # 国内域名规则未命中时，再使用本机进程直连补充；名单在对应客户端的 rule-providers 中维护。
     # 未配置集合、payload 为空或关闭进程规则的客户端，生成时移除此引用。
     - RULE-SET,direct-processes,DIRECT
     # 不按中国 IP 放行：未命中前置规则的公网 IP、公网 UDP 只能代理或拒绝。
-    # 来源未知且访问国内白名单域名的 TCP 仍会直连，这是保留国内直连的边界。
-    - MATCH,自动选择
+    # 来源未知且访问国内白名单域名的连接仍会直连，这是保留国内直连的边界。
+    - MATCH,节点选择
     # 最后一条代理规则也可能因不支持 UDP 而跳过，避免规则耗尽后默认直连。
     - MATCH,REJECT
 
