@@ -190,6 +190,22 @@ common:
         # https://support.claude.com/en/articles/15171100-age-assurance-on-claude
         - '+.yoti.com'
 
+    loopback:
+      type: inline
+      behavior: classical
+      payload:
+        - DOMAIN,localhost
+        - IP-CIDR,127.0.0.0/8,no-resolve
+        - IP-CIDR6,::1/128,no-resolve
+    openai-domains:
+      type: inline
+      behavior: domain
+      payload:
+        - +.openai.com
+        - +.chatgpt.com
+        - +.oaistatic.com
+        - +.oaiusercontent.com
+
     # 自定义域名直连名单；后续只在 payload 追加，不逐条修改 rules。
     # +. 匹配根域和全部子域；不要加入 Claude 或身份验证域名。
     direct-domains:
@@ -249,6 +265,9 @@ common:
     # 域名直连统一引用 direct-domains 名单，TCP / UDP、IPv4 / IPv6 均适用。
     # 优先于进程代理，包括 Claude / VS Code / SSH；新增域名只编辑上方 payload。
     - RULE-SET,direct-domains,DIRECT
+    - RULE-SET,loopback,DIRECT
+    - RULE-SET,openai-domains,节点选择
+    - RULE-SET,openai-domains,REJECT
 
     # 进程规则必须位于私网、国内直连之前；未命中前置直连例外时，第三方目标也只能代理或拒绝。
     # VS Code 宿主和 SSH 还承载其他连接，不按整个进程集合拒绝 IPv6。

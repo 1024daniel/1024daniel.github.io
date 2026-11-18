@@ -90,7 +90,7 @@ proxy-groups:
 - name: 台湾节点自动选择
   type: url-test
   url: https://cp.cloudflare.com/generate_204
-  interval: 300 
+  interval: 300
   timeout: 3000
   tolerance: 50
   use:
@@ -140,6 +140,21 @@ rule-providers:
     - +.claudemcpcontent.com
     - +.withpersona.com
     - +.yoti.com
+  loopback:
+    type: inline
+    behavior: classical
+    payload:
+    - DOMAIN,localhost
+    - IP-CIDR,127.0.0.0/8,no-resolve
+    - IP-CIDR6,::1/128,no-resolve
+  openai-domains:
+    type: inline
+    behavior: domain
+    payload:
+    - +.openai.com
+    - +.chatgpt.com
+    - +.oaistatic.com
+    - +.oaiusercontent.com
   direct-domains:
     type: inline
     behavior: domain
@@ -190,6 +205,9 @@ dns:
 rules:
 - AND,((RULE-SET,claude-domains),(IP-CIDR6,::/0,no-resolve)),REJECT
 - RULE-SET,direct-domains,DIRECT
+- RULE-SET,loopback,DIRECT
+- RULE-SET,openai-domains,节点选择
+- RULE-SET,openai-domains,REJECT
 - RULE-SET,claude-processes,Claude
 - RULE-SET,claude-processes,REJECT
 - RULE-SET,claude-domains,Claude
