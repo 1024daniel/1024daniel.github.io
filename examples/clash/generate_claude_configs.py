@@ -22,8 +22,9 @@ CLIENT_FILES = {
     "cmfa": "clash_meta_for_android_claude.yaml",
     "openclash": "openclash_claude.yaml",
 }
-IPV6_GUARD = "AND,((RULE-SET,claude-domains),(IP-CIDR6,::/0,no-resolve)),REJECT"
-PROCESS_RULES = ("RULE-SET,claude-processes,Claude", "RULE-SET,claude-processes,REJECT")
+IPV6_GUARD = "AND,((RULE-SET,ai-ipv4-domains),(IP-CIDR6,::/0,no-resolve)),REJECT"
+AI_RULES = ("RULE-SET,ai-ipv4-domains,节点选择", "RULE-SET,ai-ipv4-domains,REJECT")
+PROCESS_RULES = ("RULE-SET,claude-processes,节点选择", "RULE-SET,claude-processes,REJECT")
 DIRECT_PROCESS_RULE = "RULE-SET,direct-processes,DIRECT"
 HEADER = "# 自动生成，请编辑 claude.yaml 后运行 generate_claude_configs.py；不要手改此文件。\n"
 OPENCLASH_GENERAL_KEYS = set("""
@@ -77,7 +78,7 @@ def load_source(path):
     if not isinstance(source, dict) or type(source.get("schema-version")) is not int or source.get("schema-version") != 1:
         raise ConfigError("源配置需要 schema-version: 1")
     if set(source) != {"schema-version", "common", "clients", "local-services"}:
-        raise ConfigError("源配置只允许 schema-version/common/clients/local-services")
+        raise ConfigError("源配置需要 schema-version/common/clients/local-services")
     if not isinstance(source["common"], dict):
         raise ConfigError("common 必须是配置映射")
     clients = source["clients"]
@@ -103,7 +104,7 @@ def merge(base, patch):
     return result
 
 
-def local_services(source):
+def local_services(source, config=None):
     services = source["local-services"]
     if not isinstance(services, dict) or set(services) != {"domains", "ipv6-prefixes"}:
         raise ConfigError("local-services 需要 domains 与 ipv6-prefixes 两个列表")
@@ -118,9 +119,11 @@ def local_services(source):
             for label in domain.split(".")
         ):
             raise ConfigError("local-services.domains 仅接受完整域名，不接受 URL、通配符或规则文本")
-        claude_domains = source["common"].get("rule-providers", {}).get("claude-domains", {}).get("payload", [])
-        if any(domain == d.removeprefix("+.") or domain.endswith("." + d.removeprefix("+.")) for d in claude_domains):
-            raise ConfigError("local-services.domains 不能将 Claude 域名设为直连")
+        protected_config = source["common"] if config is None else config
+        protected_domains = protected_config["rule-providers"]["ai-ipv4-domains"]["payload"]
+        if any(domain == d.removeprefix("+.") or
+               (d.startswith("+.") and domain.endswith("." + d[2:])) for d in protected_domains):
+            raise ConfigError("local-services.domains 不能将 AI IPv4 保护域名设为直连")
         if domain not in domains:
             domains.append(domain)
     for value in services["ipv6-prefixes"]:
@@ -147,25 +150,30 @@ def validate_config(config, name):
     for key in ("proxy-providers", "rule-providers"):
         if any(not isinstance(value, dict) for value in config[key].values()):
             raise ConfigError(f"{name}: {key} 中每个 provider 必须是映射")
-    for key in ("claude-domains", "claude-processes"):
+    for key in ("claude-processes", "ai-ipv4-domains"):
         provider = config["rule-providers"].get(key)
         if not isinstance(provider, dict) or not isinstance(provider.get("payload"), list) or any(
             not isinstance(value, str) for value in provider["payload"]
         ):
             raise ConfigError(f"{name}: rule-providers.{key} 需要字符串 payload 列表")
+    ai_domains = config["rule-providers"]["ai-ipv4-domains"]
+    if ai_domains.get("type") != "inline" or ai_domains.get("behavior") != "domain" or not ai_domains["payload"] or any(
+        not domain.strip() for domain in ai_domains["payload"]
+    ):
+        raise ConfigError(f"{name}: ai-ipv4-domains 需要非空的 inline/domain 字符串集合")
     groups = config.get("proxy-groups")
     if not isinstance(groups, list) or any(not isinstance(group, dict) or not isinstance(group.get("name"), str) for group in groups):
         raise ConfigError(f"{name}: proxy-groups 必须是具名策略组列表")
     names = [group["name"] for group in groups]
-    if len(names) != len(set(names)) or not {"Claude", "美国节点自动选择", "自动选择", "节点选择"}.issubset(names):
-        raise ConfigError(f"{name}: 策略组名称不能重复，且必须包含 Claude、美国节点自动选择、自动选择和节点选择")
+    if len(names) != len(set(names)) or not {"日本节点自动选择", "美国节点自动选择", "自动选择", "节点选择"}.issubset(names):
+        raise ConfigError(f"{name}: 策略组名称不能重复，且必须包含节点选择与自动测速组")
     if config.get("mixed-port") != 7893 or config.get("mode") != "rule":
         raise ConfigError(f"{name}: 当前示例要求 mixed-port: 7893 与 mode: rule")
     if config.get("ipv6") is not True or config.get("dns", {}).get("ipv6") is not True:
         raise ConfigError(f"{name}: 必须保留全局和 DNS 的 IPv6")
     rules = config.get("rules")
     if not isinstance(rules, list) or not rules or any(not isinstance(rule, str) for rule in rules) or rules[0] != IPV6_GUARD or rules[-1] != "MATCH,REJECT":
-        raise ConfigError(f"{name}: 必须保留首条 Claude IPv6 限制与末尾拒绝兜底")
+        raise ConfigError(f"{name}: 必须保留首条 AI IPv6 限制与末尾拒绝兜底")
     providers = config.get("proxy-providers", {})
     for provider in providers.values():
         if provider.get("type") == "http":
@@ -199,14 +207,14 @@ def adapt_direct_processes(config, enabled, name):
     if config.get("find-process-mode") == "off":
         raise ConfigError(f"{name}: direct-processes 需要开启进程查询")
     ordered_rules = (
-        *PROCESS_RULES, "RULE-SET,claude-domains,Claude", "RULE-SET,claude-domains,REJECT",
+        *AI_RULES, *PROCESS_RULES,
         "GEOIP,private,DIRECT,no-resolve", "GEOSITE,cn,DIRECT",
         DIRECT_PROCESS_RULE, "MATCH,节点选择",
     )
     try:
         positions = [config["rules"].index(rule) for rule in ordered_rules]
     except ValueError:
-        raise ConfigError(f"{name}: 进程直连补充需要保留 Claude、私网、国内域名及默认代理规则") from None
+        raise ConfigError(f"{name}: 进程直连补充需要保留 AI、进程保护、私网、国内域名及默认代理规则") from None
     if config["rules"].count(DIRECT_PROCESS_RULE) != 1 or positions != sorted(positions):
         raise ConfigError(f"{name}: direct-processes 必须只引用一次，位于国内域名规则之后、默认代理之前")
 
@@ -224,7 +232,7 @@ def build_config(source, name):
         config["rules"] = [rule for rule in config["rules"] if rule not in PROCESS_RULES]
         config["find-process-mode"] = "off"
     adapt_direct_processes(config, client["process-rules"], name)
-    direct_rules, _ = local_services(source)
+    direct_rules, _ = local_services(source, config)
     config["rules"][1:1] = direct_rules
     return config
 

@@ -26,7 +26,7 @@ common:
   # 遇到进程规则时查询来源进程；桌面和 Android 保持 strict；路由器产物关闭查询。
   find-process-mode: strict
 
-  # 重新加载时不恢复手动选择，两个选择组均回到各自的自动测速组；运行期间仍可手选。
+  # 重新加载时不恢复手动选择，节点选择回到自动选择；运行期间仍可手选。
   profile:
     store-selected: false
 
@@ -57,16 +57,7 @@ common:
       exclude-type: 'Direct|Compatible|Pass|PassRule'
       empty-fallback: REJECT
 
-    - name: Claude
-      type: select
-      url: https://cp.cloudflare.com/generate_204
-      # 默认美国组；可切换其他共用地区组或手选订阅节点，规则和专用 DNS 仍引用 Claude。
-      proxies: [美国节点自动选择, 日本节点自动选择, 新加坡节点自动选择, 台湾节点自动选择]
-      use: [airport]
-      exclude-type: 'Direct|Compatible|Pass|PassRule'
-      empty-fallback: REJECT
-
-    # 地区测速组件：各定义一次，由两个选择入口共用；只按订阅名称分类，不验证出口位置。
+    # 地区测速组件供节点选择使用；只按订阅名称分类，不验证出口位置。
     # 无该地区候选时显式 REJECT，不跨地区回退；use 节点的健康检查仍由 airport 统一执行。
     - name: 日本节点自动选择
       type: url-test
@@ -130,12 +121,12 @@ common:
       proxies: [REJECT]
       empty-fallback: REJECT
 
-  # 按用途集中维护规则集；Claude 域名供 DNS、代理和阻断规则共用。
+  # AI 域名统一维护在 ai-ipv4-domains；直连域名和进程规则按用途单独维护。
   # inline 表示直接写在本文件中，不需要额外的规则文件。
   rule-providers:
     # 未命中前置直连例外时，按来源进程保护目标，包括第三方 STUN/TURN、查 IP 服务和纯 IP 连接。
     # 进程信息由本机系统查询，不来自网址；在连接详情核对进程名及可执行路径。
-    # 未识别进程继续按国内直连白名单和默认代理分流；不能保证其所有请求都走 Claude。
+    # 未识别进程继续按国内直连白名单和默认代理分流；不能保证其所有请求都被代理。
     claude-processes:
       type: inline
       behavior: classical
@@ -143,10 +134,10 @@ common:
         # Windows 桌面、原生 CLI 及插件内置 CLI；进程名匹配忽略大小写。
         # Android 按本机应用包名匹配；其他平台不会因此识别远端 Android 应用。
         - 'PROCESS-NAME,com.anthropic.claude'
-        # 可选：整个 Termux 的连接都会进入 Claude 组。
+        # 可选：整个 Termux 的连接都会优先代理。
         # - 'PROCESS-NAME,com.termux'
         - 'PROCESS-NAME,Claude.exe'
-        # 覆盖插件宿主自身的请求；也会让 VS Code 和其他扩展的连接走 Claude 组。
+        # 覆盖插件宿主自身的请求；也会让 VS Code 和其他扩展的连接走节点选择组。
         - 'PROCESS-NAME,Code.exe'
         - 'PROCESS-NAME,Code - Insiders.exe'
         # macOS：匹配 Claude.app 内的主程序及 Helper，不依赖固定安装目录。
@@ -160,7 +151,7 @@ common:
         # WSL/SSH 侧 VS Code Server 宿主，包括其其他扩展；需该环境自身运行 Mihomo。
         - 'PROCESS-PATH-REGEX,^/.*/\.vscode-server(-insiders)?/(bin/[^/]+|cli/servers/[^/]+/server)/node$'
         # SSH 反向转发：只匹配本机 ssh/ssh.exe 送入代理端口 7893 的请求。
-        # IN-PORT 是代理入站端口，不是目标网站端口；外层 SSH 连接不因这两条规则走 Claude。
+        # IN-PORT 是代理入站端口，不是目标网站端口；外层 SSH 连接不因这两条规则优先代理。
         # 经此入口转发的其他远端程序也受影响；未进入隧道的连接和原始 UDP 不在此范围。
         - 'AND,((IN-PORT,7893),(PROCESS-NAME,ssh))'
         - 'AND,((IN-PORT,7893),(PROCESS-NAME,ssh.exe))'
@@ -173,10 +164,12 @@ common:
         # - 'PROCESS-PATH-REGEX,(?i)^/.*/Google Chrome\.app/Contents/.*$'
         # - 'PROCESS-PATH-REGEX,(?i)^/.*/Microsoft Edge\.app/Contents/.*$'
 
-    claude-domains:
+    # AI 域名只维护这一份名单，业务代理、DNS 与目标 IPv6 限制共用。
+    ai-ipv4-domains:
       type: inline
       behavior: domain
       payload:
+        # Claude 及身份、年龄验证。
         - '+.claude.ai'
         - '+.claude.com'
         - '+.anthropic.com'
@@ -189,7 +182,82 @@ common:
         # Yoti 年龄验证：与 Claude 共用代理、DNS 和 IPv6 限制。
         # https://support.claude.com/en/articles/15171100-age-assurance-on-claude
         - '+.yoti.com'
+        # OpenAI / ChatGPT。
+        - '+.openai.com'
+        - '+.chatgpt.com'
+        - '+.oaistatic.com'
+        - '+.oaiusercontent.com'
+        # Gemini 网页核心；不将所有 Google 登录、静态资源或其他 AI 产品整包纳入。
+        # https://github.com/v2fly/domain-list-community/blob/master/data/google-deepmind
+        - '+.bard.google.com'
+        - '+.gemini.google'
+        - '+.gemini.google.com'
+        - '+.gemini.gstatic.com'
+        - 'geminiweb-pa.clients.google.com'
+        - 'geminiweb-pa.clients6.google.com'
+        # Antigravity 网页、客户端及个人账号后端。
+        - '+.antigravity.google'
+        - '+.antigravity.google.com'
+        - 'daily-cloudcode-pa.googleapis.com'
+        # 客户端版本中出现过的备用主机；此规则只匹配实际请求。
+        - 'daily-cloudcode-pa.sandbox.googleapis.com'
+        - 'aicode.googleapis.com'
+        - 'antigravity-unleash.goog'
+        # Antigravity CLI 与桌面端的专用更新服务。
+        - 'antigravity-cli-auto-updater-974169037036.us-central1.run.app'
+        - 'antigravity-hub-auto-updater-974169037036.us-central1.run.app'
+        # Gemini CLI / Code Assist；Antigravity 企业版也使用 Cloud Code。
+        - 'cloudcode-pa.googleapis.com'
+        - 'cloudaicompanion.googleapis.com'
+        # Antigravity 企业版：编排、模型和发现服务的全球、美、欧及 mTLS 端点。
+        # https://antigravity.google/docs/enterprise/#network-allowlists-and-mtls-endpoints
+        - 'businessaicode.googleapis.com'
+        - 'businessaicode.us.rep.googleapis.com'
+        - 'businessaicode.eu.rep.googleapis.com'
+        - 'businessaicode.mtls.googleapis.com'
+        - 'aiplatform.googleapis.com'
+        - 'aiplatform.us.rep.googleapis.com'
+        - 'aiplatform.eu.rep.googleapis.com'
+        - 'aiplatform.mtls.googleapis.com'
+        - 'discoveryengine.googleapis.com'
+        - 'us-discoveryengine.googleapis.com'
+        - 'eu-discoveryengine.googleapis.com'
+        - 'discoveryengine.mtls.googleapis.com'
+        - 'us-discoveryengine.mtls.googleapis.com'
+        - 'eu-discoveryengine.mtls.googleapis.com'
+        # Google AI Studio 网页和前端 RPC，以及公开的 Gemini 模型 API。
+        - 'aistudio.google.com'
+        - 'alkalimakersuite-pa.clients6.google.com'
+        - 'webchannel-alkalimakersuite-pa.clients6.google.com'
+        - 'alkalimakersuiteapplets.pa.clients6.google.com'
+        - 'generativelanguage.googleapis.com'
+        # GitHub Copilot：模型、建议匹配与专用遥测。
+        - '+.githubcopilot.com'
+        - 'copilot-proxy.githubusercontent.com'
+        - 'origin-tracker.githubusercontent.com'
+        - 'copilot-telemetry.githubusercontent.com'
+        # Cursor：编辑器、补全、Agent、托管电脑及登录。
+        - '+.cursor.com'
+        - '+.cursor.sh'
+        - '+.cursorapi.com'
+        - '+.cursor-cdn.com'
+        - '+.cursorvm.com'
+        - 'accounts.spacexsi.com'
+        - 'accounts.spacex.ai'
+        - 'accounts.x.ai'
+        - 'auth.grok.com'
+        - 'auth.grokusercontent.com'
+        - 'auth.grokipedia.com'
+        # Windsurf / Devin Desktop：编辑器及平台 API。
+        - '+.windsurf.com'
+        - '+.codeium.com'
+        - '+.codeiumdata.com'
+        - 'static.devin.ai'
+        - 'app.devin.ai'
+        - 'api.devin.ai'
 
+    # private 地址库虽包含回环 IP，但后置 GEOIP 不能替代进程规则之前的回环例外。
+    # localhost 在尚无目标 IP 时也需匹配；不能为此把所有私网直连提前。
     loopback:
       type: inline
       behavior: classical
@@ -197,17 +265,8 @@ common:
         - DOMAIN,localhost
         - IP-CIDR,127.0.0.0/8,no-resolve
         - IP-CIDR6,::1/128,no-resolve
-    openai-domains:
-      type: inline
-      behavior: domain
-      payload:
-        - +.openai.com
-        - +.chatgpt.com
-        - +.oaistatic.com
-        - +.oaiusercontent.com
-
     # 自定义域名直连名单；后续只在 payload 追加，不逐条修改 rules。
-    # +. 匹配根域和全部子域；不要加入 Claude 或身份验证域名。
+    # +. 匹配根域和全部子域；不要加入 ai-ipv4-domains 中的 AI 保护域名。
     direct-domains:
       type: inline
       behavior: domain
@@ -249,16 +308,17 @@ common:
       - https://223.5.5.5/dns-query
     direct-nameserver-follow-policy: false
 
-    # Claude 优先使用专用策略；其余命中国内域名库的查询直连 AliDNS。
+    # 共用 AI 域名名单，DNS 和业务流量都经节点选择；仅过滤这些域名的 AAAA / HTTPS。
     nameserver-policy:
-      'rule-set:claude-domains':
-        - 'https://1.1.1.1/dns-query#Claude&disable-ipv6=true&disable-qtype-65=true'
+      'rule-set:ai-ipv4-domains':
+        - 'https://1.1.1.1/dns-query#节点选择&disable-ipv6=true&disable-qtype-65=true'
       'geosite:cn':
         - https://223.5.5.5/dns-query
 
   rules:
-    # 只拒绝 Claude 域名对应的已知 IPv6 目标，且必须先于下方进程代理规则。
-    - AND,((RULE-SET,claude-domains),(IP-CIDR6,::/0,no-resolve)),REJECT
+    # 仅限制保护域名对应的已知 IPv6 目标；source 为 IPv6 不代表目标或机场出口为 IPv6。
+    # 一条规则覆盖 ai-ipv4-domains 的所有域名，必须先于本地直连及进程代理。
+    - AND,((RULE-SET,ai-ipv4-domains),(IP-CIDR6,::/0,no-resolve)),REJECT
 
     # 自有服务器的公网 IPv6 前缀不一定命中 GEOIP,private。
     # 服务直连由 local-services 自动插入此处；不要把 ::/0 全部放行。
@@ -266,19 +326,16 @@ common:
     # 优先于进程代理，包括 Claude / VS Code / SSH；新增域名只编辑上方 payload。
     - RULE-SET,direct-domains,DIRECT
     - RULE-SET,loopback,DIRECT
-    - RULE-SET,openai-domains,节点选择
-    - RULE-SET,openai-domains,REJECT
+
+    # 所有已声明 AI 域名共用一个入口；节点不支持 UDP 时由下一条拒绝。
+    - RULE-SET,ai-ipv4-domains,节点选择
+    - RULE-SET,ai-ipv4-domains,REJECT
 
     # 进程规则必须位于私网、国内直连之前；未命中前置直连例外时，第三方目标也只能代理或拒绝。
     # VS Code 宿主和 SSH 还承载其他连接，不按整个进程集合拒绝 IPv6。
-    - RULE-SET,claude-processes,Claude
+    - RULE-SET,claude-processes,节点选择
     # 节点不支持 UDP 时上一条会被跳过，在此阻断，避免落入后续 DIRECT。
     - RULE-SET,claude-processes,REJECT
-
-    # 为其他进程保留 Claude 域名保护；不能据此保护网页发起的所有第三方连接。
-    - RULE-SET,claude-domains,Claude
-    # 上一条因节点不支持 UDP 而跳过时，在此阻断。
-    - RULE-SET,claude-domains,REJECT
 
     # 直连白名单：局域网；以及当前 GEOSITE cn 域名库中的 TCP / UDP 请求。
     # 已识别的 Claude/VS Code 连接已在前面选定出口，不会落入这些直连规则。
@@ -299,7 +356,7 @@ clients:
     process-rules: true
     config:
       rule-providers:
-        # 与 claude-processes / claude-domains 一样集中维护，rules 只引用一次。
+        # 与其他规则集一样集中维护，rules 只引用一次。
         # 本机应用的直连补充；删除集合或设 payload: [] 可取消，不改变公共国内域名规则。
         direct-processes:
           type: inline

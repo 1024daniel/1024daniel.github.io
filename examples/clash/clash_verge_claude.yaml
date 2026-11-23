@@ -36,18 +36,6 @@ proxy-groups:
   - airport
   exclude-type: Direct|Compatible|Pass|PassRule
   empty-fallback: REJECT
-- name: Claude
-  type: select
-  url: https://cp.cloudflare.com/generate_204
-  proxies:
-  - 美国节点自动选择
-  - 日本节点自动选择
-  - 新加坡节点自动选择
-  - 台湾节点自动选择
-  use:
-  - airport
-  exclude-type: Direct|Compatible|Pass|PassRule
-  empty-fallback: REJECT
 - name: 日本节点自动选择
   type: url-test
   url: https://cp.cloudflare.com/generate_204
@@ -128,7 +116,7 @@ rule-providers:
     - PROCESS-PATH-REGEX,^/.*/\.vscode-server(-insiders)?/(bin/[^/]+|cli/servers/[^/]+/server)/node$
     - AND,((IN-PORT,7893),(PROCESS-NAME,ssh))
     - AND,((IN-PORT,7893),(PROCESS-NAME,ssh.exe))
-  claude-domains:
+  ai-ipv4-domains:
     type: inline
     behavior: domain
     payload:
@@ -140,6 +128,66 @@ rule-providers:
     - +.claudemcpcontent.com
     - +.withpersona.com
     - +.yoti.com
+    - +.openai.com
+    - +.chatgpt.com
+    - +.oaistatic.com
+    - +.oaiusercontent.com
+    - +.bard.google.com
+    - +.gemini.google
+    - +.gemini.google.com
+    - +.gemini.gstatic.com
+    - geminiweb-pa.clients.google.com
+    - geminiweb-pa.clients6.google.com
+    - +.antigravity.google
+    - +.antigravity.google.com
+    - daily-cloudcode-pa.googleapis.com
+    - daily-cloudcode-pa.sandbox.googleapis.com
+    - aicode.googleapis.com
+    - antigravity-unleash.goog
+    - antigravity-cli-auto-updater-974169037036.us-central1.run.app
+    - antigravity-hub-auto-updater-974169037036.us-central1.run.app
+    - cloudcode-pa.googleapis.com
+    - cloudaicompanion.googleapis.com
+    - businessaicode.googleapis.com
+    - businessaicode.us.rep.googleapis.com
+    - businessaicode.eu.rep.googleapis.com
+    - businessaicode.mtls.googleapis.com
+    - aiplatform.googleapis.com
+    - aiplatform.us.rep.googleapis.com
+    - aiplatform.eu.rep.googleapis.com
+    - aiplatform.mtls.googleapis.com
+    - discoveryengine.googleapis.com
+    - us-discoveryengine.googleapis.com
+    - eu-discoveryengine.googleapis.com
+    - discoveryengine.mtls.googleapis.com
+    - us-discoveryengine.mtls.googleapis.com
+    - eu-discoveryengine.mtls.googleapis.com
+    - aistudio.google.com
+    - alkalimakersuite-pa.clients6.google.com
+    - webchannel-alkalimakersuite-pa.clients6.google.com
+    - alkalimakersuiteapplets.pa.clients6.google.com
+    - generativelanguage.googleapis.com
+    - +.githubcopilot.com
+    - copilot-proxy.githubusercontent.com
+    - origin-tracker.githubusercontent.com
+    - copilot-telemetry.githubusercontent.com
+    - +.cursor.com
+    - +.cursor.sh
+    - +.cursorapi.com
+    - +.cursor-cdn.com
+    - +.cursorvm.com
+    - accounts.spacexsi.com
+    - accounts.spacex.ai
+    - accounts.x.ai
+    - auth.grok.com
+    - auth.grokusercontent.com
+    - auth.grokipedia.com
+    - +.windsurf.com
+    - +.codeium.com
+    - +.codeiumdata.com
+    - static.devin.ai
+    - app.devin.ai
+    - api.devin.ai
   loopback:
     type: inline
     behavior: classical
@@ -147,14 +195,6 @@ rule-providers:
     - DOMAIN,localhost
     - IP-CIDR,127.0.0.0/8,no-resolve
     - IP-CIDR6,::1/128,no-resolve
-  openai-domains:
-    type: inline
-    behavior: domain
-    payload:
-    - +.openai.com
-    - +.chatgpt.com
-    - +.oaistatic.com
-    - +.oaiusercontent.com
   direct-domains:
     type: inline
     behavior: domain
@@ -198,20 +238,18 @@ dns:
   - https://223.5.5.5/dns-query
   direct-nameserver-follow-policy: false
   nameserver-policy:
-    rule-set:claude-domains:
-    - https://1.1.1.1/dns-query#Claude&disable-ipv6=true&disable-qtype-65=true
+    rule-set:ai-ipv4-domains:
+    - https://1.1.1.1/dns-query#节点选择&disable-ipv6=true&disable-qtype-65=true
     geosite:cn:
     - https://223.5.5.5/dns-query
 rules:
-- AND,((RULE-SET,claude-domains),(IP-CIDR6,::/0,no-resolve)),REJECT
+- AND,((RULE-SET,ai-ipv4-domains),(IP-CIDR6,::/0,no-resolve)),REJECT
 - RULE-SET,direct-domains,DIRECT
 - RULE-SET,loopback,DIRECT
-- RULE-SET,openai-domains,节点选择
-- RULE-SET,openai-domains,REJECT
-- RULE-SET,claude-processes,Claude
+- RULE-SET,ai-ipv4-domains,节点选择
+- RULE-SET,ai-ipv4-domains,REJECT
+- RULE-SET,claude-processes,节点选择
 - RULE-SET,claude-processes,REJECT
-- RULE-SET,claude-domains,Claude
-- RULE-SET,claude-domains,REJECT
 - GEOIP,private,DIRECT,no-resolve
 - GEOSITE,cn,DIRECT
 - RULE-SET,direct-processes,DIRECT
