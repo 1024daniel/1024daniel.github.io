@@ -52,9 +52,9 @@ proxy-groups:
 - name: 美国节点自动选择
   type: url-test
   url: https://cp.cloudflare.com/generate_204
-  interval: 600
+  interval: 300
   timeout: 3000
-  tolerance: 200
+  tolerance: 50
   use:
   - airport
   exclude-type: Direct|Compatible|Pass|PassRule
