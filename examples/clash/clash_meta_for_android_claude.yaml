@@ -16,7 +16,7 @@ proxy-providers:
     proxy: DIRECT
     url: https://dasho.pqjc.site/api/v1/pq/d761660cde1f95110837c20747717a81
     path: ./providers/airport.yaml
-    interval: 86400
+    interval: 3600
     health-check:
       enable: true
       url: https://cp.cloudflare.com/generate_204
