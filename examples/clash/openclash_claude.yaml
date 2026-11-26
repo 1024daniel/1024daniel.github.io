@@ -184,6 +184,12 @@ rule-providers:
     behavior: domain
     payload:
     - +.nanocorechip.com
+  direct-ips:
+    type: inline
+    behavior: ipcidr
+    payload:
+    - 56.10.136.252/32
+    - 2406:da18:eeb:9a00:6c3a:5258:28e6:c855/128
 sniffer:
   enable: true
   force-dns-mapping: true
@@ -223,6 +229,7 @@ dns:
 rules:
 - AND,((RULE-SET,ai-ipv4-domains),(IP-CIDR6,::/0,no-resolve)),REJECT
 - RULE-SET,direct-domains,DIRECT
+- RULE-SET,direct-ips,DIRECT,no-resolve
 - RULE-SET,loopback,DIRECT
 - RULE-SET,ai-ipv4-domains,节点选择
 - RULE-SET,ai-ipv4-domains,REJECT

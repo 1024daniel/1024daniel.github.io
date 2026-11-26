@@ -273,6 +273,16 @@ common:
       payload:
         - '+.nanocorechip.com'
 
+    # Lightsail 等自有服务器的目标 IP 直连名单；只填写实际地址，不放行整个 AWS 网段。
+    # 单个 IPv4 用 /32，单个 IPv6 用 /128，也可填写自己管理的 CIDR 网段。
+    # 后续只在 payload 追加；清空时设为 payload: []。
+    direct-ips:
+      type: inline
+      behavior: ipcidr
+      payload:
+        - '56.10.136.252/32'
+        - '2406:da18:eeb:9a00:6c3a:5258:28e6:c855/128'
+
   # 尝试从 IP 连接中识别域名，不改写实际连接目标。
   sniffer:
     enable: true
@@ -325,6 +335,9 @@ common:
     # 域名直连统一引用 direct-domains 名单，TCP / UDP、IPv4 / IPv6 均适用。
     # 优先于进程代理，包括 Claude / VS Code / SSH；新增域名只编辑上方 payload。
     - RULE-SET,direct-domains,DIRECT
+    # 指定服务器 IP 的所有端口、TCP / UDP 均直连；no-resolve 仅匹配已有目标 IP。
+    # 仅有域名、尚无 IP 的代理请求，请同时将服务域名加入 direct-domains。
+    - RULE-SET,direct-ips,DIRECT,no-resolve
     - RULE-SET,loopback,DIRECT
 
     # 所有已声明 AI 域名共用一个入口；节点不支持 UDP 时由下一条拒绝。
