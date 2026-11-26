@@ -23,7 +23,7 @@ CLIENT_FILES = {
     "openclash": "openclash_claude.yaml",
 }
 IPV6_GUARD = "AND,((RULE-SET,ai-ipv4-domains),(IP-CIDR6,::/0,no-resolve)),REJECT"
-AI_RULES = ("RULE-SET,ai-ipv4-domains,节点选择", "RULE-SET,ai-ipv4-domains,REJECT")
+AI_RULES = ("RULE-SET,ai-ipv4-domains,AI优先", "RULE-SET,ai-ipv4-domains,REJECT")
 PROCESS_RULES = ("RULE-SET,claude-processes,节点选择", "RULE-SET,claude-processes,REJECT")
 DIRECT_PROCESS_RULE = "RULE-SET,direct-processes,DIRECT"
 HEADER = "# 自动生成，请编辑 claude.yaml 后运行 generate_claude_configs.py；不要手改此文件。\n"
@@ -91,6 +91,28 @@ def load_source(path):
         if not isinstance(client["config"], dict) or type(client["process-rules"]) is not bool:
             raise ConfigError(f"clients.{name} 需要 config 映射与 process-rules 布尔值")
     return source
+
+
+def load_lightsail_node(path):
+    try:
+        node = yaml.load(path.read_text(encoding="utf-8"), Loader=UniqueLoader)
+    except (yaml.YAMLError, ValueError, TypeError):
+        raise ConfigError("私有节点 YAML 格式错误；请检查本地文件") from None
+    if (not isinstance(node, dict) or node.get("name") != "Lightsail"
+        or not isinstance(node.get("type"), str) or not node["type"].strip()
+        or not isinstance(node.get("server"), str) or not node["server"].strip()
+        or type(node.get("port")) is not int or not 1 <= node["port"] <= 65535):
+        raise ConfigError("私有文件应为单个 Mihomo 节点，含 name: Lightsail、type、server 和整数 port")
+    return node
+
+
+def check_private_paths(node_path, output_dir):
+    if output_dir is None:
+        raise ConfigError("使用 --lightsail-node 时须显式指定私有 --output-dir")
+    for path in {node_path.absolute(), node_path.resolve(), output_dir.absolute(), output_dir.resolve()}:
+        for folder in (path, *path.parents):
+            if folder.name.casefold() in {"static", "public"} and (folder.parent / "hugo.toml").is_file():
+                raise ConfigError("私有节点与产物必须保存在站点 static 和 public 目录之外")
 
 
 def merge(base, patch):
@@ -206,8 +228,12 @@ def adapt_direct_processes(config, enabled, name):
         return
     if config.get("find-process-mode") == "off":
         raise ConfigError(f"{name}: direct-processes 需要开启进程查询")
+    # 旧版 schema-version: 1 源没有 AI优先组，继续允许 AI 规则使用节点选择。
+    ai_rule = AI_RULES[0]
+    if not any(group["name"] == "AI优先" for group in config["proxy-groups"]):
+        ai_rule = "RULE-SET,ai-ipv4-domains,节点选择"
     ordered_rules = (
-        *AI_RULES, *PROCESS_RULES,
+        ai_rule, AI_RULES[1], *PROCESS_RULES,
         "GEOIP,private,DIRECT,no-resolve", "GEOSITE,cn,DIRECT",
         DIRECT_PROCESS_RULE, "MATCH,节点选择",
     )
@@ -219,10 +245,21 @@ def adapt_direct_processes(config, enabled, name):
         raise ConfigError(f"{name}: direct-processes 必须只引用一次，位于国内域名规则之后、默认代理之前")
 
 
-def build_config(source, name):
+def build_config(source, name, lightsail_node=None):
     client = source["clients"][name]
     config = merge(source["common"], client["config"])
     validate_config(config, name)
+    if lightsail_node is not None:
+        group = next((g for g in config["proxy-groups"] if g["name"] == "AI优先"), None)
+        if group is None or group.get("type") != "fallback" or group.get("proxies") != ["节点选择"]:
+            raise ConfigError(f"{name}: 私有节点需要源配置包含 AI优先 fallback 组，以节点选择为备用")
+        proxies = config.setdefault("proxies", [])
+        if not isinstance(proxies, list) or any(not isinstance(p, dict) for p in proxies):
+            raise ConfigError(f"{name}: proxies 必须为节点列表")
+        if any(p.get("name") == "Lightsail" for p in proxies + config["proxy-groups"]):
+            raise ConfigError(f"{name}: 已存在名为 Lightsail 的节点或策略组")
+        proxies.append(lightsail_node)
+        group["proxies"].insert(0, "Lightsail")
     if name == "openclash":
         if client["process-rules"]:
             raise ConfigError("openclash: 网关配置必须关闭终端进程规则")
@@ -252,10 +289,10 @@ def dump_yaml(value):
     return yaml.safe_dump(value, allow_unicode=True, sort_keys=False, width=120)
 
 
-def generate(source, platforms):
+def generate(source, platforms, lightsail_node=None):
     outputs = {}
     for name in platforms:
-        config = build_config(source, name)
+        config = build_config(source, name, lightsail_node)
         description = {
             "verge": "# Clash Verge：导入本地配置，确认 TUN/IPv6 开启且 DNS 覆写关闭。\n",
             "cmfa": "# CMFA：导入本地配置；VPN 授权及网络 IPv6/访问控制仍需客户端设置。\n",
@@ -285,30 +322,38 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", type=Path, default=directory / "claude.yaml", help="唯一源 YAML，默认脚本旁 claude.yaml")
     parser.add_argument("--platform", choices=["all", *CLIENT_FILES], default="all")
-    parser.add_argument("--output-dir", type=Path, default=directory, help="产物目录，默认脚本所在目录")
+    parser.add_argument("--output-dir", type=Path, help="产物目录；默认脚本所在目录，生成私有配置时必填")
+    parser.add_argument("--lightsail-node", type=Path, help="私有 Lightsail 节点 YAML，启用 AI 首选节点")
     parser.add_argument("--check", action="store_true", help="只检查生成产物是否与源一致，不写文件")
     args = parser.parse_args(argv)
     try:
+        node = None
+        inputs = {args.source.resolve()}
+        if args.lightsail_node is not None:
+            check_private_paths(args.lightsail_node, args.output_dir)
+            node = load_lightsail_node(args.lightsail_node)
+            inputs.add(args.lightsail_node.resolve())
+        output_dir = args.output_dir or directory
         source = load_source(args.source)
         platforms = list(CLIENT_FILES) if args.platform == "all" else [args.platform]
-        outputs = generate(source, platforms)
+        outputs = generate(source, platforms, node)
         # Reject all source/output collisions before touching any output file.
-        if any((args.output_dir / name).resolve() == args.source.resolve() for name in outputs):
-            raise ConfigError("输出文件不能覆盖源配置")
+        if any((output_dir / name).resolve() in inputs for name in outputs):
+            raise ConfigError("输出文件不能覆盖源配置或私有节点")
         if args.check:
-            stale = [name for name, value in outputs.items() if not (args.output_dir / name).exists() or (args.output_dir / name).read_text(encoding="utf-8") != value]
+            stale = [name for name, value in outputs.items() if not (output_dir / name).exists() or (output_dir / name).read_text(encoding="utf-8") != value]
             if stale:
                 for name in stale:
-                    print(f"需要重新生成：{args.output_dir / name}", file=sys.stderr)
+                    print(f"需要重新生成：{output_dir / name}", file=sys.stderr)
                 return 1
             print(f"检查通过：{len(outputs)} 个产物与源配置一致")
             return 0
-        args.output_dir.mkdir(parents=True, exist_ok=True)
+        output_dir.mkdir(mode=0o700 if node is not None else 0o777, parents=True, exist_ok=True)
         for name, value in outputs.items():
-            target = args.output_dir / name
+            target = output_dir / name
             temporary = None
             try:
-                with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", newline="\n", dir=args.output_dir, delete=False) as handle:
+                with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", newline="\n", dir=output_dir, delete=False) as handle:
                     temporary = Path(handle.name)
                     handle.write(value)
                 os.replace(temporary, target)

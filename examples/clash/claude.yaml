@@ -57,6 +57,15 @@ common:
       exclude-type: 'Direct|Compatible|Pass|PassRule'
       empty-fallback: REJECT
 
+    # 仅供 ai-ipv4-domains 的业务连接与 DNS 使用。私有配置由 --lightsail-node 加入首选节点。
+    - name: AI优先
+      type: fallback
+      proxies: [节点选择]
+      url: https://cp.cloudflare.com/generate_204
+      interval: 60
+      timeout: 5000
+      lazy: false
+
     # 地区测速组件供节点选择使用；只按订阅名称分类，不验证出口位置。
     # 无该地区候选时显式 REJECT，不跨地区回退；use 节点的健康检查仍由 airport 统一执行。
     - name: 日本节点自动选择
@@ -74,9 +83,9 @@ common:
     - name: 美国节点自动选择
       type: url-test
       url: https://cp.cloudflare.com/generate_204
-      interval: 600
+      interval: 300
       timeout: 3000
-      tolerance: 200
+      tolerance: 50
       use: [airport]
       # 排除订阅自定义的直连/跳过节点，三个客户端使用相同的候选节点限制。
       exclude-type: 'Direct|Compatible|Pass|PassRule'
@@ -318,10 +327,10 @@ common:
       - https://223.5.5.5/dns-query
     direct-nameserver-follow-policy: false
 
-    # 共用 AI 域名名单，DNS 和业务流量都经节点选择；仅过滤这些域名的 AAAA / HTTPS。
+    # AI 域名的 DNS 和业务流量都经 AI优先；仅过滤这些域名的 AAAA / HTTPS。
     nameserver-policy:
       'rule-set:ai-ipv4-domains':
-        - 'https://1.1.1.1/dns-query#节点选择&disable-ipv6=true&disable-qtype-65=true'
+        - 'https://1.1.1.1/dns-query#AI优先&disable-ipv6=true&disable-qtype-65=true'
       'geosite:cn':
         - https://223.5.5.5/dns-query
 
@@ -341,7 +350,7 @@ common:
     - RULE-SET,loopback,DIRECT
 
     # 所有已声明 AI 域名共用一个入口；节点不支持 UDP 时由下一条拒绝。
-    - RULE-SET,ai-ipv4-domains,节点选择
+    - RULE-SET,ai-ipv4-domains,AI优先
     - RULE-SET,ai-ipv4-domains,REJECT
 
     # 进程规则必须位于私网、国内直连之前；未命中前置直连例外时，第三方目标也只能代理或拒绝。
