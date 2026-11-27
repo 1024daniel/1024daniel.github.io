@@ -1,6 +1,7 @@
 # Claude 多客户端配置的唯一编辑源；这不是可直接导入的 Mihomo 配置。
 # Python 3.9+：python3 -m pip install -r requirements.txt
-# 生成：python3 generate_claude_configs.py --platform all
+# 在仓库内运行 python3 generate_claude_configs.py，使用 .config/lightsail/node.yaml 生成三端配置到 .config/lightsail/profiles/。
+# 加 --public 生成不含 Lightsail 的配置到脚本目录；加 --platform verge 可只生成桌面端。
 # 在 Mac、Windows 或 Linux 电脑上生成，再将产物导入对应客户端；目标设备无需运行生成器。
 # 编辑 common.proxy-providers.airport.url，填写自己的 Clash/Mihomo 节点订阅。
 # common 的映射递归合并；clients.<平台>.config 中的数组整体替换，不追加。
@@ -57,7 +58,7 @@ common:
       exclude-type: 'Direct|Compatible|Pass|PassRule'
       empty-fallback: REJECT
 
-    # 仅供 ai-ipv4-domains 的业务连接与 DNS 使用。私有配置由 --lightsail-node 加入首选节点。
+    # 仅供 ai-ipv4-domains 的业务连接与 DNS 使用。私有模式把 Lightsail 插在节点选择之前。
     - name: AI优先
       type: fallback
       proxies: [节点选择]

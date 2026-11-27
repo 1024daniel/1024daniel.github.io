@@ -14,7 +14,8 @@ from urllib.parse import urlsplit
 try:
     import yaml
 except ImportError:
-    sys.exit("缺少 PyYAML；请运行 python3 -m pip install -r requirements.txt")
+    requirements = Path(__file__).resolve().with_name("requirements.txt")
+    sys.exit(f'缺少 PyYAML；请在当前 Python 环境运行 python -m pip install -r "{requirements}"')
 
 
 CLIENT_FILES = {
@@ -108,7 +109,7 @@ def load_lightsail_node(path):
 
 def check_private_paths(node_path, output_dir):
     if output_dir is None:
-        raise ConfigError("使用 --lightsail-node 时须显式指定私有 --output-dir")
+        raise ConfigError("单独下载脚本时，使用 --lightsail-node 还需指定私有 --output-dir")
     for path in {node_path.absolute(), node_path.resolve(), output_dir.absolute(), output_dir.resolve()}:
         for folder in (path, *path.parents):
             if folder.name.casefold() in {"static", "public"} and (folder.parent / "hugo.toml").is_file():
@@ -317,23 +318,44 @@ def generate(source, platforms, lightsail_node=None):
     return outputs
 
 
+def generation_paths(directory, args):
+    if args.public:
+        return None, args.output_dir or directory
+
+    node_path, output_dir = args.lightsail_node, args.output_dir
+    root = directory.parent.parent.parent
+    if directory == root / "static/examples/clash" and (root / "hugo.toml").is_file():
+        private = root / ".config/lightsail"
+        if node_path is None:
+            node_path = private / "node.yaml"
+            if not node_path.is_file():
+                raise ConfigError(f"缺少默认私有节点 {node_path}；用 --lightsail-node 指定节点，或用 --public 生成无 Lightsail 的配置")
+        output_dir = output_dir or private / "profiles"
+    if node_path is not None:
+        check_private_paths(node_path, output_dir)
+    return node_path, output_dir or directory
+
+
 def main(argv=None):
     directory = Path(__file__).resolve().parent
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(
+        description="从统一源生成 Clash 配置。仓库内无参数运行时，使用默认 Lightsail 节点生成三端私有配置。",
+        epilog="默认路径按脚本位置定位；命令行传入的相对路径按当前工作目录解析。单独下载脚本时默认生成无 Lightsail 的配置。",
+    )
     parser.add_argument("--source", type=Path, default=directory / "claude.yaml", help="唯一源 YAML，默认脚本旁 claude.yaml")
-    parser.add_argument("--platform", choices=["all", *CLIENT_FILES], default="all")
-    parser.add_argument("--output-dir", type=Path, help="产物目录；默认脚本所在目录，生成私有配置时必填")
-    parser.add_argument("--lightsail-node", type=Path, help="私有 Lightsail 节点 YAML，启用 AI 首选节点")
+    parser.add_argument("--platform", choices=["all", *CLIENT_FILES], default="all", help="目标客户端，默认 all")
+    parser.add_argument("--output-dir", type=Path, help="产物目录；仓库私有版默认 .config/lightsail/profiles，公开版默认脚本目录")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--lightsail-node", type=Path, help="私有节点文件，仓库内默认 .config/lightsail/node.yaml")
+    mode.add_argument("--public", action="store_true", help="生成不注入 Lightsail 节点的配置")
     parser.add_argument("--check", action="store_true", help="只检查生成产物是否与源一致，不写文件")
     args = parser.parse_args(argv)
     try:
-        node = None
+        node_path, output_dir = generation_paths(directory, args)
+        node = load_lightsail_node(node_path) if node_path is not None else None
         inputs = {args.source.resolve()}
-        if args.lightsail_node is not None:
-            check_private_paths(args.lightsail_node, args.output_dir)
-            node = load_lightsail_node(args.lightsail_node)
-            inputs.add(args.lightsail_node.resolve())
-        output_dir = args.output_dir or directory
+        if node_path is not None:
+            inputs.add(node_path.resolve())
         source = load_source(args.source)
         platforms = list(CLIENT_FILES) if args.platform == "all" else [args.platform]
         outputs = generate(source, platforms, node)
