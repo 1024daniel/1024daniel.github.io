@@ -23,8 +23,10 @@ CLIENT_FILES = {
     "cmfa": "clash_meta_for_android_claude.yaml",
     "openclash": "openclash_claude.yaml",
 }
-IPV6_GUARD = "AND,((RULE-SET,ai-ipv4-domains),(IP-CIDR6,::/0,no-resolve)),REJECT"
-AI_RULES = ("RULE-SET,ai-ipv4-domains,AI优先", "RULE-SET,ai-ipv4-domains,REJECT")
+IPV6_GUARD = "AND,((RULE-SET,ai-clean-ip-domains),(IP-CIDR6,::/0,no-resolve)),REJECT"
+AI_RULES = ("RULE-SET,ai-clean-ip-domains,AI纯净出口", "RULE-SET,ai-clean-ip-domains,REJECT")
+OTHER_IPV6_GUARD = "AND,((RULE-SET,service-clean-ip-domains),(IP-CIDR6,::/0,no-resolve)),REJECT"
+OTHER_RULES = ("RULE-SET,service-clean-ip-domains,服务纯净出口", "RULE-SET,service-clean-ip-domains,REJECT")
 PROCESS_RULES = ("RULE-SET,claude-processes,节点选择", "RULE-SET,claude-processes,REJECT")
 DIRECT_PROCESS_RULE = "RULE-SET,direct-processes,DIRECT"
 HEADER = "# 自动生成，请编辑 claude.yaml 后运行 generate_claude_configs.py；不要手改此文件。\n"
@@ -143,10 +145,11 @@ def local_services(source, config=None):
         ):
             raise ConfigError("local-services.domains 仅接受完整域名，不接受 URL、通配符或规则文本")
         protected_config = source["common"] if config is None else config
-        protected_domains = protected_config["rule-providers"]["ai-ipv4-domains"]["payload"]
+        protected_domains = protected_config["rule-providers"]["ai-clean-ip-domains"]["payload"]
+        protected_domains = protected_domains + protected_config["rule-providers"].get("service-clean-ip-domains", {}).get("payload", [])
         if any(domain == d.removeprefix("+.") or
                (d.startswith("+.") and domain.endswith("." + d[2:])) for d in protected_domains):
-            raise ConfigError("local-services.domains 不能将 AI IPv4 保护域名设为直连")
+            raise ConfigError("local-services.domains 不能将 AI 或其他 IPv4 保护域名设为直连")
         if domain not in domains:
             domains.append(domain)
     for value in services["ipv6-prefixes"]:
@@ -173,17 +176,17 @@ def validate_config(config, name):
     for key in ("proxy-providers", "rule-providers"):
         if any(not isinstance(value, dict) for value in config[key].values()):
             raise ConfigError(f"{name}: {key} 中每个 provider 必须是映射")
-    for key in ("claude-processes", "ai-ipv4-domains"):
+    for key in ("claude-processes", "ai-clean-ip-domains"):
         provider = config["rule-providers"].get(key)
         if not isinstance(provider, dict) or not isinstance(provider.get("payload"), list) or any(
             not isinstance(value, str) for value in provider["payload"]
         ):
             raise ConfigError(f"{name}: rule-providers.{key} 需要字符串 payload 列表")
-    ai_domains = config["rule-providers"]["ai-ipv4-domains"]
+    ai_domains = config["rule-providers"]["ai-clean-ip-domains"]
     if ai_domains.get("type") != "inline" or ai_domains.get("behavior") != "domain" or not ai_domains["payload"] or any(
         not domain.strip() for domain in ai_domains["payload"]
     ):
-        raise ConfigError(f"{name}: ai-ipv4-domains 需要非空的 inline/domain 字符串集合")
+        raise ConfigError(f"{name}: ai-clean-ip-domains 需要非空的 inline/domain 字符串集合")
     groups = config.get("proxy-groups")
     if not isinstance(groups, list) or any(not isinstance(group, dict) or not isinstance(group.get("name"), str) for group in groups):
         raise ConfigError(f"{name}: proxy-groups 必须是具名策略组列表")
@@ -197,6 +200,39 @@ def validate_config(config, name):
     rules = config.get("rules")
     if not isinstance(rules, list) or not rules or any(not isinstance(rule, str) for rule in rules) or rules[0] != IPV6_GUARD or rules[-1] != "MATCH,REJECT":
         raise ConfigError(f"{name}: 必须保留首条 AI IPv6 限制与末尾拒绝兜底")
+    # 旧版 schema-version: 1 可以完全不含其他服务策略；启用后必须保留配套组件。
+    dns_policy = config["dns"].get("nameserver-policy", {})
+    if not isinstance(dns_policy, dict):
+        raise ConfigError(f"{name}: dns.nameserver-policy 必须是映射")
+    if ("service-clean-ip-domains" in config["rule-providers"] or "服务纯净出口" in names
+        or "rule-set:service-clean-ip-domains" in dns_policy
+        or any("service-clean-ip-domains" in rule for rule in rules)):
+        other = config["rule-providers"].get("service-clean-ip-domains", {})
+        payload = other.get("payload")
+        if (other.get("type") != "inline" or other.get("behavior") != "domain"
+            or not isinstance(payload, list) or not payload
+            or any(not isinstance(domain, str) or not domain.strip() for domain in payload)):
+            raise ConfigError(f"{name}: service-clean-ip-domains 需要非空的 inline/domain 字符串集合")
+        if "服务纯净出口" not in names or rules[:2] != [IPV6_GUARD, OTHER_IPV6_GUARD]:
+            raise ConfigError(f"{name}: 其他服务需要服务纯净出口组，以及紧接 AI 限制的目标 IPv6 拒绝规则")
+        try:
+            start = rules.index(OTHER_RULES[0])
+            ai_end = rules.index(AI_RULES[1])
+            later = [rules.index(rule) for rule in (*PROCESS_RULES, "GEOSITE,cn,DIRECT", "GEOIP,private,DIRECT,no-resolve") if rule in rules]
+        except ValueError:
+            raise ConfigError(f"{name}: 其他服务需要保留 AI 和其他域名代理规则") from None
+        if (rules[start:start + 2] != list(OTHER_RULES) or start <= ai_end
+            or any(start + 1 >= index for index in later)
+            or any(rules.count(rule) != 1 for rule in OTHER_RULES)):
+            raise ConfigError(f"{name}: 其他域名代理与拒绝规则必须成对，位于 AI 之后、进程及国内直连之前")
+        resolvers = dns_policy.get("rule-set:service-clean-ip-domains")
+        if (not isinstance(resolvers, list) or not resolvers
+            or any(not isinstance(resolver, str) or resolver.partition("#")[2].split("&")[0] != "服务纯净出口"
+                   or not {"disable-ipv6=true", "disable-qtype-65=true"}.issubset(resolver.partition("#")[2].split("&"))
+                   for resolver in resolvers)):
+            raise ConfigError(f"{name}: 其他服务 DNS 必须经服务纯净出口组并过滤 AAAA / HTTPS")
+        if "geosite:cn" in dns_policy and list(dns_policy).index("rule-set:service-clean-ip-domains") > list(dns_policy).index("geosite:cn"):
+            raise ConfigError(f"{name}: 其他服务 DNS 必须位于国内域名策略之前")
     providers = config.get("proxy-providers", {})
     for provider in providers.values():
         if provider.get("type") == "http":
@@ -229,10 +265,10 @@ def adapt_direct_processes(config, enabled, name):
         return
     if config.get("find-process-mode") == "off":
         raise ConfigError(f"{name}: direct-processes 需要开启进程查询")
-    # 旧版 schema-version: 1 源没有 AI优先组，继续允许 AI 规则使用节点选择。
+    # 旧版 schema-version: 1 源没有 AI纯净出口组，继续允许 AI 规则使用节点选择。
     ai_rule = AI_RULES[0]
-    if not any(group["name"] == "AI优先" for group in config["proxy-groups"]):
-        ai_rule = "RULE-SET,ai-ipv4-domains,节点选择"
+    if not any(group["name"] == "AI纯净出口" for group in config["proxy-groups"]):
+        ai_rule = "RULE-SET,ai-clean-ip-domains,节点选择"
     ordered_rules = (
         ai_rule, AI_RULES[1], *PROCESS_RULES,
         "GEOIP,private,DIRECT,no-resolve", "GEOSITE,cn,DIRECT",
@@ -251,16 +287,22 @@ def build_config(source, name, lightsail_node=None):
     config = merge(source["common"], client["config"])
     validate_config(config, name)
     if lightsail_node is not None:
-        group = next((g for g in config["proxy-groups"] if g["name"] == "AI优先"), None)
-        if group is None or group.get("type") != "fallback" or group.get("proxies") != ["节点选择"]:
-            raise ConfigError(f"{name}: 私有节点需要源配置包含 AI优先 fallback 组，以节点选择为备用")
+        preferred_groups = ["AI纯净出口"]
+        if "service-clean-ip-domains" in config["rule-providers"]:
+            preferred_groups.append("服务纯净出口")
+        for group_name in preferred_groups:
+            group = next((g for g in config["proxy-groups"] if g["name"] == group_name), None)
+            if group is None or group.get("type") != "fallback" or group.get("proxies") != ["节点选择"]:
+                raise ConfigError(f"{name}: 私有节点需要源配置包含 {group_name} fallback 组，以节点选择为备用")
         proxies = config.setdefault("proxies", [])
         if not isinstance(proxies, list) or any(not isinstance(p, dict) for p in proxies):
             raise ConfigError(f"{name}: proxies 必须为节点列表")
         if any(p.get("name") == "Lightsail" for p in proxies + config["proxy-groups"]):
             raise ConfigError(f"{name}: 已存在名为 Lightsail 的节点或策略组")
         proxies.append(lightsail_node)
-        group["proxies"].insert(0, "Lightsail")
+        for group in config["proxy-groups"]:
+            if group["name"] in preferred_groups:
+                group["proxies"].insert(0, "Lightsail")
     if name == "openclash":
         if client["process-rules"]:
             raise ConfigError("openclash: 网关配置必须关闭终端进程规则")
@@ -271,7 +313,8 @@ def build_config(source, name, lightsail_node=None):
         config["find-process-mode"] = "off"
     adapt_direct_processes(config, client["process-rules"], name)
     direct_rules, _ = local_services(source, config)
-    config["rules"][1:1] = direct_rules
+    guard_count = 2 if "service-clean-ip-domains" in config["rule-providers"] else 1
+    config["rules"][guard_count:guard_count] = direct_rules
     return config
 
 

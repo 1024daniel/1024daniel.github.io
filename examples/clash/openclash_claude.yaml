@@ -36,7 +36,15 @@ proxy-groups:
   - airport
   exclude-type: Direct|Compatible|Pass|PassRule
   empty-fallback: REJECT
-- name: AI优先
+- name: AI纯净出口
+  type: fallback
+  proxies:
+  - 节点选择
+  url: https://cp.cloudflare.com/generate_204
+  interval: 60
+  timeout: 5000
+  lazy: false
+- name: 服务纯净出口
   type: fallback
   proxies:
   - 节点选择
@@ -108,7 +116,7 @@ proxy-groups:
   - REJECT
   empty-fallback: REJECT
 rule-providers:
-  ai-ipv4-domains:
+  ai-clean-ip-domains:
     type: inline
     behavior: domain
     payload:
@@ -180,6 +188,16 @@ rule-providers:
     - static.devin.ai
     - app.devin.ai
     - api.devin.ai
+  service-clean-ip-domains:
+    type: inline
+    behavior: domain
+    payload:
+    - translate.google.com
+    - translate.google.com.hk
+    - translate.googleapis.com
+    - translate-pa.googleapis.com
+    - translate.googleusercontent.com
+    - +.translate.goog
   loopback:
     type: inline
     behavior: classical
@@ -230,17 +248,22 @@ dns:
   - https://223.5.5.5/dns-query
   direct-nameserver-follow-policy: false
   nameserver-policy:
-    rule-set:ai-ipv4-domains:
-    - https://1.1.1.1/dns-query#AI优先&disable-ipv6=true&disable-qtype-65=true
+    rule-set:ai-clean-ip-domains:
+    - https://1.1.1.1/dns-query#AI纯净出口&disable-ipv6=true&disable-qtype-65=true
+    rule-set:service-clean-ip-domains:
+    - https://1.1.1.1/dns-query#服务纯净出口&disable-ipv6=true&disable-qtype-65=true
     geosite:cn:
     - https://223.5.5.5/dns-query
 rules:
-- AND,((RULE-SET,ai-ipv4-domains),(IP-CIDR6,::/0,no-resolve)),REJECT
+- AND,((RULE-SET,ai-clean-ip-domains),(IP-CIDR6,::/0,no-resolve)),REJECT
+- AND,((RULE-SET,service-clean-ip-domains),(IP-CIDR6,::/0,no-resolve)),REJECT
 - RULE-SET,direct-domains,DIRECT
 - RULE-SET,direct-ips,DIRECT,no-resolve
 - RULE-SET,loopback,DIRECT
-- RULE-SET,ai-ipv4-domains,AI优先
-- RULE-SET,ai-ipv4-domains,REJECT
+- RULE-SET,ai-clean-ip-domains,AI纯净出口
+- RULE-SET,ai-clean-ip-domains,REJECT
+- RULE-SET,service-clean-ip-domains,服务纯净出口
+- RULE-SET,service-clean-ip-domains,REJECT
 - GEOIP,private,DIRECT,no-resolve
 - GEOSITE,cn,DIRECT
 - MATCH,节点选择
